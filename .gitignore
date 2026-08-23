@@ -1,0 +1,39 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+.next/
+out/
+*.tsbuildinfo
+.turbo/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# env & secrets
+.env
+.env.local
+.env.*.local
+
+# testing / coverage
+coverage/
+.nyc_output/
+
+# misc
+.DS_Store
+*.log
+.idea/
+.vscode/
+!/.vscode/extensions.json
+
+# local data dirs
+/tmp/
+

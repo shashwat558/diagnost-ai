@@ -1,0 +1,16 @@
+{
+  "name": "@diagnost/demo-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sample-agent": "node src/sample-agent.mjs"
+  },
+  "dependencies": {
+    "@diagnost/sdk-ts": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/sdk-node": "^0.57.0",
+    "@opentelemetry/sdk-trace-base": "^1.30.0",
+    "@opentelemetry/sdk-trace-node": "^1.30.0"
+  }
+}
