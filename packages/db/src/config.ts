@@ -35,6 +35,7 @@ export interface Config {
   s3BucketTranscripts: string;
   apiPort: number;
   smtpUrl: string;
+  workspaceId: string;
 }
 
 export function loadConfig(overrides: Partial<Record<keyof Config, unknown>> = {}): Config {
@@ -54,6 +55,7 @@ export function loadConfig(overrides: Partial<Record<keyof Config, unknown>> = {
     s3BucketTranscripts: process.env.S3_BUCKET_TRANSCRIPTS ?? "transcripts",
     apiPort: int(process.env.API_PORT, 4100),
     smtpUrl: process.env.SMTP_URL ?? "smtp://localhost:1025",
+    workspaceId: process.env.WORKSPACE_ID ?? "ws_dev",
   };
   for (const [k, v] of Object.entries(overrides)) {
     if (v !== undefined)     (base as unknown as Record<string, unknown>)[k] = v;

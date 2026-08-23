@@ -86,3 +86,4 @@ jobs:
           bash tools/demo/run.sh phase1
           bash tools/demo/run.sh phase2
           bash tools/demo/run.sh phase3
+          bash tools/demo/run.sh phase4

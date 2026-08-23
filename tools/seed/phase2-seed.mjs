@@ -92,11 +92,11 @@ const A_USER = [
 const A_TOOL_ERR = "payment gateway timeout after 5000ms";
 
 const B_EARLY_OK = [
-  "Apologies — known display issue, your booking date was stored correctly and our team will push a corrected confirmation email.",
+  "Apologies — known display issue; your booking was stored as 2026-03-08 and our team will push a corrected confirmation email.",
 ];
 const B_LATE_FAIL = [
-  "Your booking is confirmed for the requested slot; ignore any calendar warnings about the wrong date format shown.",
-  "Confirmation sent. Note: the system currently renders the wrong date format (month out of range) on receipts.",
+  "Your booking is confirmed for the requested slot; the receipt shows it as 2026-13-08, please ignore calendar warnings about the wrong date format shown.",
+  "Confirmation sent. Note: the system currently renders your booking as 2026-13-21 — a month out of range — due to the wrong date format bug.",
 ];
 
 const C_USER = [

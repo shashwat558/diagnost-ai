@@ -164,3 +164,28 @@ bash tools/demo/run.sh phase3   # 12 checks, all PASS
 ```
 
 PASS checks: notifier running · alert delivered as email (MailHog) · duplicate-cluster alert rate-limited to `skipped` · seeded transcripts ingested · ranked list matches seed exactly (#1 csv_export×25, #2 slack_integration×15, #3 dark_mode×8) · webhooks ×5 · one-off requests captured · examples linked · dashboard renders · 29 python unit tests.
+
+---
+
+## Phase 4 — Auto-remediation (auto-PR) ✅
+
+What was built (`apps/pr-bot`):
+
+- **Artifact registry** (Postgres): workspaces register versioned patch targets — prompt templates or tool schemas — each owning a failure `intent` (e.g. `booking_assistant_prompt@v3` handles `date_format_error`)
+- **Remediation pipeline** (`node apps/pr-bot/dist/main.js --cluster <id>`):
+  1. Matches the failure cluster to its artifact
+  2. Generates a candidate patch — deterministic offline repair, or model rewrite with `LLM_PROVIDER=openai`
+  3. **Auto-generates eval cases from the cluster's failing conversations** (impossible dates observed in real evidence become probes) plus canonical edge cases
+  4. Runs the patch against them **and a held-out regression set** of previously-passing same-intent conversations
+  5. **Gate**: strict improvement required + zero regressions, or no PR
+  6. Opens a PR containing the unified diff, before/after eval table, and links to source conversations
+- **GitHub dual-mode**: real API via `GITHUB_TOKEN`+`GITHUB_REPO`, or an offline local git fixture (`fixture://…`) so self-hosted/no-token environments get the full flow; PR payloads land in `/tmp/diagnost-pr-outbox`
+- Agent-under-test: deterministic prompt-directive simulator offline (same grading contract as live-model mode); grader + gate covered by unit tests
+
+Acceptance criteria & proof:
+
+```bash
+bash tools/demo/run.sh phase4   # 13 checks, all PASS
+```
+
+PASS checks: failure cluster present · artifact registered · gate passed (baseline 0% → patched 100%, zero held-out regressions) · PR opened & recorded · branch carries the validation-directive fix while main stays untouched · PR body shows deltas + source-conversation links · eval cases are evidence-linked · 9 harness unit tests + 29 python tests.
