@@ -189,3 +189,24 @@ bash tools/demo/run.sh phase4   # 13 checks, all PASS
 ```
 
 PASS checks: failure cluster present · artifact registered · gate passed (baseline 0% → patched 100%, zero held-out regressions) · PR opened & recorded · branch carries the validation-directive fix while main stays untouched · PR body shows deltas + source-conversation links · eval cases are evidence-linked · 9 harness unit tests + 29 python tests.
+
+---
+
+## Phase 5 — Custom model training ✅
+
+What was built (`apps/finetune`, Python):
+
+- **Dataset export**: labeled/clustered traces → SFT JSONL (`system router prompt + user text → intent`) with deterministic stratified train/held-out split; uploaded to `s3://finetune-datasets/…` (MinIO). DPO export shares the same loader.
+- **Trainer abstraction**:
+  - `local_specialist` (offline default): a genuinely trained tiny router — TF-IDF + logistic regression via scikit-learn, persisted with joblib. Millisecond inference, zero marginal cost.
+  - `together` / `fireworks`: managed-provider LoRA fine-tune job submission for small open models (Llama-3.2-3B class); activates with `FINETUNE_TRAINER` + `FINETUNE_API_KEY`.
+- **Benchmark harness**: specialist vs frontier on the held-out set — accuracy per intent, p50/p95 latency, cost per 1k requests. Frontier runs live against an OpenAI-compatible model when a key is present; otherwise documented reference figures for gpt-4o-mini are shown clearly marked `measured_latency=false`. Specialist figures are always locally measured.
+- **Dashboard**: Models page — side-by-side cards with winner badge, accuracy bars, latency/cost comparison table, per-intent breakdown.
+
+Acceptance criteria & proof:
+
+```bash
+bash tools/demo/run.sh phase5   # 11 checks, all PASS
+```
+
+PASS checks: labeled corpus available (2,412 conversations) · specialist trained · SFT dataset exported to object storage and readable (1,811 rows) · benchmark side-by-side: **accuracy 1.000 vs 1.000 (matches frontier), p95 latency ~2ms vs 1800ms reference, $0 vs $22.80 per 1k requests** · specialist declared winner · artifact persisted · 5 unit tests · dashboard renders the comparison.

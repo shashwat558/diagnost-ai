@@ -11,6 +11,7 @@ const nav = [
   { href: "/", label: "Overview" },
   { href: "/clusters", label: "Patterns" },
   { href: "/features", label: "Features" },
+  { href: "/models", label: "Models" },
   { href: "/traces", label: "Conversations" },
 ];
 

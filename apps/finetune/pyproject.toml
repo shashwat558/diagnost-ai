@@ -1,0 +1,23 @@
+[project]
+name = "diagnost-finetune"
+version = "0.1.0"
+description = "Diagnost AI fine-tuning: SFT/DPO export, specialist trainers, frontier benchmarking"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.1",
+    "scikit-learn>=1.6",
+    "joblib>=1.4",
+    "httpx>=0.28",
+    "psycopg[binary]>=3.2",
+    "boto3>=1.35",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "ruff>=0.8"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

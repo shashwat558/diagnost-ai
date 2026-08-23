@@ -37,3 +37,4 @@ coverage/
 # local data dirs
 /tmp/
 
+apps/finetune/.venv/

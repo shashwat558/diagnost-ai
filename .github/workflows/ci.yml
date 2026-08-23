@@ -72,7 +72,7 @@ jobs:
           cache: pip
 
       - name: Install analysis deps (for acceptance scripts)
-        run: pip install numpy hdbscan scikit-learn httpx "psycopg[binary]"
+        run: pip install numpy hdbscan scikit-learn httpx "psycopg[binary]" joblib boto3
 
       - name: Install
         run: pnpm install --frozen-lockfile
@@ -87,3 +87,4 @@ jobs:
           bash tools/demo/run.sh phase2
           bash tools/demo/run.sh phase3
           bash tools/demo/run.sh phase4
+          bash tools/demo/run.sh phase5
