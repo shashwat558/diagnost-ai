@@ -26,6 +26,13 @@ async function main(): Promise<void> {
     [hash]
   );
 
+  // default alerting channel for local dev: MailHog captures everything
+  await query(cfg.databaseUrl, `
+    INSERT INTO notification_channels (id, workspace_id, channel, target)
+    VALUES ('nc_dev_email', 'ws_dev', 'email', 'oncall@dev.local')
+    ON CONFLICT (workspace_id, channel, target) DO NOTHING
+  `);
+
   console.log("[seed] dev workspace ready: ws_dev");
   console.log(`[seed] api key: ${DEV_API_KEY}`);
   await closePool();

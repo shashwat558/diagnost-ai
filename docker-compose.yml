@@ -109,6 +109,14 @@ services:
       S3_ACCESS_KEY: ${S3_ACCESS_KEY:-minioadmin}
       S3_SECRET_KEY: ${S3_SECRET_KEY:-minioadmin_dev_password}
 
+  # ── MailHog: local SMTP capture (alert emails) ──
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    restart: unless-stopped
+    ports:
+      - "${SMTP_API_PORT:-8025}:8025"   # web UI + API
+      - "1025:1025"                     # SMTP
+
 volumes:
   pgdata:
   chdata:

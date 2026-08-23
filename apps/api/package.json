@@ -14,10 +14,12 @@
     "@diagnost/core": "workspace:*",
     "@diagnost/db": "workspace:*",
     "@diagnost/queue": "workspace:*",
-    "fastify": "^5.0.0"
+    "fastify": "^5.0.0",
+    "nodemailer": "^9.0.5"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@types/nodemailer": "^8.0.1",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   }

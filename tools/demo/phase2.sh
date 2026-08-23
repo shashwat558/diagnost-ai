@@ -22,7 +22,7 @@ pnpm --filter @diagnost/db migrate >/dev/null
 docker compose exec -T clickhouse clickhouse-client --user "$CH_USER" --password "$CH_PASS" \
   --query "TRUNCATE TABLE events.events"
 docker compose exec -T postgres psql -U diagnost -d diagnost \
-  -c "TRUNCATE alerts, cluster_members, clusters, processed_conversations;" >/dev/null
+  -c "TRUNCATE alert_deliveries, alerts, cluster_members, clusters, processed_conversations;" >/dev/null
 
 # 1. ingestion pipeline live
 fuser -k -n tcp 4100 >/dev/null 2>&1 || true; sleep 0.5

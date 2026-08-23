@@ -139,3 +139,28 @@ Run intelligence manually:
 node tools/seed/phase2-seed.mjs                       # seed data
 apps/analysis/.venv/bin/python apps/analysis/run_analysis.py
 ```
+
+---
+
+## Phase 3 — Alerts & feedback loop ✅
+
+What was built:
+
+- **Alert notifier** (`apps/api/src/notifier.ts`, separate process):
+  - Fans out undelivered alerts to per-workspace channels: **Slack webhook** + **SMTP email** (MailHog captures locally at http://localhost:8025)
+  - **Rate limiting**: one notification per cluster per 60min window; suppressed duplicates are logged as `skipped` rows, never silently dropped
+  - **At-least-once ledger** (`alert_deliveries`): every attempt recorded as sent / failed / skipped with detail
+- **Feature-request extraction** (`apps/analysis` → `run_features.py`):
+  - Separate pass over transcripts tagging *"user asked for X we don't support"* signals
+  - Offline rule-based judge: sentence-level request-cue detection + signature-keyword slug mapping (`csv_export`, `slack_integration`, …) with stable derived slugs for unmapped asks
+  - OpenAI-compatible LLM path via `FEATURE_JUDGE=openai` + key
+  - Aggregation counts **conversations per slug** (never raw mentions), keeps up to 20 example conversation IDs linked to source sessions
+- **Dashboard**: Features page — ranked requests with frequency bars and example links into session drill-downs
+
+Acceptance criteria & proof:
+
+```bash
+bash tools/demo/run.sh phase3   # 12 checks, all PASS
+```
+
+PASS checks: notifier running · alert delivered as email (MailHog) · duplicate-cluster alert rate-limited to `skipped` · seeded transcripts ingested · ranked list matches seed exactly (#1 csv_export×25, #2 slack_integration×15, #3 dark_mode×8) · webhooks ×5 · one-off requests captured · examples linked · dashboard renders · 29 python unit tests.

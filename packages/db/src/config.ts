@@ -34,6 +34,7 @@ export interface Config {
   s3SecretKey: string;
   s3BucketTranscripts: string;
   apiPort: number;
+  smtpUrl: string;
 }
 
 export function loadConfig(overrides: Partial<Record<keyof Config, unknown>> = {}): Config {
@@ -52,6 +53,7 @@ export function loadConfig(overrides: Partial<Record<keyof Config, unknown>> = {
     s3SecretKey: process.env.S3_SECRET_KEY ?? "minioadmin_dev_password",
     s3BucketTranscripts: process.env.S3_BUCKET_TRANSCRIPTS ?? "transcripts",
     apiPort: int(process.env.API_PORT, 4100),
+    smtpUrl: process.env.SMTP_URL ?? "smtp://localhost:1025",
   };
   for (const [k, v] of Object.entries(overrides)) {
     if (v !== undefined)     (base as unknown as Record<string, unknown>)[k] = v;
