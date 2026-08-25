@@ -38,49 +38,71 @@ export default async function ClusterDetailPage({
   );
 
   if (!cluster) {
-    return <p className="text-slate-500">Cluster not found.</p>;
+    return <p className="px-6 pt-5 text-[13px] text-gray-500">Cluster not found.</p>;
   }
 
   return (
-    <div className="space-y-4">
-      <header>
-        <Link href="/clusters" className="text-xs text-accent hover:underline">
-          ← all patterns
-        </Link>
-        <h1 className="mt-1 text-xl font-semibold capitalize">{cluster.intent.replace(/_/g, " ")}</h1>
-        <p className="mt-0.5 text-sm text-slate-400">{cluster.summary}</p>
-        <div className="mt-2 flex gap-4 text-xs text-slate-500">
-          <span>{Number(cluster.size)} conversations</span>
-          <span>error rate {(Number(cluster.error_rate) * 100).toFixed(0)}%</span>
-          <span>frustration {(Number(cluster.frustration) * 100).toFixed(0)}%</span>
-          <span>sentiment {Number(cluster.sentiment).toFixed(2)}</span>
-        </div>
-      </header>
-
-      <div className="overflow-hidden rounded-lg border border-edge bg-panel/70">
-        <h2 className="border-b border-edge px-4 py-2 text-xs uppercase tracking-wider text-slate-500">
-          Source conversations (linked evidence)
-        </h2>
-        <ul className="divide-y divide-edge/60">
-          {members.map((m) => (
-            <li key={m.conversation_id} className="flex items-center justify-between px-4 py-2">
-              <Link
-                href={`/traces/${encodeURIComponent(m.conversation_id)}`}
-                className="font-mono text-xs text-accent hover:underline"
-              >
-                {m.conversation_id}
-              </Link>
-              <span
-                className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
-                  m.has_error ? "bg-red-500/15 text-red-300" : "bg-emerald-500/15 text-emerald-300"
-                }`}
-              >
-                {m.has_error ? "FAIL" : "PASS"}
-              </span>
-            </li>
-          ))}
-        </ul>
+    <div className="px-6 pt-5">
+      <Link href="/clusters" className="text-[12px] text-gray-500 hover:text-gray-800">
+        ← Intents
+      </Link>
+      <div className="mt-1 flex items-center gap-2">
+        <h1 className="text-[15px] font-semibold capitalize text-gray-900">
+          {cluster.intent.replace(/_/g, " ")}
+        </h1>
+        {Number(cluster.frustration) >= 0.5 && (
+          <span className="rounded bg-accent-soft px-1.5 py-0.5 text-[11px] font-medium text-accent">
+            Suggested
+          </span>
+        )}
       </div>
+      <p className="mt-0.5 max-w-3xl text-[13px] text-gray-500">{cluster.summary}</p>
+
+      <div className="mt-3 flex gap-5 text-[12px] text-gray-500">
+        <span>{Number(cluster.size)} conversations</span>
+        <span>error rate {(Number(cluster.error_rate) * 100).toFixed(0)}%</span>
+        <span>frustration {(Number(cluster.frustration) * 100).toFixed(0)}%</span>
+        <span>sentiment {Number(cluster.sentiment).toFixed(2)}</span>
+        <span className="flex gap-1">
+          {(cluster.top_terms ?? []).slice(0, 5).map((t) => (
+            <span key={t} className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-[11px] text-gray-600">
+              {t}
+            </span>
+          ))}
+        </span>
+      </div>
+
+      <table className="mt-4 w-full border-separate border-spacing-0 text-[13px]">
+        <thead>
+          <tr className="text-left text-[12px] text-gray-500">
+            <th className="border-b border-gray-200 py-2 pr-4 font-normal">Source conversation</th>
+            <th className="border-b border-gray-200 py-2 font-normal">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {members.map((m) => (
+            <tr key={m.conversation_id} className="hover:bg-gray-50">
+              <td className="border-b border-gray-100 py-2.5 pr-4">
+                <Link
+                  href={`/traces/${encodeURIComponent(m.conversation_id)}`}
+                  className="font-medium text-gray-900 underline decoration-gray-300 underline-offset-2 hover:decoration-gray-500"
+                >
+                  {m.conversation_id}
+                </Link>
+              </td>
+              <td className="border-b border-gray-100 py-2.5">
+                <span
+                  className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${
+                    m.has_error ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
+                  }`}
+                >
+                  {m.has_error ? "FAIL" : "PASS"}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

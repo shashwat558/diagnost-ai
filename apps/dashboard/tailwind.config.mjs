@@ -4,10 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: "#0b1020",
-        panel: "#111832",
-        edge: "#1f2a4d",
-        accent: "#5eead4",
+        accent: {
+          DEFAULT: "#7c3aed",
+          soft: "#f3eefe",
+        },
+      },
+      fontSize: {
+        "2xs": ["11px", "14px"],
       },
     },
   },

@@ -28,47 +28,65 @@ export default async function ConversationsPage() {
   `);
 
   return (
-    <div className="space-y-4">
-      <header className="flex items-baseline justify-between">
-        <h1 className="text-xl font-semibold">Conversations</h1>
-        <span className="text-xs text-slate-500">most recent 50</span>
-      </header>
+    <div className="px-6 pt-5">
+      <div className="flex items-baseline justify-between">
+        <h1 className="text-[15px] font-semibold text-gray-900">Conversations</h1>
+        <span className="text-[12px] text-gray-400">most recent 50</span>
+      </div>
 
-      <div className="overflow-hidden rounded-lg border border-edge bg-panel/70">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-[11px] uppercase tracking-wider text-slate-500">
-              <th className="px-4 py-2">Conversation</th>
-              <th className="px-4 py-2">Events</th>
-              <th className="px-4 py-2">Errors</th>
-              <th className="px-4 py-2">PII findings</th>
-              <th className="px-4 py-2">Last seen</th>
-            </tr>
-          </thead>
-          <tbody>
-            {convos.map((c) => (
-              <tr key={c.conversation_id} className="border-t border-edge/60 hover:bg-edge/30">
-                <td className="px-4 py-2">
-                  <Link href={`/traces/${encodeURIComponent(c.conversation_id)}`} className="font-mono text-xs text-accent hover:underline">
+      <table className="mt-4 w-full border-separate border-spacing-0 text-[13px]">
+        <thead>
+          <tr className="text-left text-[12px] text-gray-500">
+            <th className="border-b border-gray-200 py-2 pr-4 font-normal">Conversation</th>
+            <th className="border-b border-gray-200 py-2 pr-4 text-right font-normal">Events</th>
+            <th className="border-b border-gray-200 py-2 pr-4 font-normal">Status</th>
+            <th className="border-b border-gray-200 py-2 pr-4 text-right font-normal">PII findings</th>
+            <th className="border-b border-gray-200 py-2 font-normal">Last seen</th>
+          </tr>
+        </thead>
+        <tbody>
+          {convos.map((c) => {
+            const failed = Number(c.errors) > 0;
+            return (
+              <tr key={c.conversation_id} className="hover:bg-gray-50">
+                <td className="border-b border-gray-100 py-2.5 pr-4">
+                  <Link
+                    href={`/traces/${encodeURIComponent(c.conversation_id)}`}
+                    className="font-medium text-gray-900 underline decoration-gray-300 underline-offset-2 hover:decoration-gray-500"
+                  >
                     {c.conversation_id}
                   </Link>
                 </td>
-                <td className="px-4 py-2 text-slate-300">{Number(c.events)}</td>
-                <td className={`px-4 py-2 ${Number(c.errors) > 0 ? "text-red-400" : "text-slate-500"}`}>{c.errors}</td>
-                <td className="px-4 py-2 text-slate-300">{Number(c.pii_findings)}</td>
-                <td className="px-4 py-2 text-xs text-slate-400">{String(c.last_ts).replace("T", " ").slice(0, 19)}</td>
-              </tr>
-            ))}
-            {convos.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
-                  No conversations yet — run <code className="text-accent">tools/demo/src/sample-agent.mjs</code>.
+                <td className="border-b border-gray-100 py-2.5 pr-4 text-right tabular-nums text-gray-700">
+                  {Number(c.events)}
+                </td>
+                <td className="border-b border-gray-100 py-2.5 pr-4">
+                  <span
+                    className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${
+                      failed ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
+                    }`}
+                  >
+                    {failed ? `${c.errors} failed` : "passing"}
+                  </span>
+                </td>
+                <td className="border-b border-gray-100 py-2.5 pr-4 text-right tabular-nums text-gray-600">
+                  {Number(c.pii_findings) || "—"}
+                </td>
+                <td className="border-b border-gray-100 py-2.5 text-gray-500">
+                  {String(c.last_ts).replace("T", " ").slice(0, 19)}
                 </td>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            );
+          })}
+          {convos.length === 0 && (
+            <tr>
+              <td colSpan={5} className="py-10 text-center text-gray-400">
+                No conversations yet.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

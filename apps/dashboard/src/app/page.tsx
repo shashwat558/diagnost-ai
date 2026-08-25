@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { chQuery } from "@/lib/ch";
-import { LatencyChart, ToolChart, VolumeChart } from "@/components/charts";
+import { LatencyChart, VolumeChart } from "@/components/charts";
+import { Icon } from "@/components/icon";
 
 export const dynamic = "force-dynamic";
 
@@ -11,149 +12,143 @@ interface StatRow {
   p95: number | null;
   conversations: string;
 }
-interface BucketRow {
-  bucket: string;
-  ok: string;
-  error: string;
-}
-interface LatencyBucketRow {
-  bucket: string;
-  p50: number | null;
-  p95: number | null;
-}
-interface ToolRow {
-  name: string;
-  calls: string;
-  errors: string;
-  avg_ms: number | null;
-}
+interface BucketRow { bucket: string; ok: string; error: string }
+interface LatencyBucketRow { bucket: string; p50: number | null; p95: number | null }
+interface TickRow { status: string }
 
-function fmtMs(v: number | null): string {
+function fmtMs(v: number | null) {
   return v == null ? "—" : `${Math.round(v)} ms`;
 }
 
-function Card({ label, value, sub }: { label: string; value: string; sub?: string }) {
+function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-edge bg-panel/70 p-4">
-      <div className="text-[11px] uppercase tracking-wider text-slate-400">{label}</div>
-      <div className="mt-1 text-2xl font-semibold text-slate-100">{value}</div>
-      {sub && <div className="mt-0.5 text-xs text-slate-500">{sub}</div>}
+    <div className="px-5 py-3.5">
+      <div className="text-[12px] text-gray-500">{label}</div>
+      <div className="mt-0.5 text-lg font-semibold text-gray-900">{value}</div>
     </div>
   );
 }
 
-export default async function OverviewPage() {
+export default async function HomePage() {
   const [stats] = await chQuery<StatRow>(`
-    SELECT
-      count() AS total,
-      countIf(status = 'error') AS errors,
-      quantile(0.5)(latency_ms) AS p50,
-      quantile(0.95)(latency_ms) AS p95,
-      uniqExact(conversation_id) AS conversations
-    FROM events
-    WHERE timestamp > now() - INTERVAL 24 HOUR
+    SELECT count() AS total,
+           countIf(status = 'error') AS errors,
+           quantile(0.5)(latency_ms) AS p50,
+           quantile(0.95)(latency_ms) AS p95,
+           uniqExact(conversation_id) AS conversations
+    FROM events WHERE timestamp > now() - INTERVAL 24 HOUR
   `);
-
   const volume = await chQuery<BucketRow>(`
-    SELECT
-      formatDateTime(toStartOfMinute(timestamp), '%H:%M') AS bucket,
-      countIf(status = 'ok') AS ok,
-      countIf(status = 'error') AS error
-    FROM events
-    WHERE timestamp > now() - INTERVAL 6 HOUR
+    SELECT formatDateTime(toStartOfMinute(timestamp), '%H:%M') AS bucket,
+           countIf(status='ok') AS ok, countIf(status='error') AS error
+    FROM events WHERE timestamp > now() - INTERVAL 6 HOUR
     GROUP BY bucket ORDER BY bucket
   `);
-
   const latency = await chQuery<LatencyBucketRow>(`
-    SELECT
-      formatDateTime(toStartOfInterval(timestamp, INTERVAL 10 MINUTE), '%H:%M') AS bucket,
-      quantile(0.5)(latency_ms) AS p50,
-      quantile(0.95)(latency_ms) AS p95
-    FROM events
-    WHERE timestamp > now() - INTERVAL 6 HOUR AND latency_ms IS NOT NULL
+    SELECT formatDateTime(toStartOfInterval(timestamp, INTERVAL 10 MINUTE), '%H:%M') AS bucket,
+           quantile(0.5)(latency_ms) AS p50, quantile(0.95)(latency_ms) AS p95
+    FROM events WHERE timestamp > now() - INTERVAL 6 HOUR AND latency_ms IS NOT NULL
     GROUP BY bucket ORDER BY bucket
   `);
+  const ticks = await chQuery<TickRow>(
+    "SELECT status FROM events ORDER BY timestamp DESC LIMIT 60"
+  );
 
-  const tools = await chQuery<ToolRow>(`
-    SELECT
-      name,
-      count() AS calls,
-      countIf(status = 'error') AS errors,
-      avg(latency_ms) AS avg_ms
-    FROM events
-    WHERE kind IN ('tool', 'llm', 'retrieval') AND timestamp > now() - INTERVAL 24 HOUR
-    GROUP BY name ORDER BY calls DESC LIMIT 8
-  `);
-
-  const errRate = stats && Number(stats.total) > 0 ? ((Number(stats.errors) / Number(stats.total)) * 100).toFixed(1) : "0.0";
+  const errRate =
+    stats && Number(stats.total) > 0
+      ? ((Number(stats.errors) / Number(stats.total)) * 100).toFixed(1)
+      : "0.0";
 
   return (
-    <div className="space-y-6">
-      <header className="flex items-baseline justify-between">
-        <h1 className="text-xl font-semibold">Overview — Dev Workspace</h1>
-        <span className="text-xs text-slate-500">last 24h · live from ClickHouse</span>
-      </header>
+    <div className="flex min-h-screen flex-col">
+      <div className="flex-1 px-6 pt-5">
+        {/* stat strip */}
+        <div className="grid grid-cols-5 divide-x divide-gray-200 rounded-lg border border-gray-200">
+          <Stat label="Events (24h)" value={stats ? Number(stats.total).toLocaleString() : "—"} />
+          <Stat label="Error rate" value={`${errRate}%`} />
+          <Stat label="p50 latency" value={fmtMs(stats?.p50 ?? null)} />
+          <Stat label="p95 latency" value={fmtMs(stats?.p95 ?? null)} />
+          <Stat label="Conversations" value={stats ? Number(stats.conversations).toLocaleString() : "—"} />
+        </div>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-        <Card label="Events" value={stats ? Number(stats.total).toLocaleString() : "—"} />
-        <Card label="Error rate" value={`${errRate}%`} />
-        <Card label="p50 latency" value={fmtMs(stats?.p50 ?? null)} />
-        <Card label="p95 latency" value={fmtMs(stats?.p95 ?? null)} />
-        <Card label="Conversations" value={stats ? Number(stats.conversations).toLocaleString() : "—"} />
+        {/* volume chart card */}
+        <div className="mt-4 rounded-lg border border-gray-200 p-4">
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-[15px] font-semibold text-gray-900">Event volume</h2>
+            <span className="text-[12px] text-gray-400">ok vs error · last 6h</span>
+          </div>
+          <div className="mt-2">
+            <VolumeChart data={volume.map((r) => ({ bucket: r.bucket, ok: Number(r.ok), error: Number(r.error) }))} />
+          </div>
+        </div>
+
+        {/* latency + tools */}
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          <div className="rounded-lg border border-gray-200 p-4">
+            <h2 className="text-[15px] font-semibold text-gray-900">Latency</h2>
+            <div className="mt-2">
+              <LatencyChart data={latency.map((r) => ({ bucket: r.bucket, p50: Number(r.p50 ?? 0), p95: Number(r.p95 ?? 0) }))} />
+            </div>
+          </div>
+          <div className="rounded-lg border border-gray-200 p-4">
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-[15px] font-semibold text-gray-900">Top tools</h2>
+              <Link href="/clusters" className="text-[12px] text-accent hover:underline">
+                View intents →
+              </Link>
+            </div>
+            <ToolTable />
+          </div>
+        </div>
       </div>
 
-      <section className="rounded-lg border border-edge bg-panel/70 p-4">
-        <h2 className="mb-2 text-sm font-medium text-slate-300">Event volume (ok / error)</h2>
-        <VolumeChart data={volume.map((r) => ({ bucket: r.bucket, ok: Number(r.ok), error: Number(r.error) }))} />
-      </section>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-lg border border-edge bg-panel/70 p-4">
-          <h2 className="mb-2 text-sm font-medium text-slate-300">Latency timeline</h2>
-          <LatencyChart data={latency.map((r) => ({ bucket: r.bucket, p50: Number(r.p50 ?? 0), p95: Number(r.p95 ?? 0) }))} />
-        </section>
-        <section className="rounded-lg border border-edge bg-panel/70 p-4">
-          <h2 className="mb-2 text-sm font-medium text-slate-300">Per-tool breakdown</h2>
-          <ToolChart data={tools.map((r) => ({ name: r.name, calls: Number(r.calls), errors: Number(r.errors) }))} />
-        </section>
-      </div>
-
-      <section className="rounded-lg border border-edge bg-panel/70">
-        <h2 className="border-b border-edge px-4 py-3 text-sm font-medium text-slate-300">
-          Tool detail
-        </h2>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-[11px] uppercase tracking-wider text-slate-500">
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Calls</th>
-              <th className="px-4 py-2">Errors</th>
-              <th className="px-4 py-2">Avg latency</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tools.map((t) => (
-              <tr key={t.name} className="border-t border-edge/60 text-slate-300">
-                <td className="px-4 py-2 font-mono text-xs">{t.name}</td>
-                <td className="px-4 py-2">{Number(t.calls).toLocaleString()}</td>
-                <td className={`px-4 py-2 ${Number(t.errors) > 0 ? "text-red-400" : ""}`}>{t.errors}</td>
-                <td className="px-4 py-2">{fmtMs(t.avg_ms)}</td>
-              </tr>
+      {/* live events footer strip */}
+      <footer className="sticky bottom-0 mt-6 border-t border-gray-200 bg-white">
+        <div className="flex items-center gap-4 px-6 py-2.5">
+          <span className="text-[12px] font-medium text-gray-600">Live events</span>
+          <div className="flex flex-1 items-center gap-[3px] overflow-hidden">
+            {ticks.map((t, i) => (
+              <span
+                key={i}
+                className={`inline-block h-2.5 w-[3px] rounded-sm ${
+                  t.status === "error" ? "bg-red-500" : "bg-gray-200"
+                }`}
+              />
             ))}
-            {tools.length === 0 && (
-              <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-slate-500">
-                  No tool events yet — run the sample agent.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </section>
-
-      <Link href="/traces" className="inline-block text-sm text-accent hover:underline">
-        Browse conversations →
-      </Link>
+            {ticks.length === 0 && <span className="text-[12px] text-gray-400">no events yet</span>}
+          </div>
+          <Link href="/traces" className="flex items-center gap-1 text-[12px] text-gray-600 hover:text-gray-900">
+            View all <Icon name="arrowRight" className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      </footer>
     </div>
+  );
+}
+
+async function ToolTable() {
+  const tools = await chQuery<{ name: string; calls: string; errors: string; avg_ms: number | null }>(`
+    SELECT name, count() AS calls, countIf(status='error') AS errors, avg(latency_ms) AS avg_ms
+    FROM events WHERE kind IN ('tool','llm','retrieval') AND timestamp > now() - INTERVAL 24 HOUR
+    GROUP BY name ORDER BY calls DESC LIMIT 6
+  `);
+  if (tools.length === 0) {
+    return <p className="py-8 text-center text-[13px] text-gray-400">No tool calls yet.</p>;
+  }
+  return (
+    <table className="mt-2 w-full text-[13px]">
+      <tbody>
+        {tools.map((t) => (
+          <tr key={t.name} className="border-b border-gray-100 last:border-0">
+            <td className="py-2 font-mono text-[12px] text-gray-700">{t.name}</td>
+            <td className="py-2 text-right tabular-nums text-gray-600">{Number(t.calls)}</td>
+            <td className={`py-2 pl-4 text-right tabular-nums ${Number(t.errors) > 0 ? "text-red-600" : "text-gray-400"}`}>
+              {Number(t.errors) > 0 ? `${t.errors} err` : "—"}
+            </td>
+            <td className="py-2 pl-4 text-right tabular-nums text-gray-600">{fmtMs(t.avg_ms)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
