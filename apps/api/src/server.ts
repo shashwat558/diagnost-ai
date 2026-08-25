@@ -1,5 +1,7 @@
 import Fastify, { type FastifyInstance } from "fastify";
+import { query } from "@diagnost/db";
 import { apiKeyAuth } from "./auth.js";
+import { quotaEnforcement } from "./quota.js";
 import { eventsRoutes } from "./routes/events.js";
 import type { Producer } from "@diagnost/queue";
 
@@ -22,6 +24,7 @@ export function buildServer(opts: ServerOpts): FastifyInstance {
   // Auth runs whenever a DB is wired; unit tests run without it to exercise routes directly.
   if (opts.databaseUrl !== ":test:") {
     apiKeyAuth(app, opts.databaseUrl);
+    quotaEnforcement(app, { databaseUrl: opts.databaseUrl, query });
   }
   eventsRoutes(app, {
     producer: opts.producer,

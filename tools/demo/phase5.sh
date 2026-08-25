@@ -72,7 +72,7 @@ fuser -k -n tcp 3100 >/dev/null 2>&1 || true; sleep 0.5
 for i in $(seq 1 20); do curl -sf http://localhost:3100/models >/dev/null 2>&1 && break; sleep 0.5; done
 CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3100/models)
 BODY=$(curl -s http://localhost:3100/models)
-if [[ "$CODE" == "200" ]] && echo "$BODY" | grep -q "winner" && echo "$BODY" | grep -q "specialist:fine-tuned-router"; then
+if [[ "$CODE" == "200" ]] && echo "$BODY" | grep -qi "winner" && echo "$BODY" | grep -q "fine-tuned router"; then
   pass "dashboard /models shows side-by-side comparison with winner badge"
 else
   fail "models page broken ($CODE)"

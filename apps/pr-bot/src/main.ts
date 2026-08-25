@@ -10,7 +10,7 @@
  *   diff + eval report + source-conversation links.
  */
 import { randomUUID } from "node:crypto";
-import { loadConfig, createClickhouse, query } from "@diagnost/db";
+import { loadConfig, createClickhouse, query, recordAudit } from "@diagnost/db";
 import { fetchConversationTexts, buildCaseBundle } from "./cases.js";
 import { makeSimulator } from "./simulate.js";
 import { offlinePatch, openaiPatch, unifiedDiff } from "./patch.js";
@@ -235,6 +235,14 @@ async function main(): Promise<void> {
     prBody,
   });
   console.log(`[remediate] PR opened (${pr.mode}): ${pr.url}`);
+
+  await recordAudit(cfg.databaseUrl, {
+    workspaceId: cfg.workspaceId,
+    actor: "system:pr-bot",
+    action: "remediation.pr_opened",
+    target: remediationId,
+    metadata: { cluster: clusterId, intent: cluster.intent, url: pr.url, branch: pr.branch },
+  });
 
   await query(
     cfg.databaseUrl,

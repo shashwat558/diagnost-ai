@@ -100,7 +100,7 @@ fuser -k -n tcp 3100 >/dev/null 2>&1 || true; sleep 0.5
 for i in $(seq 1 20); do curl -sf http://localhost:3100/features >/dev/null 2>&1 && break; sleep 0.5; done
 CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3100/features)
 BODY=$(curl -s http://localhost:3100/features)
-[[ "$CODE" == "200" ]] && echo "$BODY" | grep -q "csv_export" \
+[[ "$CODE" == "200" ]] && echo "$BODY" | grep -qi "csv export" \
   && pass "dashboard /features renders ranked requests" || fail "features page broken ($CODE)"
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true
 

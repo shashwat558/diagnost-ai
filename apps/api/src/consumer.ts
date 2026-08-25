@@ -6,7 +6,7 @@
  * transcripts are hydrated per event but rows are written once per Kafka
  * batch, and offsets commit only after a successful insert.
  */
-import { loadConfig, createClickhouse, createS3, insertEvents, uploadTranscript } from "@diagnost/db";
+import { loadConfig, createClickhouse, createS3, insertEvents, uploadTranscript, incrementUsage } from "@diagnost/db";
 import { consume, createKafka, ensureTopic } from "@diagnost/queue";
 import type { EventEnvelope } from "@diagnost/core";
 
@@ -76,6 +76,12 @@ async function main(): Promise<void> {
         events.push(event);
       }
       await insertEvents(ch, cfg.clickhouseDb, events);
+      // usage metering for billing (best-effort; never blocks the pipeline)
+      try {
+        await incrementUsage(cfg.databaseUrl, events[0]!.workspaceId, events.length);
+      } catch (err) {
+        console.error("[consumer] usage increment failed:", err);
+      }
       processed += events.length;
       if (processed % 1000 < events.length) {
         console.log(`[consumer] processed ${processed} events`);

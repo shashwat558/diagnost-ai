@@ -53,3 +53,25 @@ describe("api keys", () => {
     expect(hashApiKey(key.raw)).toBe(key.hash);
   });
 });
+
+import { hasAtLeast } from "./governance.js";
+import { planFor, PLANS } from "./billing.js";
+
+describe("governance", () => {
+  it("role ranking: owner > admin > member > viewer", () => {
+    expect(hasAtLeast("owner", "admin")).toBe(true);
+    expect(hasAtLeast("admin", "admin")).toBe(true);
+    expect(hasAtLeast("member", "admin")).toBe(false);
+    expect(hasAtLeast("viewer", "member")).toBe(false);
+    expect(hasAtLeast(null, "viewer")).toBe(true);
+  });
+});
+
+describe("billing", () => {
+  it("plans expose quotas and unknown ids fall back to free", () => {
+    expect(PLANS.free.monthlyEvents).toBe(50_000);
+    expect(PLANS.pro.retentionDays).toBe(90);
+    expect(planFor("nope").id).toBe("free");
+    expect(planFor("enterprise").monthlyEvents).toBeGreaterThan(1e9);
+  });
+});

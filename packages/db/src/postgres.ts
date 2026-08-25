@@ -6,6 +6,12 @@ import { Pool, type QueryResultRow } from "pg";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 export const MIGRATIONS_DIR = join(__dirname, "migrations");
 
+export type QueryFn = <T extends QueryResultRow>(
+  databaseUrl: string,
+  sql: string,
+  params?: unknown[]
+) => Promise<T[]>;
+
 let pool: Pool | null = null;
 
 export function getPool(databaseUrl: string): Pool {

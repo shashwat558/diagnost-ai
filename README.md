@@ -210,3 +210,25 @@ bash tools/demo/run.sh phase5   # 11 checks, all PASS
 ```
 
 PASS checks: labeled corpus available (2,412 conversations) · specialist trained · SFT dataset exported to object storage and readable (1,811 rows) · benchmark side-by-side: **accuracy 1.000 vs 1.000 (matches frontier), p95 latency ~2ms vs 1800ms reference, $0 vs $22.80 per 1k requests** · specialist declared winner · artifact persisted · 5 unit tests · dashboard renders the comparison.
+
+---
+
+## Phase 6 — Productionization ✅
+
+What was built:
+
+- **Usage-based billing**: Free (50k events/mo, 7-day retention) · Starter (250k, $49) · Pro (2M, $299) · Enterprise (custom). Monthly usage metered by the ingest consumer; **quotas enforced at the ingestion edge (HTTP 402)** with audit logging; reads never blocked. Settings page shows the usage meter and tier comparison.
+- **Audit log**: every privileged action (quota violations, plan changes, auto-PR openings) recorded with actor/target/metadata/IP — browsable at `/audit`.
+- **Workspace roles**: owner > admin > member > viewer (`users.role`, enforced via `hasAtLeast()`), dev owner seeded. OIDC SSO adapter documented (`OIDC_ISSUER_URL`) with IdP-group→role mapping.
+- **Deployment**: Terraform AWS module (VPC, RDS Postgres, S3, ECS Fargate for api/consumer/notifier/dashboard/pr-bot, ALB) + GCP skeleton (Compute Engine, Cloud SQL, GCS). Fully self-hostable via Docker Compose from the Free tier. Self-host guide in `/docs`.
+- **Docs site**: in-app documentation (quickstart, SDK instrumentation, plans, self-hosting, agent skill).
+- **Skill installer**: `skills/agent-analytics/SKILL.md` — one-line auto-instrumentation for AI coding agents:
+  `npx skills add shashwat558/diagnost-ai --skill agent-analytics`
+
+Acceptance criteria & proof:
+
+```bash
+bash tools/demo/run.sh phase6   # 12 checks, all PASS
+```
+
+PASS checks: over-quota ingestion rejected 402 + audited · ingestion resumes after reset · roles seeded · settings/audit/docs pages render · Terraform AWS + GCP present · skill package present · 4 governance/billing unit tests.
