@@ -1,5 +1,6 @@
 import { pgQuery } from "@/lib/pg";
 import { Icon } from "@/components/icon";
+import { requireAdmin } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -28,14 +29,19 @@ const TIER_INFO: Record<string, { price: string; events: string; retention: stri
 };
 
 export default async function SettingsPage() {
+  const user = await requireAdmin();
+  const wsId = user.workspaceId;
   const [ws] = await pgQuery<WsRow>(
-    "SELECT id, name, plan, created_at FROM workspaces WHERE id='ws_dev'"
+    "SELECT id, name, plan, created_at FROM workspaces WHERE id=$1",
+    [wsId]
   );
   const usage = await pgQuery<UsageRow>(
-    "SELECT events, period FROM usage_monthly WHERE workspace_id='ws_dev' ORDER BY period DESC LIMIT 1"
+    "SELECT events, period FROM usage_monthly WHERE workspace_id=$1 ORDER BY period DESC LIMIT 1",
+    [wsId]
   );
   const users = await pgQuery<UserRow>(
-    "SELECT id, email, role FROM users WHERE workspace_id='ws_dev' ORDER BY role"
+    "SELECT id, email, role FROM users WHERE workspace_id=$1 ORDER BY role",
+    [wsId]
   );
 
   const plan = ws?.plan ?? "free";

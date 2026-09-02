@@ -17,3 +17,14 @@ export {
   type AuditEntry,
   type Role,
 } from "./governance.js";
+export {
+  hashPassword,
+  verifyPassword,
+  createSession,
+  getSessionUser,
+  destroySession,
+  createUserWorkspace,
+  loginUser,
+  type SessionUser,
+  type SignupResult,
+} from "./auth.js";

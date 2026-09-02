@@ -52,25 +52,28 @@ CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$API/v1/events" \
 ROLE=$($PSQL "SELECT role FROM users WHERE email='owner@dev.local'")
 [[ "$ROLE" == "owner" ]] && pass "workspace roles present (owner@dev.local=owner)" || fail "role=$ROLE"
 
-# ── dashboard: settings / audit / docs ──────────────────────────────
+# ── dashboard: settings / audit / docs (auth-gated since Phase 7A) ───
 pnpm --filter @diagnostic/dashboard build >/dev/null 2>&1 || pnpm --filter @diagnost/dashboard build >/dev/null
 mkdir -p /tmp/diagnost-logs
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true; sleep 0.5
 (pnpm --filter @diagnost/dashboard start > /tmp/diagnost-logs/dash.log 2>&1 &)
-for i in $(seq 1 20); do curl -sf http://localhost:3100/settings >/dev/null 2>&1 && break; sleep 0.5; done
+for i in $(seq 1 20); do curl -sf http://localhost:3100/login >/dev/null 2>&1 && break; sleep 0.5; done
+curl -s -c /tmp/diagnost-cookie.jar -X POST http://localhost:3100/api/auth/login \
+  -H 'content-type: application/json' \
+  -d '{"email":"owner@dev.local","password":"devpassword123"}' >/dev/null
 
-CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3100/settings)
-BODY=$(curl -s http://localhost:3100/settings)
+CODE=$(curl -s -b /tmp/diagnost-cookie.jar -o /dev/null -w "%{http_code}" http://localhost:3100/settings)
+BODY=$(curl -s -b /tmp/diagnost-cookie.jar http://localhost:3100/settings)
 [[ "$CODE" == "200" ]] && echo "$BODY" | grep -q "Billing" && echo "$BODY" | grep -qi "free" \
   && pass "settings page renders plan tiers + usage meter" || fail "settings broken ($CODE)"
 
-CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3100/audit)
-BODY=$(curl -s http://localhost:3100/audit)
+CODE=$(curl -s -b /tmp/diagnost-cookie.jar -o /dev/null -w "%{http_code}" http://localhost:3100/audit)
+BODY=$(curl -s -b /tmp/diagnost-cookie.jar http://localhost:3100/audit)
 [[ "$CODE" == "200" ]] && echo "$BODY" | grep -q "ingest.quota_exceeded" \
   && pass "audit page lists quota violation" || fail "audit page broken ($CODE)"
 
-CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3100/docs)
-BODY=$(curl -s http://localhost:3100/docs)
+CODE=$(curl -s -b /tmp/diagnost-cookie.jar -o /dev/null -w "%{http_code}" http://localhost:3100/docs)
+BODY=$(curl -s -b /tmp/diagnost-cookie.jar http://localhost:3100/docs)
 [[ "$CODE" == "200" ]] && echo "$BODY" | grep -q "Quickstart" && echo "$BODY" | grep -q "skills add" \
   && pass "docs site renders quickstart + skill installer" || fail "docs broken ($CODE)"
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true
@@ -83,8 +86,8 @@ fuser -k -n tcp 3100 >/dev/null 2>&1 || true
 [[ -f skills/agent-analytics/SKILL.md ]] && grep -q "^name: agent-analytics" skills/agent-analytics/SKILL.md \
   && pass "skill installer package present (agent-analytics)" || fail "skill missing"
 
-pnpm --filter @diagnost/db test 2>&1 | grep -q "Tests  4 passed" \
-  && pass "governance/billing unit tests (4)" || fail "db tests failed"
+pnpm --filter @diagnost/db test 2>&1 | grep -q "Tests  6 passed" \
+  && pass "governance/billing + auth unit tests (6)" || fail "db tests failed"
 
 echo ""
 echo "All Phase 6 acceptance checks passed."

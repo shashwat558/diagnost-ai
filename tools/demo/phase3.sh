@@ -93,13 +93,16 @@ ONEOFFS=$($PSQL "SELECT count(*) FROM feature_requests WHERE slug LIKE 'req_%' A
 EXAMPLES=$($PSQL "SELECT cardinality(example_conversation_ids) FROM feature_requests WHERE slug='csv_export'")
 [[ "${EXAMPLES:-0}" -ge 1 ]] && pass "examples linked to source conversations ($EXAMPLES stored)" || fail "no examples"
 
-# ── Part 3: dashboard renders features view ────────────────────
+# ── Part 3: dashboard renders features view (auth-gated since Phase 7A) ─
 pnpm --filter @diagnost/dashboard build >/dev/null
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true; sleep 0.5
 (pnpm --filter @diagnost/dashboard start > /tmp/diagnost-logs/dash.log 2>&1 &)
-for i in $(seq 1 20); do curl -sf http://localhost:3100/features >/dev/null 2>&1 && break; sleep 0.5; done
-CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3100/features)
-BODY=$(curl -s http://localhost:3100/features)
+for i in $(seq 1 20); do curl -sf http://localhost:3100/login >/dev/null 2>&1 && break; sleep 0.5; done
+curl -s -c /tmp/diagnost-cookie.jar -X POST http://localhost:3100/api/auth/login \
+  -H 'content-type: application/json' \
+  -d '{"email":"owner@dev.local","password":"devpassword123"}' >/dev/null
+CODE=$(curl -s -b /tmp/diagnost-cookie.jar -o /dev/null -w "%{http_code}" http://localhost:3100/features)
+BODY=$(curl -s -b /tmp/diagnost-cookie.jar http://localhost:3100/features)
 [[ "$CODE" == "200" ]] && echo "$BODY" | grep -qi "csv export" \
   && pass "dashboard /features renders ranked requests" || fail "features page broken ($CODE)"
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true

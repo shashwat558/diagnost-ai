@@ -1,4 +1,5 @@
 import { pgQuery } from "@/lib/pg";
+import { requireAdmin } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -18,10 +19,12 @@ function metaSummary(m: Record<string, unknown>): string {
 }
 
 export default async function AuditPage() {
+  const user = await requireAdmin();
   const rows = await pgQuery<AuditRow>(
     `SELECT id, actor, action, target, metadata, ip, created_at
-     FROM audit_logs WHERE workspace_id='ws_dev'
-     ORDER BY created_at DESC LIMIT 100`
+     FROM audit_logs WHERE workspace_id=$1
+     ORDER BY created_at DESC LIMIT 100`,
+    [user.workspaceId]
   );
 
   return (

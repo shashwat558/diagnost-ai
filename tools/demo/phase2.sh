@@ -107,13 +107,16 @@ ALERTS=$($PSQL "SELECT coalesce(string_agg(c.intent || ':' || a.severity, ' '), 
 (cd apps/analysis && PYTHONPATH=src .venv/bin/python -m pytest tests/ -q >/dev/null) \
   && pass "python unit tests (21)" || fail "pytest failed"
 
-# 8. dashboard renders patterns view
+# 8. dashboard renders patterns view (auth-gated since Phase 7A)
 pnpm --filter @diagnost/dashboard build >/dev/null
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true; sleep 0.5
 (pnpm --filter @diagnost/dashboard start > /tmp/diagnost-logs/dash.log 2>&1 &)
-for i in $(seq 1 20); do curl -sf http://localhost:3100/clusters >/dev/null 2>&1 && break; sleep 0.5; done
-CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3100/clusters)
-BODY=$(curl -s http://localhost:3100/clusters)
+for i in $(seq 1 20); do curl -sf http://localhost:3100/login >/dev/null 2>&1 && break; sleep 0.5; done
+curl -s -c /tmp/diagnost-cookie.jar -X POST http://localhost:3100/api/auth/login \
+  -H 'content-type: application/json' \
+  -d '{"email":"owner@dev.local","password":"devpassword123"}' >/dev/null
+CODE=$(curl -s -b /tmp/diagnost-cookie.jar -o /dev/null -w "%{http_code}" http://localhost:3100/clusters)
+BODY=$(curl -s -b /tmp/diagnost-cookie.jar http://localhost:3100/clusters)
 [[ "$CODE" == "200" ]] && echo "$BODY" | grep -q "date format" \
   && pass "dashboard /clusters renders patterns + alert banner" || fail "dashboard clusters page broken ($CODE)"
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true

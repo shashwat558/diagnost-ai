@@ -232,3 +232,26 @@ bash tools/demo/run.sh phase6   # 12 checks, all PASS
 ```
 
 PASS checks: over-quota ingestion rejected 402 + audited · ingestion resumes after reset · roles seeded · settings/audit/docs pages render · Terraform AWS + GCP present · skill package present · 4 governance/billing unit tests.
+
+---
+
+## Phase 7A — Hosted auth & self-serve signup ✅
+
+What was built:
+
+- **Signup → instant workspace**: `POST /api/auth/signup` provisions workspace + owner user + ingestion API key (shown once) in one transaction; session cookie issued immediately.
+- **Sessions**: opaque tokens, sha256-hashed server-side (`sessions` table, migration `0008_auth`), 30-day expiry, httpOnly cookies, revocable logout.
+- **Passwords**: scrypt (node crypto — no native deps), per-hash random salt, timing-safe compare.
+- **Dashboard gating**: route groups `(app)` / `(auth)`; unauthenticated users redirected to `/login`; role-aware nav (Settings/Audit hidden below admin); member logins blocked from admin pages at page level too.
+- **Per-tenant pages**: Settings and Audit now scope to the logged-in user's workspace instead of hardcoded dev tenant.
+- **Audit trail**: workspace creations recorded (`workspace.created`).
+
+Acceptance criteria & proof:
+
+```bash
+bash tools/demo/run.sh phase7   # 15 checks, all PASS
+```
+
+PASS checks: sessions migrated · signup provisions ws + key · /me resolves owner/free · creation audited · duplicate email & weak password rejected (400) · provisioned key ingests real events (202) · wrong password 401 · unauthenticated `/`→`/login` · owner opens settings · member blocked from settings (page + nav) · logout destroys session · 6 db unit tests incl. scrypt roundtrip.
+
+*(Next up in Phase 7: Stripe billing in test mode, retention cron, landing page, concierge installer.)*

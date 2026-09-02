@@ -64,14 +64,17 @@ MODEL_REF=$($PSQL "SELECT model_ref FROM fine_tunes WHERE status='succeeded' ORD
 (cd apps/finetune && PYTHONPATH=src .venv/bin/python -m pytest tests/ -q >/dev/null) \
   && pass "finetune unit tests (5)" || fail "pytest failed"
 
-# ── dashboard renders comparison ────────────────────────────────────
+# ── dashboard renders comparison (auth-gated since Phase 7A) ───────────
 pnpm --filter @diagnostic/dashboard build >/dev/null 2>&1 || pnpm --filter @diagnost/dashboard build >/dev/null
 mkdir -p /tmp/diagnost-logs
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true; sleep 0.5
 (pnpm --filter @diagnost/dashboard start > /tmp/diagnost-logs/dash.log 2>&1 &)
-for i in $(seq 1 20); do curl -sf http://localhost:3100/models >/dev/null 2>&1 && break; sleep 0.5; done
-CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3100/models)
-BODY=$(curl -s http://localhost:3100/models)
+for i in $(seq 1 20); do curl -sf http://localhost:3100/login >/dev/null 2>&1 && break; sleep 0.5; done
+curl -s -c /tmp/diagnost-cookie.jar -X POST http://localhost:3100/api/auth/login \
+  -H 'content-type: application/json' \
+  -d '{"email":"owner@dev.local","password":"devpassword123"}' >/dev/null
+CODE=$(curl -s -b /tmp/diagnost-cookie.jar -o /dev/null -w "%{http_code}" http://localhost:3100/models)
+BODY=$(curl -s -b /tmp/diagnost-cookie.jar http://localhost:3100/models)
 if [[ "$CODE" == "200" ]] && echo "$BODY" | grep -qi "winner" && echo "$BODY" | grep -q "fine-tuned router"; then
   pass "dashboard /models shows side-by-side comparison with winner badge"
 else
