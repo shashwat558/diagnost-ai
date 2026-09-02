@@ -2,69 +2,83 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginInput } from "@/lib/validation";
+import { useLogin } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const login = useLogin();
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  const busy = isSubmitting || login.isPending;
+  const serverError = login.error ? (login.error as Error).message : null;
+
+  const onSubmit = handleSubmit(async (data) => {
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      if (!res.ok) {
-        const data = (await res.json()) as { error?: string };
-        setError(data.error === "invalid_credentials" ? "Wrong email or password." : "Login failed.");
-        return;
-      }
+      await login.mutateAsync(data);
       router.push("/");
       router.refresh();
-    } finally {
-      setBusy(false);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Login failed.";
+      if (msg === "invalid_credentials") {
+        setError("password", { message: "Wrong email or password." });
+        setError("email", { message: " " });
+      }
     }
-  }
+  });
 
   return (
     <form
-      onSubmit={submit}
+      onSubmit={onSubmit}
       className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+      noValidate
     >
       <h1 className="text-[15px] font-semibold text-gray-900">Log in</h1>
+
       <label className="mt-4 block text-[12px] font-medium text-gray-700">Email</label>
-      <input
+      <Input
         type="email"
-        required
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-[13px] outline-none focus:border-accent"
+        {...register("email")}
+        className="mt-1"
         placeholder="you@company.com"
+        aria-invalid={!!errors.email}
       />
+      {errors.email?.message && errors.email.message.trim() && (
+        <p className="mt-1 text-[12px] text-red-600">{errors.email.message}</p>
+      )}
+
       <label className="mt-3 block text-[12px] font-medium text-gray-700">Password</label>
-      <input
+      <Input
         type="password"
-        required
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-[13px] outline-none focus:border-accent"
+        {...register("password")}
+        className="mt-1"
         placeholder="••••••••"
+        aria-invalid={!!errors.password}
       />
-      {error && <p className="mt-2 text-[12px] text-red-600">{error}</p>}
-      <button
-        type="submit"
-        disabled={busy}
-        className="mt-4 w-full rounded-md bg-accent py-2 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-50"
-      >
+      {errors.password?.message && (
+        <p className="mt-1 text-[12px] text-red-600">{errors.password.message}</p>
+      )}
+
+      {serverError && serverError !== "invalid_credentials" && (
+        <p className="mt-2 text-[12px] text-red-600">Login failed.</p>
+      )}
+
+      <Button type="submit" disabled={busy} className="mt-4 w-full">
         {busy ? "Logging in…" : "Log in"}
-      </button>
+      </Button>
       <p className="mt-3 text-center text-[12px] text-gray-500">
         No account?{" "}
         <Link href="/signup" className="font-medium text-accent hover:underline">

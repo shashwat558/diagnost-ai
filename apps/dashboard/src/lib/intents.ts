@@ -19,7 +19,7 @@ export interface IntentRow {
 const CH_DSN = "'postgres:5432','diagnost','cluster_members','diagnost','diagnost_dev_password'";
 const CH_DSN_C = "'postgres:5432','diagnost','clusters','diagnost','diagnost_dev_password'";
 
-export async function getIntentRows(): Promise<IntentRow[]> {
+export async function getIntentRows(workspaceId = "ws_dev"): Promise<IntentRow[]> {
   const clusters = await pgQuery<{
     id: string;
     intent: string;
@@ -31,7 +31,8 @@ export async function getIntentRows(): Promise<IntentRow[]> {
     created_at: string;
   }>(
     `SELECT id, intent, summary, size, error_rate, frustration, top_terms, created_at
-     FROM clusters WHERE workspace_id='ws_dev' ORDER BY size DESC`
+     FROM clusters WHERE workspace_id=$1 ORDER BY size DESC`,
+    [workspaceId]
   );
   if (clusters.length === 0) return [];
 

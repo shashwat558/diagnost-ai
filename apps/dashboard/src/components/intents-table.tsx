@@ -1,9 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { Sparkline } from "@/components/sparkline";
 import { Icon } from "@/components/icon";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useUiStore } from "@/stores/ui-store";
 import type { IntentRow } from "@/lib/intents";
 
 function relTime(iso: string | null): string {
@@ -18,7 +21,8 @@ function relTime(iso: string | null): string {
 }
 
 export function IntentsTable({ rows }: { rows: IntentRow[] }) {
-  const [q, setQ] = useState("");
+  const q = useUiStore((s) => s.clusterFilter);
+  const setQ = useUiStore((s) => s.setClusterFilter);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -36,19 +40,15 @@ export function IntentsTable({ rows }: { rows: IntentRow[] }) {
       <div className="flex items-center gap-2 px-6">
         <div className="relative flex-1">
           <Icon name="search" className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
-          <input
+          <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search…"
-            className="h-9 w-full rounded-md border border-gray-200 pl-9 pr-3 text-[13px] outline-none placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-violet-100"
+            className="pl-9"
           />
         </div>
-        <button className="h-9 whitespace-nowrap rounded-md border border-gray-200 px-3 text-[13px] font-medium text-gray-700 hover:bg-gray-50">
-          Export CSV
-        </button>
-        <button className="h-9 whitespace-nowrap rounded-md bg-accent px-3 text-[13px] font-medium text-white hover:bg-violet-700">
-          + New instruction
-        </button>
+        <Button variant="outline">Export CSV</Button>
+        <Button>+ New instruction</Button>
       </div>
 
       <div className="mt-4 px-6 pb-10">

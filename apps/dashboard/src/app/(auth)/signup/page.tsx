@@ -3,41 +3,52 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signupSchema, type SignupInput } from "@/lib/validation";
+import { useSignup } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function SignupPage() {
   const router = useRouter();
-  const [workspaceName, setWorkspaceName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const signup = useSignup();
   const [apiKey, setApiKey] = useState<string | null>(null);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupInput>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: { workspaceName: "", email: "", password: "" },
+  });
+
+  const busy = isSubmitting || signup.isPending;
+
+  const onSubmit = handleSubmit(async (data) => {
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, password, workspaceName: workspaceName || undefined }),
+      const res = await signup.mutateAsync({
+        email: data.email,
+        password: data.password,
+        workspaceName: data.workspaceName || undefined,
       });
-      const data = (await res.json()) as { apiKey?: string; error?: string };
-      if (!res.ok) {
-        const messages: Record<string, string> = {
-          email_taken: "That email already has an account.",
-          weak_password: "Password must be at least 8 characters.",
-          invalid_email: "Enter a valid email address.",
-        };
-        setError(messages[data.error ?? ""] ?? "Signup failed.");
-        return;
+      setApiKey(res.apiKey ?? null);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Signup failed.";
+      const messages: Record<string, string> = {
+        email_taken: "That email already has an account.",
+        weak_password: "Password must be at least 8 characters.",
+        invalid_email: "Enter a valid email address.",
+      };
+      if (messages[msg]) {
+        setError("email", { message: messages[msg] });
+      } else {
+        setError("root", { message: "Signup failed." });
       }
-      setApiKey(data.apiKey ?? null); // shown once
-    } finally {
-      setBusy(false);
     }
-  }
+  });
 
   if (apiKey) {
     return (
@@ -49,63 +60,48 @@ export default function SignupPage() {
         <code className="mt-3 block break-all rounded-md border border-gray-200 bg-gray-50 px-3 py-2 font-mono text-[12px] text-gray-700">
           {apiKey}
         </code>
-        <button
+        <Button
           onClick={() => {
             router.push("/");
             router.refresh();
           }}
-          className="mt-4 w-full rounded-md bg-accent py-2 text-[13px] font-medium text-white hover:opacity-90"
+          className="mt-4 w-full"
         >
           Open dashboard →
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
     <form
-      onSubmit={submit}
+      onSubmit={onSubmit}
       className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+      noValidate
     >
       <h1 className="text-[15px] font-semibold text-gray-900">Create your workspace</h1>
       <p className="mt-0.5 text-[12px] text-gray-500">Free plan — 50k events/month.</p>
+
       <label className="mt-4 block text-[12px] font-medium text-gray-700">
-        Workspace name{" "}
-        <span className="font-normal text-gray-400">(optional)</span>
+        Workspace name <span className="font-normal text-gray-400">(optional)</span>
       </label>
-      <input
-        value={workspaceName}
-        onChange={(e) => setWorkspaceName(e.target.value)}
-        className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-[13px] outline-none focus:border-accent"
-        placeholder="Acme Agents"
-      />
+      <Input {...register("workspaceName")} className="mt-1" placeholder="Acme Agents" />
+      {errors.workspaceName && (
+        <p className="mt-1 text-[12px] text-red-600">{errors.workspaceName.message}</p>
+      )}
+
       <label className="mt-3 block text-[12px] font-medium text-gray-700">Email</label>
-      <input
-        type="email"
-        required
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-[13px] outline-none focus:border-accent"
-        placeholder="you@company.com"
-      />
+      <Input type="email" {...register("email")} className="mt-1" placeholder="you@company.com" />
+      {errors.email && <p className="mt-1 text-[12px] text-red-600">{errors.email.message}</p>}
+
       <label className="mt-3 block text-[12px] font-medium text-gray-700">Password</label>
-      <input
-        type="password"
-        required
-        minLength={8}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-[13px] outline-none focus:border-accent"
-        placeholder="At least 8 characters"
-      />
-      {error && <p className="mt-2 text-[12px] text-red-600">{error}</p>}
-      <button
-        type="submit"
-        disabled={busy}
-        className="mt-4 w-full rounded-md bg-accent py-2 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-50"
-      >
+      <Input type="password" {...register("password")} className="mt-1" placeholder="At least 8 characters" />
+      {errors.password && <p className="mt-1 text-[12px] text-red-600">{errors.password.message}</p>}
+      {errors.root && <p className="mt-2 text-[12px] text-red-600">{errors.root.message}</p>}
+
+      <Button type="submit" disabled={busy} className="mt-4 w-full">
         {busy ? "Creating…" : "Create workspace"}
-      </button>
+      </Button>
       <p className="mt-3 text-center text-[12px] text-gray-500">
         Already have an account?{" "}
         <Link href="/login" className="font-medium text-accent hover:underline">

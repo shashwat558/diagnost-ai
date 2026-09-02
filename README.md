@@ -22,7 +22,7 @@ Production analytics and self-improvement platform for teams running AI agents (
 | Blob store | MinIO (S3-compatible) |
 | App DB | Postgres |
 | Analysis workers | Python (embeddings + HDBSCAN + stats) |
-| Dashboard | Next.js + Tailwind + Recharts |
+| Dashboard | Next.js 15 + Tailwind + Recharts + Zustand 5 + TanStack Query 5 + React Hook Form + Zod + shadcn/ui |
 | SDKs | TypeScript, Python |
 
 ## Quickstart

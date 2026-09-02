@@ -1,6 +1,9 @@
 import { pgQuery } from "@/lib/pg";
 import { Icon } from "@/components/icon";
 import { requireAdmin } from "@/lib/session";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +58,7 @@ export default async function SettingsPage() {
       <h1 className="text-[15px] font-semibold text-gray-900">Settings</h1>
 
       {/* plan + usage */}
-      <div className="mt-4 rounded-lg border border-gray-200 p-4">
+      <Card className="mt-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-[13px] font-semibold text-gray-900">
@@ -65,9 +68,7 @@ export default async function SettingsPage() {
               {TIER_INFO[plan]?.events} · {TIER_INFO[plan]?.retention}
             </p>
           </div>
-          <span className="rounded bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">
-            {TIER_INFO[plan]?.price}
-          </span>
+          <Badge>{TIER_INFO[plan]?.price}</Badge>
         </div>
         <div className="mt-3">
           <div className="flex justify-between text-[11px] text-gray-500">
@@ -98,9 +99,9 @@ export default async function SettingsPage() {
               {t === plan ? (
                 <div className="mt-2 text-[11px] font-medium text-accent">Current</div>
               ) : (
-                <button className="mt-2 rounded border border-gray-200 px-2 py-0.5 text-[11px] text-gray-600 hover:bg-gray-50">
+                <Button variant="outline" size="sm" className="mt-2 h-6 px-2 text-[11px]">
                   Upgrade
-                </button>
+                </Button>
               )}
             </div>
           ))}
@@ -108,20 +109,20 @@ export default async function SettingsPage() {
         <p className="mt-3 text-[11px] text-gray-400">
           Plan changes are owner/admin actions and are recorded in the audit log.
         </p>
-      </div>
+      </Card>
 
       {/* api key */}
-      <div className="mt-4 rounded-lg border border-gray-200 p-4">
+      <Card className="mt-4">
         <h2 className="text-[13px] font-semibold text-gray-900">API credentials</h2>
         <div className="mt-2 flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 font-mono text-[12px] text-gray-600">
           <Icon name="database" className="h-3.5 w-3.5 text-gray-400" />
           dw_local_••••••••••••0000
           <span className="ml-auto text-[11px] text-gray-400">created {ws ? String(ws.created_at).slice(0, 10) : "—"}</span>
         </div>
-      </div>
+      </Card>
 
       {/* roles */}
-      <div className="mt-4 rounded-lg border border-gray-200 p-4">
+      <Card className="mt-4">
         <h2 className="text-[13px] font-semibold text-gray-900">Members & roles</h2>
         <table className="mt-2 w-full text-[13px]">
           <tbody>
@@ -129,9 +130,9 @@ export default async function SettingsPage() {
               <tr key={u.id} className="border-b border-gray-100 last:border-0">
                 <td className="py-2 text-gray-800">{u.email ?? u.id}</td>
                 <td className="py-2 text-right">
-                  <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] font-medium capitalize text-gray-600">
+                  <Badge variant="secondary" className="capitalize">
                     {u.role}
-                  </span>
+                  </Badge>
                 </td>
               </tr>
             ))}
@@ -146,7 +147,7 @@ export default async function SettingsPage() {
           Roles: owner &gt; admin &gt; member &gt; viewer. SSO via OIDC is available
           (<code className="font-mono">OIDC_ISSUER_URL</code> env) and maps IdP groups to roles.
         </p>
-      </div>
+      </Card>
     </div>
   );
 }

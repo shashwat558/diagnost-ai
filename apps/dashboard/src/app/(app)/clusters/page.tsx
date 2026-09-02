@@ -1,12 +1,14 @@
 import { chQuery } from "@/lib/ch";
 import { getIntentRows } from "@/lib/intents";
+import { getSession } from "@/lib/session";
 import { IntentsTable } from "@/components/intents-table";
 import { Sparkline } from "@/components/sparkline";
 
 export const dynamic = "force-dynamic";
 
 export default async function ClustersPage() {
-  const rows = await getIntentRows();
+  const session = await getSession();
+  const rows = await getIntentRows(session?.workspaceId ?? "ws_dev");
 
   // matches-over-time line for the header card: total clustered conversations per day
   const daily = await chQuery<{ d: string; n: number }>(`
