@@ -4,7 +4,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { requireSession } from "@/lib/session";
 
 const NAV = [
-  { href: "/", label: "Home", icon: "home" },
+  { href: "/dashboard", label: "Home", icon: "home" },
   { href: "/clusters", label: "Intents", icon: "target" },
   { href: "/features", label: "Feature requests", icon: "sparkles" },
   { href: "/models", label: "Models", icon: "activity" },

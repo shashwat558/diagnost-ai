@@ -29,7 +29,7 @@ export default function LoginPage() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       await login.mutateAsync(data);
-      router.push("/");
+      router.push("/dashboard");
       router.refresh();
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Login failed.";

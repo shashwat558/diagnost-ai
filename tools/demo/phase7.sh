@@ -81,8 +81,13 @@ CODE=$(curl -s -o /dev/null -w "%{http_code}" -c "$JAR_O" -X POST "$DASH/api/aut
 [[ "$CODE" == "200" ]] && pass "login succeeds with correct credentials" || fail "expected 200, got $CODE"
 
 # ── dashboard gating ────────────────────────────────────────────────
-LOC=$(curl -s -o /dev/null -w "%{redirect_url}" "$DASH/")
-[[ "$LOC" == *"/login"* ]] && pass "unauthenticated / redirects to /login" || fail "redirect=$LOC"
+LOC=$(curl -s -o /dev/null -w "%{redirect_url}" "$DASH/dashboard")
+[[ "$LOC" == *"/login"* ]] && pass "unauthenticated /dashboard redirects to /login" || fail "redirect=$LOC"
+# landing page is public with hero background
+CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DASH/")
+BODY=$(curl -s "$DASH/")
+[[ "$CODE" == "200" ]] && echo "$BODY" | grep -q "Production analytics" && echo "$BODY" | grep -q "hero.jpg" \
+  && pass "landing page renders hero with background image" || fail "landing broken ($CODE)"
 CODE=$(curl -s -o /dev/null -w "%{http_code}" -b "$JAR_O" "$DASH/settings")
 [[ "$CODE" == "200" ]] && pass "owner can open /settings" || fail "owner settings=$CODE"
 
@@ -96,7 +101,7 @@ CODE=$(curl -s -o /dev/null -w "%{http_code}" -c "$JAR_M" -X POST "$DASH/api/aut
   -H 'content-type: application/json' -d '{"email":"member@acme.test","password":"member pass phrase"}')
 [[ "$CODE" == "200" ]] && pass "member logs in" || fail "member login=$CODE"
 LOC=$(curl -s -o /dev/null -w "%{redirect_url}" -b "$JAR_M" "$DASH/settings")
-[[ "$LOC" != *"/settings"* ]] && NAV=$(curl -s -b "$JAR_M" "$DASH/") && ! echo "$NAV" | grep -q 'href="/settings"' \
+[[ "$LOC" != *"/settings"* ]] && NAV=$(curl -s -b "$JAR_M" "$DASH/dashboard") && ! echo "$NAV" | grep -q 'href="/settings"' \
   && pass "member blocked from settings (page + nav)" || fail "member can reach settings"
 
 # logout invalidates server-side

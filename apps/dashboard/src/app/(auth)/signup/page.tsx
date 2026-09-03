@@ -62,7 +62,7 @@ export default function SignupPage() {
         </code>
         <Button
           onClick={() => {
-            router.push("/");
+            router.push("/dashboard");
             router.refresh();
           }}
           className="mt-4 w-full"

@@ -23,6 +23,6 @@ export async function requireSession(): Promise<SessionUser> {
 /** Role gate for admin-only pages (Settings, Audit). */
 export async function requireAdmin(): Promise<SessionUser> {
   const user = await requireSession();
-  if (!["owner", "admin"].includes(user.role)) redirect("/");
+  if (!["owner", "admin"].includes(user.role)) redirect("/dashboard");
   return user;
 }
