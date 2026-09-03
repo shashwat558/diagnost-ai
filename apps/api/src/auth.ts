@@ -18,7 +18,7 @@ export function apiKeyAuth(app: FastifyInstance, databaseUrl: string): void {
   const cache = new Map<string, CachedKey>();
 
   app.addHook("onRequest", async (req: FastifyRequest, reply: FastifyReply) => {
-    if (req.url === "/healthz" || req.method === "OPTIONS") return;
+    if (req.url === "/healthz" || req.url === "/readyz" || req.method === "OPTIONS") return;
 
     const header = req.headers.authorization;
     if (!header?.startsWith("Bearer ")) {

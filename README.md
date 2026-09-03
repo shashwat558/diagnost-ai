@@ -254,4 +254,24 @@ bash tools/demo/run.sh phase7   # 15 checks, all PASS
 
 PASS checks: sessions migrated · signup provisions ws + key · /me resolves owner/free · creation audited · duplicate email & weak password rejected (400) · provisioned key ingests real events (202) · wrong password 401 · unauthenticated `/`→`/login` · owner opens settings · member blocked from settings (page + nav) · logout destroys session · 6 db unit tests incl. scrypt roundtrip.
 
-*(Next up in Phase 7: Stripe billing in test mode, retention cron, landing page, concierge installer.)*
+---
+
+## Phase 7B — Retention & Production Hygiene ✅
+
+What was built:
+
+- **Per-plan retention enforcement**: `free 7d / starter 30d / pro 90d / enterprise ∞` — `packages/db/src/retention.ts` (`enforceRetention`) deletes `events.events` via ClickHouse `ALTER TABLE … DELETE` per workspace cutoff, purges expired `sessions` and old `audit_logs` (≥30d). ClickHouse TTL (90d) remains as safety net.
+- **CLI + dry-run**: `pnpm --filter @diagnost/db retention` (or `--dry-run`) — `packages/db/src/bin/retention.ts` loads `.env` + ClickHouse, logs per-workspace `cutoff`/`sessions_purged`. Runs as `retention-cron` in prod (daily `0 2 * * *` or docker `while sleep 86400`).
+- **Enhanced health**: `GET /readyz` — checks Postgres (`SELECT 1`), ClickHouse (`/ping`), queue state; `503` if any fail, `200` if all `ok`. `GET /healthz` stays lightweight. Auth skips both.
+- **Backup script**: `tools/backup/backup.sh` — `pg_dump` → `postgres.sql.gz` + ClickHouse `SELECT … FORMAT CSVWithNames` → `clickhouse_events.csv.gz` + MinIO `mc mirror` hint. Restore one-liner documented.
+
+Usage:
+
+```bash
+pnpm --filter @diagnost/db retention -- --dry-run   # preview cutoffs
+pnpm --filter @diagnost/db retention                # enforce now
+bash tools/backup/backup.sh ./backups/2026-09-03    # full backup
+curl -s http://localhost:4100/readyz | jq           # dependency checks
+```
+
+*(Next up: Stripe billing in test mode, landing page, concierge installer.)*

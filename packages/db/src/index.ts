@@ -28,3 +28,4 @@ export {
   type SessionUser,
   type SignupResult,
 } from "./auth.js";
+export { enforceRetention, type RetentionResult } from "./retention.js";
