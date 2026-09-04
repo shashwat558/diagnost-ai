@@ -1,0 +1,26 @@
+# Diagnost AI — Caddy reverse proxy (automatic HTTPS).
+# {$DOMAIN} comes from .env.prod (set by tools/install.sh).
+# API routes go to the ingestion API, everything else to the dashboard.
+
+{$DOMAIN:localhost} {
+	# ingestion + health
+	handle /v1/* {
+		reverse_proxy api:{$API_PORT:4100}
+	}
+	handle /readyz {
+		reverse_proxy api:{$API_PORT:4100}
+	}
+	handle /healthz {
+		reverse_proxy api:{$API_PORT:4100}
+	}
+
+	# dashboard + landing + auth + billing
+	handle {
+		reverse_proxy dashboard:{$DASHBOARD_PORT:3100}
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

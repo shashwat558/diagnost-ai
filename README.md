@@ -47,6 +47,18 @@ Services (local):
 
 Copy `.env.example` → `.env` to override defaults.
 
+## Self-host (concierge / your own VPS)
+
+One command on Ubuntu 22.04 (8 vCPU / 32 GB, ports 80+443, domain pointed at the box):
+
+```bash
+git clone https://github.com/shashwat558/diagnost-ai /opt/diagnost-ai
+cd /opt/diagnost-ai
+bash tools/install.sh --domain agents.example.com --email owner@example.com
+```
+
+Provisions `.env.prod`, builds, starts the full stack (infra + api/consumer/notifier/dashboard + retention-cron + Caddy HTTPS), migrates, creates the owner + API key (printed once), installs nightly backups. Full guide: [`docs/self-host.md`](docs/self-host.md).
+
 ---
 
 ## Phase 0 — Scaffolding ✅
