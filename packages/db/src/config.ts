@@ -35,6 +35,8 @@ export interface Config {
   s3BucketTranscripts: string;
   apiPort: number;
   smtpUrl: string;
+  smtpFrom: string;
+  dashboardUrl: string;
   workspaceId: string;
 }
 
@@ -55,6 +57,11 @@ export function loadConfig(overrides: Partial<Record<keyof Config, unknown>> = {
     s3BucketTranscripts: process.env.S3_BUCKET_TRANSCRIPTS ?? "transcripts",
     apiPort: int(process.env.API_PORT, 4100),
     smtpUrl: process.env.SMTP_URL ?? "smtp://localhost:1025",
+    // Real providers work via URL auth, e.g. smtp://user:pass@smtp.resend.com:587
+    // (STARTTLS on 587 is automatic; append ?secure=true for port 465 SMTPS).
+    smtpFrom: process.env.SMTP_FROM ?? "alerts@diagnost.local",
+    dashboardUrl:
+      process.env.DASHBOARD_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3100",
     workspaceId: process.env.WORKSPACE_ID ?? "ws_dev",
   };
   for (const [k, v] of Object.entries(overrides)) {

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { UpgradeButton } from "@/components/billing/upgrade-button";
 import { PortalButton } from "@/components/billing/portal-button";
+import { ChannelsManager } from "@/components/notifications/channels-manager";
 
 export const dynamic = "force-dynamic";
 
@@ -132,6 +133,17 @@ export default async function SettingsPage({
           dw_local_••••••••••••0000
           <span className="ml-auto text-[11px] text-gray-400">created {ws ? String(ws.created_at).slice(0, 10) : "—"}</span>
         </div>
+      </Card>
+
+      {/* notifications */}
+      <Card className="mt-4">
+        <h2 className="text-[13px] font-semibold text-gray-900">Alert notifications</h2>
+        <p className="mt-0.5 text-[12px] text-gray-500">
+          Drift alerts fan out to these channels (rate-limited: one per cluster per hour).
+          Delivery runs on <code className="font-mono">SMTP_URL</code> — MailHog locally,
+          Resend/SES in prod.
+        </p>
+        <ChannelsManager />
       </Card>
 
       {/* roles */}

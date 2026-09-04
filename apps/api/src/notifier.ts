@@ -79,10 +79,10 @@ async function record(
   );
 }
 
-export function makeMailer(smtpUrl: string) {
+export function makeMailer(smtpUrl: string, from = "alerts@diagnost.local") {
   const transport = nodemailer.createTransport({ url: smtpUrl });
   return (to: string, subject: string, text: string) =>
-    transport.sendMail({ from: "alerts@diagnost.local", to, subject, text });
+    transport.sendMail({ from, to, subject, text });
 }
 
 export function makeSlackPoster() {
@@ -96,9 +96,11 @@ export function makeSlackPoster() {
   };
 }
 
-export function formatAlert(alert: PendingRow): { subject: string; text: string } {
-  const dash =
-    process.env.DASHBOARD_URL ?? "http://localhost:3100";
+export function formatAlert(
+  alert: PendingRow,
+  dashboardUrl = process.env.DASHBOARD_URL ?? "http://localhost:3100"
+): { subject: string; text: string } {
+  const dash = dashboardUrl.replace(/\/$/, "");
   const link = alert.cluster_id ? `${dash}/clusters/${alert.cluster_id}` : `${dash}/clusters`;
   return {
     subject: `[diagnost][${alert.severity}] ${alert.type}`,
@@ -107,7 +109,7 @@ export function formatAlert(alert: PendingRow): { subject: string; text: string 
 }
 
 export async function tickOnce(cfg = loadConfig()): Promise<number> {
-  const mailer = makeMailer(cfg.smtpUrl);
+  const mailer = makeMailer(cfg.smtpUrl, cfg.smtpFrom);
   const postSlack = makeSlackPoster();
   const pending = await pendingDeliveries(cfg.databaseUrl);
   let handled = 0;
@@ -118,7 +120,7 @@ export async function tickOnce(cfg = loadConfig()): Promise<number> {
         await record(cfg.databaseUrl, alert.id, alert.channel_id, "skipped", "rate_limited");
         continue;
       }
-      const { subject, text } = formatAlert(alert);
+      const { subject, text } = formatAlert(alert, cfg.dashboardUrl);
       if (alert.channel === "email") {
         await mailer(alert.target, subject, text);
         await record(cfg.databaseUrl, alert.id, alert.channel_id, "sent", `emailed ${alert.target}`);

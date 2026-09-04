@@ -319,3 +319,22 @@ curl -s http://localhost:3100/readyz | jq  # still ok
 ```
 
 *(Next up: Concierge installer, real SMTP, docs polish.)*
+
+---
+
+## Phase 7F — Notifications (real SMTP + channels UI) ✅
+
+What was built:
+
+- **Real SMTP providers**: `SMTP_URL` already accepted URL auth — now documented + wired with `SMTP_FROM` and `DASHBOARD_URL` (`packages/db/src/config.ts`). Resend/SES work as `smtp://user:pass@smtp.resend.com:587` (STARTTLS automatic; `?secure=true` for 465). Notifier uses `cfg.smtpFrom` / `cfg.dashboardUrl` instead of hardcoded values.
+- **Channels CRUD API** (owner/admin, workspace-scoped): `GET/POST /api/channels` (409 on duplicate, 400 on invalid email/webhook), `PATCH/DELETE /api/channels/:id`, `POST /api/channels/:id/test` (sends a real test email/Slack message; 502 with provider error on failure). Slack targets masked in list responses.
+- **Settings UI**: `Alert notifications` card with `ChannelsManager` (TanStack Query: list, add with RHF+zod validation, enable/disable, test, remove).
+- **Docs**: in-app `/docs` gains `Alerts & notifications`; stale skill URL fixed.
+
+Acceptance criteria & proof:
+
+```bash
+bash tools/demo/run.sh phase7f   # 12 checks, all PASS
+```
+
+PASS checks: seeded channel listed · invalid email 400 · create 201 · duplicate 409 · disable/enable · test accepted + email lands in MailHog · delete + gone · member 403 · anon 401 · settings section renders.

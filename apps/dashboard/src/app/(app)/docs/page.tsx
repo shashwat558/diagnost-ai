@@ -64,6 +64,18 @@ dx.checkpoint("order.lookup", { orderId });`}</Code>
         tiers under <strong>Settings</strong>; every change lands in the audit log.
       </P>
 
+      <H2>Alerts &amp; notifications</H2>
+      <P>
+        Drift alerts (Slack + email) are delivered by the notifier worker with a 60-minute
+        per-cluster rate limit. Manage channels under{" "}
+        <strong>Settings → Alert notifications</strong>: add an email address or Slack
+        webhook, toggle, remove, or send a test. Locally, email lands in MailHog
+        (<code className="font-mono text-[12px]">:8025</code>); in prod set{" "}
+        <code className="font-mono text-[12px]">SMTP_URL=smtp://user:pass@smtp.resend.com:587</code>{" "}
+        (+ <code className="font-mono text-[12px]">SMTP_FROM</code>) and alert links point at{" "}
+        <code className="font-mono text-[12px]">DASHBOARD_URL</code>.
+      </P>
+
       <H2>Self-hosting &amp; cloud</H2>
       <P>
         The stack runs fully self-hosted via Docker Compose. For cloud deployments use
@@ -83,7 +95,7 @@ terraform init && terraform plan -var="key_name=your-key"`}</Code>
         The <code className="font-mono text-[12px]">agent-analytics</code> skill teaches any
         coding agent to instrument a target codebase automatically:
       </P>
-      <Code>{`npx skills add diagnost/skills --skill agent-analytics`}</Code>
+      <Code>{`npx skills add shashwat558/diagnost-ai --skill agent-analytics`}</Code>
 
       <div className="mt-8 flex items-center gap-2 text-[12px] text-gray-400">
         <Icon name="shield" className="h-3.5 w-3.5" />
