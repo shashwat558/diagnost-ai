@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Sparkline } from "@/components/sparkline";
 import { Icon } from "@/components/icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NewInstructionDialog } from "@/components/instructions/new-instruction-dialog";
 import { useUiStore } from "@/stores/ui-store";
 import type { IntentRow } from "@/lib/intents";
 
@@ -23,6 +24,8 @@ function relTime(iso: string | null): string {
 export function IntentsTable({ rows }: { rows: IntentRow[] }) {
   const q = useUiStore((s) => s.clusterFilter);
   const setQ = useUiStore((s) => s.setClusterFilter);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -34,6 +37,35 @@ export function IntentsTable({ rows }: { rows: IntentRow[] }) {
         r.top_terms.join(" ").toLowerCase().includes(needle)
     );
   }, [rows, q]);
+
+  const intents = useMemo(() => [...new Set(rows.map((r) => r.intent))].sort(), [rows]);
+
+  function exportCsv() {
+    const esc = (v: string | number | null) => {
+      const s = v === null ? "" : String(v);
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const lines = [
+      "intent,conversations,error_rate_pct,vs_prior_day_pct,last_seen,summary",
+      ...filtered.map((r) =>
+        [
+          esc(r.intent),
+          esc(r.size),
+          esc((r.error_rate * 100).toFixed(1)),
+          esc(r.deltaPct),
+          esc(r.lastSeen),
+          esc(r.summary),
+        ].join(",")
+      ),
+    ];
+    const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `intents-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <>
@@ -47,9 +79,24 @@ export function IntentsTable({ rows }: { rows: IntentRow[] }) {
             className="pl-9"
           />
         </div>
-        <Button variant="outline">Export CSV</Button>
-        <Button>+ New instruction</Button>
+        <Button variant="outline" onClick={exportCsv}>
+          Export CSV
+        </Button>
+        <Button
+          onClick={() => {
+            setNotice(null);
+            setDialogOpen(true);
+          }}
+        >
+          + New instruction
+        </Button>
       </div>
+
+      {notice && (
+        <div className="mx-6 mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-[12px] text-emerald-700">
+          {notice}
+        </div>
+      )}
 
       <div className="mt-4 px-6 pb-10">
         <table className="w-full border-separate border-spacing-0 text-[13px]">
@@ -123,6 +170,20 @@ export function IntentsTable({ rows }: { rows: IntentRow[] }) {
           </tbody>
         </table>
       </div>
+
+      {dialogOpen && (
+        <NewInstructionDialog
+          intents={intents}
+          onClose={(createdName) => {
+            setDialogOpen(false);
+            if (createdName) {
+              setNotice(
+                `Instruction “${createdName}” saved as v1 — remediation runs can now propose improvements with eval reports.`
+              );
+            }
+          }}
+        />
+      )}
     </>
   );
 }
