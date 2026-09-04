@@ -72,6 +72,9 @@ importers:
       '@diagnost/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@dodopayments/nextjs':
+        specifier: ^0.3.9
+        version: 0.3.9(next@15.5.23(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(zod@3.25.76)
       '@hookform/resolvers':
         specifier: ^5.9.1
         version: 5.9.1(ajv@8.20.0)(react-hook-form@7.87.0(react@19.2.8))(zod@3.25.76)
@@ -102,9 +105,9 @@ importers:
       recharts:
         specifier: ^2.15.1
         version: 2.15.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      stripe:
-        specifier: ^22.6.1
-        version: 22.6.1(@types/node@22.20.1)
+      standardwebhooks:
+        specifier: ^1.1.1
+        version: 1.1.1
       tailwind-merge:
         specifier: ^3.6.0
         version: 3.6.0
@@ -356,6 +359,17 @@ packages:
   '@clickhouse/client@1.23.1':
     resolution: {integrity: sha512-vs3/Zc1dHvT171btW5nMoPsPCJ6QVJ5pp7obxzO5sjqwFx/jjz9wwCAqcFOdc2DhprugDBaVn+4dVY8hG3A9nw==}
     engines: {node: '>=20'}
+
+  '@dodopayments/core@0.3.15':
+    resolution: {integrity: sha512-xbBqfY7Ytq6c0jR1qmV8UqqyA7qGnOoP5g02NpDOWyCgkeXLxcAfr6z/g8FkPNCiFcI405oIwi0AlFDVUKm6SA==}
+    peerDependencies:
+      zod: ^3.25.0 || ^4.0.0
+
+  '@dodopayments/nextjs@0.3.9':
+    resolution: {integrity: sha512-AxKISyMwvtUxaNU9QYSIehLXYwG/cWlciQsg0ddfvQXS/jXD/0ArR7/Iys9tOOnXkBbORHbWyljzE1AlXqtk6w==}
+    peerDependencies:
+      next: ^14.0.0 || ^15.0.0 || ^16.0.0
+      zod: ^3.25.0 || ^4.0.0
 
   '@emnapi/runtime@1.11.3':
     resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
@@ -1224,6 +1238,9 @@ packages:
     resolution: {integrity: sha512-FOKpVZob9MPTn2znRzGrnsMHv7BOsKVw3XiP/cOyYLDVZ9qKp4nifIiSCuUU/fIj5Vu0UOAxCFr+qRAtG0NUkA==}
     engines: {node: '>=18.0.0'}
 
+  '@stablelib/base64@1.0.1':
+    resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==}
+
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
@@ -1686,6 +1703,10 @@ packages:
   dlv@1.1.3:
     resolution: {integrity: sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==}
 
+  dodopayments@2.49.0:
+    resolution: {integrity: sha512-7hIdidOmrNGdWsCdv5n/8YpP9Rb2kFNvmQwrd4iYMvt6syiTXGi4UqfMzkv26/gnPc2Gq0PgmPalPWe2qw/NAQ==}
+    hasBin: true
+
   dom-helpers@5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
 
@@ -1797,6 +1818,9 @@ packages:
 
   fast-querystring@1.1.2:
     resolution: {integrity: sha512-g6KuKWmFXc0fID8WWH0jit4g0AGBoJhCkJMb1RmbsSEUNvQ+ZC8D6CUZ+GtF8nMzSPXnhiePyyqqipzNNEnHjg==}
+
+  fast-sha256@1.3.0:
+    resolution: {integrity: sha512-n11RGP/lrWEFI/bWdygLxhI+pVeo1ZYIVwvvPkW7azl/rOy+F3HYRZ2K5zeE9mmkhQppyv9sQFx0JM9UabnpPQ==}
 
   fast-uri@3.1.5:
     resolution: {integrity: sha512-gHwA1O9LDIcKunMKhObS/HimwtehO1nPUECKAu5TpKgaO19fcWEl4bliWe1jWxVFvIXztJjjQ4L8XQ1EU9f7Jw==}
@@ -2425,6 +2449,9 @@ packages:
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
 
+  standardwebhooks@1.1.1:
+    resolution: {integrity: sha512-bCbX9ZEyFkWPsRz7Bl3NuQUJohmwGSev/yhr7vhaGPlc4AfIrspIRa6cPTBuI1ItmrTDJ4d/S2hCsfe4+vQGnQ==}
+
   std-env@3.10.0:
     resolution: {integrity: sha512-5GS12FdOZNliM5mAOxFRg7Ir0pWz8MdpYm6AY6VPkGpbA7ZzmbzNcBJQ0GPvvyWgcY7QAhCgf9Uy89I03faLkg==}
 
@@ -2439,15 +2466,6 @@ packages:
   strip-json-comments@3.1.1:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
-
-  stripe@22.6.1:
-    resolution: {integrity: sha512-hAKSkGeVt2u46TRYhmnvwmVHxBNtOCJnPjc+SH5sP2B2ypElYzAAY3Ljx0Ar8C2w8nfpFQiZ95qoDCDsFkXMTA==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@types/node': '>=18'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
 
   styled-jsx@5.1.6:
     resolution: {integrity: sha512-qSVyDTeMotdvQYoHWLNGwRFJHC+i+ZvdBRYosOFgC+Wg1vx4frN2/RG/NA7SYqqvKNLf39P2LSRA2pu6n0XYZA==}
@@ -2869,6 +2887,18 @@ snapshots:
   '@babel/runtime@7.29.7': {}
 
   '@clickhouse/client@1.23.1': {}
+
+  '@dodopayments/core@0.3.15(zod@3.25.76)':
+    dependencies:
+      dodopayments: 2.49.0
+      standardwebhooks: 1.1.1
+      zod: 3.25.76
+
+  '@dodopayments/nextjs@0.3.9(next@15.5.23(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(zod@3.25.76)':
+    dependencies:
+      '@dodopayments/core': 0.3.15(zod@3.25.76)
+      next: 15.5.23(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      zod: 3.25.76
 
   '@emnapi/runtime@1.11.3':
     dependencies:
@@ -3564,6 +3594,8 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@stablelib/base64@1.0.1': {}
+
   '@standard-schema/utils@0.3.0': {}
 
   '@swc/helpers@0.5.15':
@@ -4016,6 +4048,10 @@ snapshots:
 
   dlv@1.1.3: {}
 
+  dodopayments@2.49.0:
+    dependencies:
+      standardwebhooks: 1.1.1
+
   dom-helpers@5.2.1:
     dependencies:
       '@babel/runtime': 7.29.7
@@ -4167,6 +4203,8 @@ snapshots:
   fast-querystring@1.1.2:
     dependencies:
       fast-decode-uri-component: 1.0.1
+
+  fast-sha256@1.3.0: {}
 
   fast-uri@3.1.5: {}
 
@@ -4788,6 +4826,11 @@ snapshots:
 
   stackback@0.0.2: {}
 
+  standardwebhooks@1.1.1:
+    dependencies:
+      '@stablelib/base64': 1.0.1
+      fast-sha256: 1.3.0
+
   std-env@3.10.0: {}
 
   string-width@4.2.3:
@@ -4801,10 +4844,6 @@ snapshots:
       ansi-regex: 5.0.1
 
   strip-json-comments@3.1.1: {}
-
-  stripe@22.6.1(@types/node@22.20.1):
-    optionalDependencies:
-      '@types/node': 22.20.1
 
   styled-jsx@5.1.6(react@19.2.8):
     dependencies:

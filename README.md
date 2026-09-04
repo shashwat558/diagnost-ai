@@ -276,22 +276,24 @@ curl -s http://localhost:4100/readyz | jq           # dependency checks
 
 ---
 
-## Phase 7C — Stripe Billing (test-mode) ✅
+## Phase 7C — DodoPayments Billing (test-mode) ✅ — *full replace of Stripe*
 
 What was built:
 
-- **Checkout + portal**: `POST /api/billing/checkout` (owner/admin) — Free downgrades directly, `starter`/`pro` create Stripe Checkout (or dev-mode direct flip when `STRIPE_SECRET_KEY` unset), `enterprise` → contact. `POST /api/billing/portal` creates Stripe Customer Portal. Both respect RBAC and audit (`plan.changed`).
-- **Webhook**: `POST /api/billing/webhook` — verifies `stripe-signature` when `STRIPE_WEBHOOK_SECRET` set; handles `checkout.session.completed` + `customer.subscription.updated/deleted` → `workspaces.plan` + `stripe_customer_id`/`stripe_subscription_id`. Dev-mode accepts synthetic `{ workspaceId, plan }` JSON when Stripe not configured (so acceptance works at $0).
-- **Per-workspace Stripe ids**: migration `0009_stripe.sql` adds `stripe_customer_id`, `stripe_subscription_id`, `stripe_price_id` to `workspaces`.
+- **Checkout + portal**: `POST /api/billing/checkout` (owner/admin) — Free downgrades directly, `starter`/`pro` create Dodo Checkout (`product_cart: [{product_id}]` → `checkout_url`) (or dev-mode direct flip when `DODO_PAYMENTS_API_KEY` unset), `enterprise` → contact. `POST /api/billing/portal` creates Dodo Customer Portal. Both respect RBAC and audit (`plan.changed`).
+- **Webhook**: `POST /api/billing/webhook` — verifies Standard Webhooks (`webhook-id` + `webhook-signature` + `webhook-timestamp` via `standardwebhooks`) when `DODO_PAYMENTS_WEBHOOK_KEY` set; handles `payment.succeeded` / `subscription.active` / `subscription.renewed` / `subscription.cancelled` → `workspaces.plan` + `dodo_customer_id`/`dodo_subscription_id`. Dev-mode accepts synthetic `{ workspaceId, plan }` JSON when Dodo not configured (so acceptance works at $0).
+- **Per-workspace Dodo ids**: migration `0010_dodo.sql` adds `dodo_customer_id`, `dodo_subscription_id`, `dodo_product_id` to `workspaces` (keeps `stripe_*` for rollback).
 - **Settings UI**: `UpgradeButton` (client, `useState` + `fetch` → redirect or `router.refresh()` in dev) + `PortalButton` + success/cancel banners via `?checkout=`; quota cache (15s TTL) picks up new `plan.monthlyEvents` immediately.
 
 Env (all optional in dev — dev-mode fallback when unset):
 
 ```
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_STARTER=price_...
-STRIPE_PRICE_PRO=price_...
+DODO_PAYMENTS_API_KEY=dodo_test_...
+DODO_PAYMENTS_WEBHOOK_KEY=whsec_...
+DODO_PAYMENTS_ENVIRONMENT=test_mode
+DODO_PAYMENTS_RETURN_URL=http://localhost:3100/settings?checkout=success
+DODO_PAYMENTS_PRODUCT_STARTER=pdt_...
+DODO_PAYMENTS_PRODUCT_PRO=pdt_...
 NEXT_PUBLIC_APP_URL=http://localhost:3100
 ```
 
