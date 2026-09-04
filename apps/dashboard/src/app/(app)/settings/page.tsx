@@ -3,7 +3,8 @@ import { Icon } from "@/components/icon";
 import { requireAdmin } from "@/lib/session";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { UpgradeButton } from "@/components/billing/upgrade-button";
+import { PortalButton } from "@/components/billing/portal-button";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +32,12 @@ const TIER_INFO: Record<string, { price: string; events: string; retention: stri
   enterprise: { price: "Custom", events: "Unlimited events", retention: "1-year retention" },
 };
 
-export default async function SettingsPage() {
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ checkout?: string }>;
+}) {
+  const sp = await searchParams;
   const user = await requireAdmin();
   const wsId = user.workspaceId;
   const [ws] = await pgQuery<WsRow>(
@@ -56,6 +62,16 @@ export default async function SettingsPage() {
   return (
     <div className="px-6 pt-5">
       <h1 className="text-[15px] font-semibold text-gray-900">Settings</h1>
+      {sp?.checkout === "success" && (
+        <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-[12px] text-emerald-700">
+          Checkout completed — your plan will update shortly. If Stripe is configured, the webhook will flip the plan; in dev mode it’s already active.
+        </div>
+      )}
+      {sp?.checkout === "cancel" && (
+        <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-700">
+          Checkout canceled.
+        </div>
+      )}
 
       {/* plan + usage */}
       <Card className="mt-4">
@@ -68,7 +84,10 @@ export default async function SettingsPage() {
               {TIER_INFO[plan]?.events} · {TIER_INFO[plan]?.retention}
             </p>
           </div>
-          <Badge>{TIER_INFO[plan]?.price}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge>{TIER_INFO[plan]?.price}</Badge>
+            {plan !== "free" && <PortalButton />}
+          </div>
         </div>
         <div className="mt-3">
           <div className="flex justify-between text-[11px] text-gray-500">
@@ -96,13 +115,7 @@ export default async function SettingsPage() {
               <div className="text-[13px] font-medium capitalize text-gray-900">{t}</div>
               <div className="mt-0.5 text-[12px] text-gray-500">{TIER_INFO[t].price}</div>
               <div className="text-[11px] text-gray-400">{TIER_INFO[t].events}</div>
-              {t === plan ? (
-                <div className="mt-2 text-[11px] font-medium text-accent">Current</div>
-              ) : (
-                <Button variant="outline" size="sm" className="mt-2 h-6 px-2 text-[11px]">
-                  Upgrade
-                </Button>
-              )}
+              <UpgradeButton plan={t as "free" | "starter" | "pro" | "enterprise"} current={t === plan} />
             </div>
           ))}
         </div>

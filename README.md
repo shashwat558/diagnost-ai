@@ -274,4 +274,34 @@ bash tools/backup/backup.sh ./backups/2026-09-03    # full backup
 curl -s http://localhost:4100/readyz | jq           # dependency checks
 ```
 
-*(Next up: Stripe billing in test mode, landing page, concierge installer.)*
+---
+
+## Phase 7C — Stripe Billing (test-mode) ✅
+
+What was built:
+
+- **Checkout + portal**: `POST /api/billing/checkout` (owner/admin) — Free downgrades directly, `starter`/`pro` create Stripe Checkout (or dev-mode direct flip when `STRIPE_SECRET_KEY` unset), `enterprise` → contact. `POST /api/billing/portal` creates Stripe Customer Portal. Both respect RBAC and audit (`plan.changed`).
+- **Webhook**: `POST /api/billing/webhook` — verifies `stripe-signature` when `STRIPE_WEBHOOK_SECRET` set; handles `checkout.session.completed` + `customer.subscription.updated/deleted` → `workspaces.plan` + `stripe_customer_id`/`stripe_subscription_id`. Dev-mode accepts synthetic `{ workspaceId, plan }` JSON when Stripe not configured (so acceptance works at $0).
+- **Per-workspace Stripe ids**: migration `0009_stripe.sql` adds `stripe_customer_id`, `stripe_subscription_id`, `stripe_price_id` to `workspaces`.
+- **Settings UI**: `UpgradeButton` (client, `useState` + `fetch` → redirect or `router.refresh()` in dev) + `PortalButton` + success/cancel banners via `?checkout=`; quota cache (15s TTL) picks up new `plan.monthlyEvents` immediately.
+
+Env (all optional in dev — dev-mode fallback when unset):
+
+```
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRICE_STARTER=price_...
+STRIPE_PRICE_PRO=price_...
+NEXT_PUBLIC_APP_URL=http://localhost:3100
+```
+
+Usage (dev, no keys):
+
+```bash
+curl -s -b jar.txt -X POST http://localhost:3100/api/billing/checkout \
+  -H 'content-type: application/json' -d '{"plan":"pro"}' | jq
+# → {"ok":true,"plan":"pro","devMode":true}  (workspace plan flips, quota 2M)
+curl -s http://localhost:3100/readyz | jq  # still ok
+```
+
+*(Next up: Concierge installer, real SMTP, docs polish.)*
