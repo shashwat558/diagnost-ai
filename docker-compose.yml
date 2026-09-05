@@ -4,7 +4,7 @@ services:
   # ── Postgres: app DB (workspaces, users, alerts, PR records, billing) ──
   postgres:
     image: postgres:16-alpine
-    restart: unless-stopped
+    restart: "no"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-diagnost}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-diagnost_dev_password}
@@ -22,7 +22,7 @@ services:
   # ── ClickHouse: high-cardinality event store ──
   clickhouse:
     image: clickhouse/clickhouse-server:24.8-alpine
-    restart: unless-stopped
+    restart: "no"
     environment:
       CLICKHOUSE_USER: ${CLICKHOUSE_USER:-diagnost}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-diagnost_dev_password}
@@ -49,7 +49,7 @@ services:
   # ── Redpanda: Kafka-compatible event queue (single broker, dev mode) ──
   redpanda:
     image: redpandadata/redpanda:v24.2.7
-    restart: unless-stopped
+    restart: "no"
     command:
       - redpanda
       - start
@@ -78,7 +78,7 @@ services:
   # ── MinIO: S3-compatible blob storage (full transcripts) ──
   minio:
     image: minio/minio:RELEASE.2024-11-07T00-52-20Z
-    restart: unless-stopped
+    restart: "no"
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${S3_ACCESS_KEY:-minioadmin}
@@ -112,7 +112,7 @@ services:
   # ── MailHog: local SMTP capture (alert emails) ──
   mailhog:
     image: mailhog/mailhog:v1.0.1
-    restart: unless-stopped
+    restart: "no"
     ports:
       - "${SMTP_API_PORT:-8025}:8025"   # web UI + API
       - "1025:1025"                     # SMTP
