@@ -18,6 +18,26 @@ function metaSummary(m: Record<string, unknown>): string {
   return entries.map(([k, v]) => `${k}=${String(v)}`).join(" · ");
 }
 
+/** Plain-language sentence for each audit action, e.g. "Plan changed to Pro". */
+function describeAction(action: string, metadata: Record<string, unknown>): string {
+  const m = metadata ?? {};
+  const str = (v: unknown) => String(v ?? "");
+  switch (action) {
+    case "plan.changed":
+      return `Plan changed${m.to ? ` to ${str(m.to)}` : ""}${m.from ? ` (was ${str(m.from)})` : ""}`;
+    case "ingest.quota_exceeded":
+      return `Monthly event limit hit (${str(m.used) || "?"} of ${str(m.limit) || "?"} used)`;
+    case "workspace.created":
+      return "Workspace created";
+    case "artifact.created":
+      return `Instruction “${str(m.name) || "?"}” saved${m.version ? ` (${str(m.version)})` : ""}`;
+    case "plan.on_hold":
+      return "Subscription payment on hold — update payment method to avoid downgrade";
+    default:
+      return action.replace(/[_.]/g, " ");
+  }
+}
+
 export default async function AuditPage() {
   const user = await requireAdmin();
   const rows = await pgQuery<AuditRow>(
@@ -37,29 +57,33 @@ export default async function AuditPage() {
       <table className="mt-4 w-full border-separate border-spacing-0 text-[13px]">
         <thead>
           <tr className="text-left text-[12px] text-gray-500">
-            <th className="border-b border-gray-200 py-2 pr-4 font-normal">Action</th>
-            <th className="border-b border-gray-200 py-2 pr-4 font-normal">Actor</th>
-            <th className="border-b border-gray-200 py-2 pr-4 font-normal">Details</th>
-            <th className="border-b border-gray-200 py-2 pr-4 font-normal">IP</th>
-            <th className="border-b border-gray-200 py-2 font-normal">When</th>
+            <th className="border-b border-gray-200 py-2 pr-4 font-normal">What happened</th>
+            <th className="border-b border-gray-200 py-2 pr-4 font-normal">Who</th>
+            <th className="border-b border-gray-200 py-2 pr-4 font-normal">When</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.id} className="hover:bg-gray-50">
               <td className="border-b border-gray-100 py-2.5 pr-4">
-                <span className={`rounded px-1.5 py-0.5 font-mono text-[11px] ${
-                  r.action.includes("quota") ? "bg-red-50 text-red-600" : "bg-gray-100 text-gray-700"
+                <span className={`rounded px-1.5 py-0.5 text-[12px] font-medium ${
+                  r.action.includes("quota") || r.action.includes("on_hold")
+                    ? "bg-red-50 text-red-600"
+                    : "bg-gray-100 text-gray-700"
                 }`}>
-                  {r.action}
+                  {describeAction(r.action, r.metadata ?? {})}
                 </span>
+                <details className="mt-0.5">
+                  <summary className="cursor-pointer text-[11px] text-gray-400 hover:text-gray-600">
+                    Technical details
+                  </summary>
+                  <span className="font-mono text-[11px] text-gray-500">{r.action}</span>
+                  {r.target && <span className="font-mono text-[11px] text-gray-500"> · {r.target} </span>}
+                  <span className="text-[11px] text-gray-500">{metaSummary(r.metadata ?? {})}</span>
+                  {r.ip && <span className="font-mono text-[11px] text-gray-400"> · IP {r.ip}</span>}
+                </details>
               </td>
-              <td className="border-b border-gray-100 py-2.5 pr-4 font-mono text-[12px] text-gray-600">{r.actor}</td>
-              <td className="border-b border-gray-100 py-2.5 pr-4 text-gray-600">
-                {r.target && <span className="font-mono text-[11px]">{r.target} </span>}
-                <span className="text-gray-500">{metaSummary(r.metadata ?? {})}</span>
-              </td>
-              <td className="border-b border-gray-100 py-2.5 pr-4 font-mono text-[11px] text-gray-400">{r.ip || "—"}</td>
+              <td className="border-b border-gray-100 py-2.5 pr-4 text-[12px] text-gray-600">{r.actor}</td>
               <td className="border-b border-gray-100 py-2.5 text-gray-500">
                 {String(r.created_at).replace("T", " ").slice(0, 19)}
               </td>
@@ -67,8 +91,8 @@ export default async function AuditPage() {
           ))}
           {rows.length === 0 && (
             <tr>
-              <td colSpan={5} className="py-10 text-center text-gray-400">
-                No audit events yet — privileged actions will appear here.
+              <td colSpan={3} className="py-10 text-center text-gray-400">
+                No audit events yet — plan changes, quota hits and new instructions will appear here.
               </td>
             </tr>
           )}

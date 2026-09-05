@@ -6,6 +6,7 @@ import { Sparkline } from "@/components/sparkline";
 import { Icon } from "@/components/icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { HelpTip } from "@/components/ui/help-tip";
 import { NewInstructionDialog } from "@/components/instructions/new-instruction-dialog";
 import { useUiStore } from "@/stores/ui-store";
 import type { IntentRow } from "@/lib/intents";
@@ -102,18 +103,30 @@ export function IntentsTable({ rows }: { rows: IntentRow[] }) {
         <table className="w-full border-separate border-spacing-0 text-[13px]">
           <thead>
             <tr className="text-left text-[12px] text-gray-500">
-              <th className="w-8 border-b border-gray-200 py-2"></th>
-              <th className="border-b border-gray-200 py-2 pr-4 font-normal">User intent</th>
+              <th className="w-8 border-b border-gray-200 py-2" title="Select for bulk actions">●</th>
+              <th className="border-b border-gray-200 py-2 pr-4 font-normal">
+                User intent
+                <HelpTip text="A group of similar conversations, clustered automatically. Click one to see examples and failures." />
+              </th>
               <th className="border-b border-gray-200 py-2 pr-4 text-right font-normal"># Conversations</th>
-              <th className="border-b border-gray-200 py-2 pr-4 font-normal">Trend</th>
-              <th className="border-b border-gray-200 py-2 pr-4 font-normal">vs Prior 1 day</th>
-              <th className="border-b border-gray-200 py-2 pr-4 font-normal">Error rate</th>
+              <th className="border-b border-gray-200 py-2 pr-4 font-normal">
+                Trend
+                <HelpTip text="Conversations per day, last 7 days. Red means a high failure share." />
+              </th>
+              <th className="border-b border-gray-200 py-2 pr-4 font-normal">
+                vs Prior 1 day
+                <HelpTip text="Change in daily volume vs yesterday. Green = growing, gray = shrinking." />
+              </th>
+              <th className="border-b border-gray-200 py-2 pr-4 font-normal">
+                Error rate
+                <HelpTip text="Share of conversations in this intent that failed." />
+              </th>
               <th className="border-b border-gray-200 py-2 font-normal">Last seen</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((r) => {
-              const suggested = r.frustration >= 0.5;
+              const needsInstruction = r.frustration >= 0.5;
               const delta = r.deltaPct;
               return (
                 <tr key={r.id} className="group hover:bg-gray-50">
@@ -127,12 +140,15 @@ export function IntentsTable({ rows }: { rows: IntentRow[] }) {
                     >
                       {r.intent.replace(/_/g, " ")}
                     </Link>
-                    {suggested && (
-                      <span className="ml-2 rounded bg-accent-soft px-1.5 py-0.5 text-[11px] font-medium text-accent">
-                        Suggested
+                    {needsInstruction && (
+                      <span
+                        className="ml-2 rounded bg-accent-soft px-1.5 py-0.5 text-[11px] font-medium text-accent"
+                        title="Over half of rated conversations in this intent got low scores — adding an instruction gives the auto-improver something to refine."
+                      >
+                        Needs instruction
                       </span>
                     )}
-                    <span className="mt-0.5 block max-w-lg truncate text-[12px] text-gray-500">{r.summary}</span>
+                    <span className="mt-0.5 block max-w-lg truncate text-[12px] text-gray-500" title={r.summary}>{r.summary}</span>
                   </td>
                   <td className="border-b border-gray-100 py-2.5 pr-4 text-right tabular-nums text-gray-700">
                     {Number(r.size)}
@@ -140,14 +156,17 @@ export function IntentsTable({ rows }: { rows: IntentRow[] }) {
                   <td className="border-b border-gray-100 py-2.5 pr-4">
                     <Sparkline
                       points={r.daily}
-                      color={r.error_rate > 0.4 ? "#ef4444" : r.deltaPct !== null && r.deltaPct < 0 ? "#ef4444" : "#10b981"}
+                      color={r.error_rate > 0.4 ? "#ef4444" : "#10b981"}
                     />
                   </td>
                   <td className="border-b border-gray-100 py-2.5 pr-4">
                     {delta === null ? (
-                      <span className="text-gray-400">—</span>
+                      <span className="text-gray-400" title="Not enough history yet">—</span>
                     ) : (
-                      <span className={delta < 0 ? "text-red-600" : delta > 0 ? "text-emerald-600" : "text-gray-500"}>
+                      <span
+                        title={delta > 0 ? "Growing vs yesterday" : delta < 0 ? "Shrinking vs yesterday" : "Flat vs yesterday"}
+                        className={delta > 0 ? "text-emerald-600" : "text-gray-500"}
+                      >
                         {delta > 0 ? "+" : ""}
                         {delta}%
                       </span>

@@ -9,6 +9,7 @@ import { signupSchema, type SignupInput } from "@/lib/validation";
 import { useSignup } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { friendlyError } from "@/lib/friendly-errors";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -36,16 +37,11 @@ export default function SignupPage() {
       });
       setApiKey(res.apiKey ?? null);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Signup failed.";
-      const messages: Record<string, string> = {
-        email_taken: "That email already has an account.",
-        weak_password: "Password must be at least 8 characters.",
-        invalid_email: "Enter a valid email address.",
-      };
-      if (messages[msg]) {
-        setError("email", { message: messages[msg] });
+      const msg = err instanceof Error ? err.message : null;
+      if (msg === "email_taken" || msg === "weak_password" || msg === "invalid_email") {
+        setError("email", { message: friendlyError(msg) });
       } else {
-        setError("root", { message: "Signup failed." });
+        setError("root", { message: friendlyError(msg) });
       }
     }
   });

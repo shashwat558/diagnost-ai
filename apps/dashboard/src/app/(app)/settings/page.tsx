@@ -139,7 +139,7 @@ export default async function SettingsPage({
       <Card className="mt-4">
         <h2 className="text-[13px] font-semibold text-gray-900">Alert notifications</h2>
         <p className="mt-0.5 text-[12px] text-gray-500">
-          Drift alerts fan out to these channels (rate-limited: one per cluster per hour).
+          Drift alerts fan out to these channels (rate-limited: one per intent per hour).
           Delivery runs on <code className="font-mono">SMTP_URL</code> — MailHog locally,
           Resend/SES in prod.
         </p>

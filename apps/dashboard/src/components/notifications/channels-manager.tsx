@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { friendlyError } from "@/lib/friendly-errors";
 import {
   useChannels,
   useAddChannel,
@@ -48,7 +49,7 @@ export function ChannelsManager() {
       await add.mutateAsync(data);
       reset();
     } catch (err) {
-      setError("target", { message: err instanceof Error ? err.message : "Add failed." });
+      setError("target", { message: friendlyError(err instanceof Error ? err.message : null, "Couldn't add the channel. Try again.") });
     }
   });
 
@@ -58,14 +59,21 @@ export function ChannelsManager() {
       await test.mutateAsync(id);
       setTestResult("Test sent — check the inbox / channel.");
     } catch (err) {
-      setTestResult(err instanceof Error ? err.message : "Test failed.");
+      setTestResult(friendlyError(err instanceof Error ? err.message : null, "Test failed. Check the address or webhook URL and SMTP settings."));
     }
   };
 
   return (
     <div>
       {isLoading && <p className="mt-2 text-[12px] text-gray-400">Loading channels…</p>}
-      {error && <p className="mt-2 text-[12px] text-red-600">Could not load channels.</p>}
+      {error && (
+        <p className="mt-2 text-[12px] text-red-600">
+          Couldn't load channels.{" "}
+          <button className="underline hover:text-red-700" onClick={() => window.location.reload()}>
+            Retry
+          </button>
+        </p>
+      )}
 
       <table className="mt-2 w-full text-[13px]">
         <tbody>

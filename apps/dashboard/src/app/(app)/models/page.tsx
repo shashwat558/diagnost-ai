@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { pgQuery } from "@/lib/pg";
+import { HelpTip } from "@/components/ui/help-tip";
 
 export const dynamic = "force-dynamic";
 
@@ -38,15 +40,20 @@ export default async function ModelsPage() {
   return (
     <div className="px-6 pt-5">
       <div className="flex items-baseline justify-between">
-        <h1 className="text-[15px] font-semibold text-gray-900">Model comparison</h1>
+        <h1 className="text-[15px] font-semibold text-gray-900">
+          Model comparison
+          <HelpTip text="Your small, fast, cheap model (specialist, trained on your conversations) vs the big general model (frontier). Winner = as accurate or better, at lower cost." />
+        </h1>
         <span className="text-[12px] text-gray-400">
-          frontier vs fine-tuned specialist on held-out eval set
+          big model vs your fine-tuned model, tested on fresh examples
         </span>
       </div>
 
       {!latest && (
         <p className="mt-6 rounded-lg border border-gray-200 p-8 text-center text-[13px] text-gray-400">
-          No benchmarks yet — run the Phase 5 pipeline.
+          No comparisons yet — train your first specialist with{" "}
+          <code className="font-mono text-[12px]">python3 apps/finetune/run_pipeline.py</code>,
+          then come back. See <Link href="/docs">Docs</Link> for the full walkthrough.
         </p>
       )}
 
@@ -55,11 +62,20 @@ export default async function ModelsPage() {
           <table className="mt-4 w-full border-separate border-spacing-0 text-[13px]">
             <thead>
               <tr className="text-left text-[12px] text-gray-500">
-                <th className="border-b border-gray-200 py-2 pr-4 font-normal">Candidate</th>
-                <th className="border-b border-gray-200 py-2 pr-4 text-right font-normal">Accuracy</th>
-                <th className="border-b border-gray-200 py-2 pr-4 text-right font-normal">Latency p95</th>
-                <th className="border-b border-gray-200 py-2 pr-4 text-right font-normal">Cost / 1k reqs</th>
-                <th className="border-b border-gray-200 py-2 pr-4 font-normal">Source</th>
+                <th className="border-b border-gray-200 py-2 pr-4 font-normal">Model</th>
+                <th className="border-b border-gray-200 py-2 pr-4 text-right font-normal">
+                  Correct answers
+                  <HelpTip text="Share of test questions answered correctly. Higher is better." />
+                </th>
+                <th className="border-b border-gray-200 py-2 pr-4 text-right font-normal">
+                  Slowest 5%
+                  <HelpTip text="Reply time that 95% of answers beat. Lower is faster." />
+                </th>
+                <th className="border-b border-gray-200 py-2 pr-4 text-right font-normal">
+                  Cost / 1k answers
+                  <HelpTip text="Estimated API cost per thousand answers. Lower is cheaper." />
+                </th>
+                <th className="border-b border-gray-200 py-2 pr-4 font-normal">Numbers from</th>
                 <th className="border-b border-gray-200 py-2 font-normal"></th>
               </tr>
             </thead>
@@ -67,7 +83,7 @@ export default async function ModelsPage() {
               {candidates.map((c) => (
                 <tr key={c.name} className="hover:bg-gray-50">
                   <td className="border-b border-gray-100 py-2.5 pr-4 font-medium text-gray-900">
-                    {c.kind === "specialist" ? "fine-tuned router" : "frontier (gpt-4o-mini)"}
+                    {c.kind === "specialist" ? "Yours — fine-tuned router" : "Big model — frontier (gpt-4o-mini)"}
                     <span className="mt-0.5 block font-mono text-[11px] text-gray-400">{c.name}</span>
                   </td>
                   <td className="border-b border-gray-100 py-2.5 pr-4 text-right tabular-nums">
@@ -79,8 +95,8 @@ export default async function ModelsPage() {
                   <td className="border-b border-gray-100 py-2.5 pr-4 text-right tabular-nums">
                     ${c.cost_per_1k_usd.toFixed(4)}
                   </td>
-                  <td className="border-b border-gray-100 py-2.5 pr-4 text-[12px] text-gray-500">
-                    {c.measured_latency ? "measured locally" : "reference figures"}
+                  <td className="border-b border-gray-100 py-2.5 pr-4 text-[12px] text-gray-500" title={c.measured_latency ? "We timed this model on this machine." : "Vendor-published figures — we didn't time this one."}>
+                    {c.measured_latency ? "timed here" : "published figures"}
                   </td>
                   <td className="border-b border-gray-100 py-2.5 text-right">
                     {latest.winner === c.name && (
@@ -99,9 +115,9 @@ export default async function ModelsPage() {
               <div key={c.name} className="rounded-lg border border-gray-200 p-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-[13px] font-semibold text-gray-900">
-                    {c.kind === "specialist" ? "Fine-tuned router" : "Frontier baseline"}
+                    {c.kind === "specialist" ? "Yours, per topic" : "Big model, per topic"}
                   </h2>
-                  <span className="text-[11px] text-gray-400">{c.total} examples</span>
+                  <span className="text-[11px] text-gray-400" title="Fresh examples neither model saw during training">{c.total} test answers</span>
                 </div>
                 <div className="mt-2 space-y-1.5">
                   {Object.entries(c.per_intent).map(([intent, acc]) => (
@@ -127,7 +143,7 @@ export default async function ModelsPage() {
             <p className="mt-4 text-[11px] leading-4 text-gray-400">* {latest.notes}</p>
           )}
           <p className="mt-1 text-[12px] text-gray-500">
-            Dataset: {Number(latest.dataset_size)} held-out examples · benchmark {latest.id}
+            Tested on {Number(latest.dataset_size)} fresh examples neither model had seen.
           </p>
         </>
       )}

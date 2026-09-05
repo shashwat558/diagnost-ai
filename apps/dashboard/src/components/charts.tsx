@@ -34,9 +34,21 @@ export function VolumeChart({
         <CartesianGrid stroke={GRID} vertical={false} />
         <XAxis dataKey="bucket" tick={AXIS} tickLine={false} axisLine={{ stroke: "#e5e7eb" }} />
         <YAxis tick={AXIS} tickLine={false} axisLine={false} allowDecimals={false} />
-        <Tooltip contentStyle={TOOLTIP_STYLE} />
-        <Line dataKey="ok" stroke="#7c3aed" strokeWidth={1.5} dot={false} />
-        <Line dataKey="error" stroke="#ef4444" strokeWidth={1.5} dot={false} />
+        <Tooltip
+          contentStyle={TOOLTIP_STYLE}
+          formatter={(value, name) => [
+            `${Number(value ?? 0)} events`,
+            name === "ok" ? "Passed" : "Failed",
+          ]}
+          labelFormatter={(label) => `Time ${label}`}
+        />
+        <Legend
+          wrapperStyle={{ fontSize: 11 }}
+          iconType="plainline"
+          formatter={(v) => (v === "ok" ? "Passed" : "Failed")}
+        />
+        <Line dataKey="ok" stroke="#7c3aed" strokeWidth={1.5} dot={false} name="ok" />
+        <Line dataKey="error" stroke="#ef4444" strokeWidth={1.5} dot={false} name="error" />
       </LineChart>
     </ResponsiveContainer>
   );
@@ -53,8 +65,19 @@ export function LatencyChart({
         <CartesianGrid stroke={GRID} vertical={false} />
         <XAxis dataKey="bucket" tick={AXIS} tickLine={false} axisLine={{ stroke: "#e5e7eb" }} />
         <YAxis tick={AXIS} tickLine={false} axisLine={false} />
-        <Tooltip contentStyle={TOOLTIP_STYLE} />
-        <Legend wrapperStyle={{ fontSize: 11 }} iconType="plainline" />
+        <Tooltip
+          contentStyle={TOOLTIP_STYLE}
+          formatter={(value, name) => [
+            `${Math.round(Number(value ?? 0))} ms`,
+            name === "p50" ? "Typical (p50)" : "Slowest 5% (p95)",
+          ]}
+          labelFormatter={(label) => `Time ${label}`}
+        />
+        <Legend
+          wrapperStyle={{ fontSize: 11 }}
+          iconType="plainline"
+          formatter={(v) => (v === "p50" ? "Typical (p50)" : "Slowest 5% (p95)")}
+        />
         <Line dataKey="p50" stroke="#7c3aed" strokeWidth={1.5} dot={false} name="p50" />
         <Line dataKey="p95" stroke="#a78bfa" strokeWidth={1.5} dot={false} strokeDasharray="4 3" name="p95" />
       </LineChart>

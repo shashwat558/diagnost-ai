@@ -92,3 +92,4 @@ jobs:
           bash tools/demo/run.sh phase7
           bash tools/demo/run.sh phase7e
           bash tools/demo/run.sh phase7f
+          bash tools/demo/run.sh phase8

@@ -8,6 +8,7 @@ import { loginSchema, type LoginInput } from "@/lib/validation";
 import { useLogin } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { friendlyError } from "@/lib/friendly-errors";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,7 +25,6 @@ export default function LoginPage() {
   });
 
   const busy = isSubmitting || login.isPending;
-  const serverError = login.error ? (login.error as Error).message : null;
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -32,10 +32,12 @@ export default function LoginPage() {
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Login failed.";
+      const msg = err instanceof Error ? err.message : null;
       if (msg === "invalid_credentials") {
         setError("password", { message: "Wrong email or password." });
         setError("email", { message: " " });
+      } else {
+        setError("password", { message: friendlyError(msg) });
       }
     }
   });
@@ -70,10 +72,6 @@ export default function LoginPage() {
       />
       {errors.password?.message && (
         <p className="mt-1 text-[12px] text-red-600">{errors.password.message}</p>
-      )}
-
-      {serverError && serverError !== "invalid_credentials" && (
-        <p className="mt-2 text-[12px] text-red-600">Login failed.</p>
       )}
 
       <Button type="submit" disabled={busy} className="mt-4 w-full">
