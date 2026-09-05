@@ -109,7 +109,7 @@ fi
 
 # shellcheck disable=SC1090
 if [[ "$DRY_RUN" == "0" ]]; then set -a; source "$ENV_FILE"; set +a; fi
-HOST_DB_URL="postgres://${POSTGRES_USER:-diagnost}:${POSTGRES_PASSWORD:-x}@localhost:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-diagnost}"
+HOST_DB_URL="postgres://${POSTGRES_USER:-diagnost}:${POSTGRES_PASSWORD:-x}@localhost:${POSTGRES_PORT:-5434}/${POSTGRES_DB:-diagnost}"
 
 # ── 3. build ───────────────────────────────────────────────────────
 echo "-- build (pnpm install + build)"

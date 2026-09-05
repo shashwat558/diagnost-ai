@@ -22,7 +22,7 @@ for svc in postgres clickhouse; do
 done
 $CH "SELECT 1" >/dev/null 2>&1 || fail "clickhouse not reachable"
 docker compose exec -T postgres pg_isready -U diagnost >/dev/null 2>&1 || fail "postgres not reachable"
-pnpm --filter @diagnostic/dashboard build >/dev/null 2>&1 || pnpm --filter @diagnost/dashboard build >/dev/null
+pnpm --filter @diagnost/dashboard build >/tmp/diagnost-logs/dash-build.log 2>&1 || { tail -15 /tmp/diagnost-logs/dash-build.log; fail "dashboard build failed"; }
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true; sleep 0.5
 mkdir -p /tmp/diagnost-logs
 (pnpm --filter @diagnost/dashboard start > /tmp/diagnost-logs/dash.log 2>&1 &)

@@ -7,7 +7,7 @@ function p(): Pool {
     pool = new Pool({
       connectionString:
         process.env.DATABASE_URL ??
-        "postgres://diagnost:diagnost_dev_password@localhost:5432/diagnost",
+        "postgres://diagnost:diagnost_dev_password@localhost:5434/diagnost",
       max: 5,
     });
   }

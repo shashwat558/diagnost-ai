@@ -43,7 +43,7 @@ export interface Config {
 export function loadConfig(overrides: Partial<Record<keyof Config, unknown>> = {}): Config {
   loadDotEnv();
   const base: Config = {
-    databaseUrl: process.env.DATABASE_URL ?? "postgres://diagnost:diagnost_dev_password@localhost:5432/diagnost",
+    databaseUrl: process.env.DATABASE_URL ?? "postgres://diagnost:diagnost_dev_password@localhost:5434/diagnost",
     clickhouseUrl: process.env.CLICKHOUSE_URL ?? process.env.CLICKHOUSE_HTTP_URL ?? "http://localhost:8123",
     clickhouseUser: process.env.CLICKHOUSE_USER ?? "diagnost",
     clickhousePassword: process.env.CLICKHOUSE_PASSWORD ?? "diagnost_dev_password",

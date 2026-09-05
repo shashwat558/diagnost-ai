@@ -40,7 +40,7 @@ Services (local):
 |---|---|
 | ClickHouse HTTP | http://localhost:8123 |
 | ClickHouse native | localhost:9009 |
-| Postgres | localhost:5432 (`diagnost` / `diagnost_dev_password`) |
+| Postgres | localhost:5434 (`diagnost` / `diagnost_dev_password`) — host port 5434 avoids clashes with other local Postgres instances |
 | Redpanda (Kafka) | localhost:9092 (external), redpanda:29092 (in-network) |
 | MinIO console | http://localhost:9001 |
 | Ingestion API | http://localhost:4100 |

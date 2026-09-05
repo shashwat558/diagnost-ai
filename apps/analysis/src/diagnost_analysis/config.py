@@ -25,7 +25,7 @@ def load_config() -> Config:
     return Config(
         database_url=os.environ.get(
             "DATABASE_URL",
-            "postgres://diagnost:diagnost_dev_password@localhost:5432/diagnost",
+            "postgres://diagnost:diagnost_dev_password@localhost:5434/diagnost",
         ),
         clickhouse_url=os.environ.get("CLICKHOUSE_URL", "http://localhost:8123"),
         clickhouse_user=os.environ.get("CLICKHOUSE_USER", "diagnost"),

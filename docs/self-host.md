@@ -60,7 +60,7 @@ docker compose -p diagnost-ai-prod -f docker-compose.prod.yml logs -f api consum
 cd /opt/diagnost-ai && git pull
 pnpm install --frozen-lockfile && pnpm build
 docker compose -p diagnost-ai-prod -f docker-compose.prod.yml --profile tls --env-file .env.prod up -d --build --wait
-DATABASE_URL="postgres://diagnost:<pw>@localhost:5432/diagnost" pnpm --filter @diagnost/db migrate
+DATABASE_URL="postgres://diagnost:<pw>@localhost:5434/diagnost" pnpm --filter @diagnost/db migrate
 # NOTE: changing DOMAIN requires rebuild (NEXT_PUBLIC_APP_URL is baked at build time)
 
 # retention (automatic daily via retention-cron; manual:)

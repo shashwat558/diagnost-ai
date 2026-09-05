@@ -70,16 +70,17 @@ export default async function TraceDetailPage({
         </span>
       </div>
 
-      {failed > 0 && events.some((e) => e.error_message) && (
+      {failed > 0 && (
         <div className="mt-3 max-w-3xl rounded-lg border border-red-200 bg-red-50 p-3">
           <div className="text-[12px] font-semibold text-red-700">What happened</div>
           <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[12px] leading-5 text-red-900">
             {events
-              .filter((e) => e.error_message)
+              .filter((e) => e.status === "error")
               .slice(0, 3)
               .map((e) => (
                 <li key={e.id}>
-                  <span className="font-medium">{e.name}:</span> {e.error_message}
+                  <span className="font-medium">{e.name}</span>
+                  {e.error_message ? `: ${e.error_message}` : " failed (no details recorded)"}
                 </li>
               ))}
           </ul>

@@ -17,13 +17,13 @@ rm -f "$JAR_O" "$JAR_M"
 echo "Phase 7A — hosted auth acceptance"
 
 docker compose up -d --wait >/dev/null 2>&1 || true
-pnpm --filter @diagnostic/db build >/dev/null 2>&1 || pnpm --filter @diagnost/db build >/dev/null
+pnpm --filter @diagnost/db build >/dev/null 2>&1 || fail "db build failed"
 pnpm --filter @diagnost/db migrate >/dev/null
 
 SESSIONS_TABLE=$($PSQL "SELECT count(*) FROM information_schema.tables WHERE table_name='sessions'")
 [[ "${SESSIONS_TABLE:-0}" -ge 1 ]] && pass "sessions table migrated (0008_auth)" || fail "sessions missing"
 
-pnpm --filter @diagnostic/dashboard build >/dev/null 2>&1 || pnpm --filter @diagnost/dashboard build >/dev/null
+pnpm --filter @diagnost/dashboard build >/tmp/diagnost-logs/dash-build.log 2>&1 || { tail -15 /tmp/diagnost-logs/dash-build.log; fail "dashboard build failed"; }
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true; sleep 0.5
 mkdir -p /tmp/diagnost-logs
 (pnpm --filter @diagnost/dashboard start > /tmp/diagnost-logs/dash.log 2>&1 &)

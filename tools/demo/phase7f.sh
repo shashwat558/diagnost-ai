@@ -15,7 +15,7 @@ rm -f "$JAR_O" "$JAR_M"
 echo "Phase 7F — notifications acceptance"
 
 docker compose up -d --wait >/dev/null 2>&1 || true
-pnpm --filter @diagnostic/dashboard build >/dev/null 2>&1 || pnpm --filter @diagnost/dashboard build >/dev/null
+pnpm --filter @diagnost/dashboard build >/tmp/diagnost-logs/dash-build.log 2>&1 || { tail -15 /tmp/diagnost-logs/dash-build.log; fail "dashboard build failed"; }
 fuser -k -n tcp 3100 >/dev/null 2>&1 || true; sleep 0.5
 mkdir -p /tmp/diagnost-logs
 (pnpm --filter @diagnost/dashboard start > /tmp/diagnost-logs/dash.log 2>&1 &)

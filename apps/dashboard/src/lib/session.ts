@@ -6,7 +6,7 @@ export const SESSION_COOKIE = "diagnost_session";
 
 export const DATABASE_URL =
   process.env.DATABASE_URL ??
-  "postgres://diagnost:diagnost_dev_password@localhost:5432/diagnost";
+  "postgres://diagnost:diagnost_dev_password@localhost:5434/diagnost";
 
 export async function getSession(): Promise<SessionUser | null> {
   const store = await cookies();
