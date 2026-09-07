@@ -1,12 +1,12 @@
 "use client";
 
 import {
+  Area,
+  AreaChart,
   CartesianGrid,
   Legend,
   Line,
   LineChart,
-  Bar,
-  BarChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -14,14 +14,68 @@ import {
 } from "recharts";
 
 const AXIS = { stroke: "#9ca3af", fontSize: 11 };
-const GRID = "#f3f4f6";
+const GRID = "#eef1f5";
 const TOOLTIP_STYLE = {
   backgroundColor: "#ffffff",
   border: "1px solid #e5e7eb",
-  borderRadius: 8,
+  borderRadius: 10,
   fontSize: 12,
-  boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+  boxShadow: "0 8px 24px rgba(17, 24, 39, 0.10)",
+  padding: "8px 10px",
 };
+
+function EventsTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ name?: string; value?: number | string }>;
+  label?: string;
+}) {
+  if (!active || !payload || payload.length === 0) return null;
+  return (
+    <div style={TOOLTIP_STYLE}>
+      <div className="mb-1 text-[11px] font-medium text-gray-400">Time {label}</div>
+      {payload.map((p) => (
+        <div key={p.name} className="flex items-center gap-2 text-[12px] tabular-nums text-gray-700">
+          <span
+            className="inline-block h-2 w-2 rounded-full"
+            style={{ backgroundColor: p.name === "ok" ? "#7c3aed" : "#ef4444" }}
+          />
+          {p.name === "ok" ? "Passed" : "Failed"} · <strong>{Number(p.value ?? 0).toLocaleString()}</strong>&nbsp;events
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MsTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ name?: string; value?: number | string }>;
+  label?: string;
+}) {
+  if (!active || !payload || payload.length === 0) return null;
+  return (
+    <div style={TOOLTIP_STYLE}>
+      <div className="mb-1 text-[11px] font-medium text-gray-400">Time {label}</div>
+      {payload.map((p) => (
+        <div key={p.name} className="flex items-center gap-2 text-[12px] tabular-nums text-gray-700">
+          <span
+            className="inline-block h-2 w-2 rounded-full"
+            style={{ backgroundColor: p.name === "p50" ? "#7c3aed" : "#a78bfa" }}
+          />
+          {p.name === "p50" ? "Typical (p50)" : "Slowest 5% (p95)"} ·{" "}
+          <strong>{Math.round(Number(p.value ?? 0)).toLocaleString()} ms</strong>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export function VolumeChart({
   data,
@@ -29,27 +83,31 @@ export function VolumeChart({
   data: Array<{ bucket: string; ok: number; error: number }>;
 }) {
   return (
-    <ResponsiveContainer width="100%" height={200}>
-      <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
+    <ResponsiveContainer width="100%" height={220}>
+      <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
+        <defs>
+          <linearGradient id="volOk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.28} />
+            <stop offset="100%" stopColor="#7c3aed" stopOpacity={0.02} />
+          </linearGradient>
+          <linearGradient id="volErr" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ef4444" stopOpacity={0.25} />
+            <stop offset="100%" stopColor="#ef4444" stopOpacity={0.02} />
+          </linearGradient>
+        </defs>
         <CartesianGrid stroke={GRID} vertical={false} />
-        <XAxis dataKey="bucket" tick={AXIS} tickLine={false} axisLine={{ stroke: "#e5e7eb" }} />
-        <YAxis tick={AXIS} tickLine={false} axisLine={false} allowDecimals={false} />
-        <Tooltip
-          contentStyle={TOOLTIP_STYLE}
-          formatter={(value, name) => [
-            `${Number(value ?? 0)} events`,
-            name === "ok" ? "Passed" : "Failed",
-          ]}
-          labelFormatter={(label) => `Time ${label}`}
-        />
+        <XAxis dataKey="bucket" tick={AXIS} tickLine={false} axisLine={{ stroke: "#e5e7eb" }} minTickGap={48} />
+        <YAxis tick={AXIS} tickLine={false} axisLine={false} allowDecimals={false} width={44} />
+        <Tooltip content={<EventsTooltip />} cursor={{ stroke: "#d1d5db", strokeDasharray: "3 3" }} />
         <Legend
-          wrapperStyle={{ fontSize: 11 }}
-          iconType="plainline"
+          wrapperStyle={{ fontSize: 12 }}
+          iconType="circle"
+          iconSize={8}
           formatter={(v) => (v === "ok" ? "Passed" : "Failed")}
         />
-        <Line dataKey="ok" stroke="#7c3aed" strokeWidth={1.5} dot={false} name="ok" />
-        <Line dataKey="error" stroke="#ef4444" strokeWidth={1.5} dot={false} name="error" />
-      </LineChart>
+        <Area type="monotone" dataKey="ok" stroke="#7c3aed" strokeWidth={2} fill="url(#volOk)" dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="ok" />
+        <Area type="monotone" dataKey="error" stroke="#ef4444" strokeWidth={2} fill="url(#volErr)" dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="error" />
+      </AreaChart>
     </ResponsiveContainer>
   );
 }
@@ -60,46 +118,21 @@ export function LatencyChart({
   data: Array<{ bucket: string; p50: number; p95: number }>;
 }) {
   return (
-    <ResponsiveContainer width="100%" height={200}>
-      <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
+    <ResponsiveContainer width="100%" height={220}>
+      <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
         <CartesianGrid stroke={GRID} vertical={false} />
-        <XAxis dataKey="bucket" tick={AXIS} tickLine={false} axisLine={{ stroke: "#e5e7eb" }} />
-        <YAxis tick={AXIS} tickLine={false} axisLine={false} />
-        <Tooltip
-          contentStyle={TOOLTIP_STYLE}
-          formatter={(value, name) => [
-            `${Math.round(Number(value ?? 0))} ms`,
-            name === "p50" ? "Typical (p50)" : "Slowest 5% (p95)",
-          ]}
-          labelFormatter={(label) => `Time ${label}`}
-        />
+        <XAxis dataKey="bucket" tick={AXIS} tickLine={false} axisLine={{ stroke: "#e5e7eb" }} minTickGap={48} />
+        <YAxis tick={AXIS} tickLine={false} axisLine={false} width={44} />
+        <Tooltip content={<MsTooltip />} cursor={{ stroke: "#d1d5db", strokeDasharray: "3 3" }} />
         <Legend
-          wrapperStyle={{ fontSize: 11 }}
-          iconType="plainline"
+          wrapperStyle={{ fontSize: 12 }}
+          iconType="circle"
+          iconSize={8}
           formatter={(v) => (v === "p50" ? "Typical (p50)" : "Slowest 5% (p95)")}
         />
-        <Line dataKey="p50" stroke="#7c3aed" strokeWidth={1.5} dot={false} name="p50" />
-        <Line dataKey="p95" stroke="#a78bfa" strokeWidth={1.5} dot={false} strokeDasharray="4 3" name="p95" />
+        <Line type="monotone" dataKey="p50" stroke="#7c3aed" strokeWidth={2} dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="p50" />
+        <Line type="monotone" dataKey="p95" stroke="#a78bfa" strokeWidth={2} strokeDasharray="5 4" dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="p95" />
       </LineChart>
-    </ResponsiveContainer>
-  );
-}
-
-export function ToolChart({
-  data,
-}: {
-  data: Array<{ name: string; calls: number; errors: number }>;
-}) {
-  return (
-    <ResponsiveContainer width="100%" height={200}>
-      <BarChart data={data} layout="vertical" margin={{ top: 4, right: 16, bottom: 0, left: 40 }}>
-        <CartesianGrid stroke={GRID} horizontal={false} />
-        <XAxis type="number" tick={AXIS} tickLine={false} axisLine={{ stroke: "#e5e7eb" }} allowDecimals={false} />
-        <YAxis type="category" dataKey="name" tick={AXIS} tickLine={false} axisLine={false} width={130} />
-        <Tooltip contentStyle={TOOLTIP_STYLE} />
-        <Bar dataKey="calls" fill="#7c3aed" radius={[0, 3, 3, 0]} barSize={12} />
-        <Bar dataKey="errors" fill="#ef4444" radius={[0, 3, 3, 0]} barSize={12} />
-      </BarChart>
     </ResponsiveContainer>
   );
 }

@@ -1,4 +1,9 @@
-/** Tiny inline SVG sparkline (table trend column). */
+"use client";
+
+import { useId } from "react";
+import { Area, AreaChart, Tooltip } from "recharts";
+
+/** Recharts-based sparkline (table trend column, header card). */
 export function Sparkline({
   points,
   color = "#7c3aed",
@@ -10,22 +15,37 @@ export function Sparkline({
   width?: number;
   height?: number;
 }) {
-  if (points.length < 2) points = [points[0] ?? 0, points[0] ?? 0];
-  const max = Math.max(...points, 1);
-  const min = Math.min(...points, 0);
-  const span = max - min || 1;
-  const step = width / (points.length - 1);
-  const y = (v: number) => height - 2 - ((v - min) / span) * (height - 4);
-
-  const d = points.map((p, i) => `${i === 0 ? "M" : "L"}${(i * step).toFixed(1)},${y(p).toFixed(1)}`).join(" ");
-  const last = points[points.length - 1]!;
-  const first = points[0]!;
+  const gradientId = `spark-${useId().replace(/:/g, "")}`;
+  const values = points.length >= 2 ? points : [points[0] ?? 0, points[0] ?? 0];
+  const data = values.map((v, i) => ({ i, v }));
 
   return (
-    <svg width={width} height={height} className="overflow-visible">
-      <path d={d} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
-      <rect x={width - 3} y={y(last) - 1.5} width="3" height="3" fill={color} />
-      <rect x={0} y={y(first) - 1.5} width="3" height="3" fill={color} opacity={0.5} />
-    </svg>
+    <AreaChart width={width} height={height} data={data} margin={{ top: 2, right: 2, bottom: 2, left: 2 }}>
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity={0.35} />
+          <stop offset="100%" stopColor={color} stopOpacity={0} />
+        </linearGradient>
+      </defs>
+      <Tooltip
+        content={({ active, payload }) =>
+          active && payload && payload.length > 0 ? (
+            <div className="rounded-md border border-gray-200 bg-white px-2 py-1 text-[11px] tabular-nums text-gray-700 shadow-lg">
+              {Number(payload[0]!.value).toLocaleString()}
+            </div>
+          ) : null
+        }
+      />
+      <Area
+        type="monotone"
+        dataKey="v"
+        stroke={color}
+        strokeWidth={1.5}
+        fill={`url(#${gradientId})`}
+        dot={false}
+        activeDot={{ r: 2.5, fill: color, stroke: "#fff", strokeWidth: 1 }}
+        isAnimationActive={false}
+      />
+    </AreaChart>
   );
 }
