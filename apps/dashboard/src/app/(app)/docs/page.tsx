@@ -4,24 +4,24 @@ export const metadata = { title: "Docs — Diagnost AI" };
 
 function Code({ children }: { children: string }) {
   return (
-    <pre className="my-2 overflow-x-auto rounded-md border border-gray-200 bg-gray-50 p-3 font-mono text-[12px] leading-5 text-gray-700">
+    <pre className="my-2 overflow-x-auto rounded-md border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-3 font-mono text-sm leading-5 text-gray-700 dark:text-gray-300">
       {children}
     </pre>
   );
 }
 
 function H2({ children }: { children: React.ReactNode }) {
-  return <h2 className="mt-6 text-[14px] font-semibold text-gray-900">{children}</h2>;
+  return <h2 className="mt-6 text-[14px] font-semibold text-gray-900 dark:text-gray-100">{children}</h2>;
 }
 
 function P({ children }: { children: React.ReactNode }) {
-  return <p className="mt-2 text-[13px] leading-5 text-gray-600">{children}</p>;
+  return <p className="mt-2 text-sm leading-5 text-gray-600 dark:text-gray-400">{children}</p>;
 }
 
 export default function DocsPage() {
   return (
     <div className="px-6 pt-5 pb-16 max-w-3xl">
-      <h1 className="text-[15px] font-semibold text-gray-900">Documentation</h1>
+      <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">Documentation</h1>
 
       <H2>Quickstart</H2>
       <P>
@@ -52,8 +52,8 @@ dx.checkpoint("order.lookup", { orderId });`}</Code>
         <strong>PII redaction is default-on</strong>: emails, phone numbers, SSNs, credit
         cards (Luhn-validated) and named entities are hashed before anything leaves your
         process, with a per-event audit log. Zero-PII mode strips all string content.
-        Known gaps are listed in <code className="font-mono text-[12px]">docs/pii.md</code>;
-        add custom rules via the <code className="font-mono text-[12px]">redaction.customRules</code> option.
+        Known gaps are listed in <code className="font-mono text-sm">docs/pii.md</code>;
+        add custom rules via the <code className="font-mono text-sm">redaction.customRules</code> option.
       </P>
 
       <H2>Plans &amp; billing</H2>
@@ -70,10 +70,10 @@ dx.checkpoint("order.lookup", { orderId });`}</Code>
         per-cluster rate limit. Manage channels under{" "}
         <strong>Settings → Alert notifications</strong>: add an email address or Slack
         webhook, toggle, remove, or send a test. Locally, email lands in MailHog
-        (<code className="font-mono text-[12px]">:8025</code>); in prod set{" "}
-        <code className="font-mono text-[12px]">SMTP_URL=smtp://user:pass@smtp.resend.com:587</code>{" "}
-        (+ <code className="font-mono text-[12px]">SMTP_FROM</code>) and alert links point at{" "}
-        <code className="font-mono text-[12px]">DASHBOARD_URL</code>.
+        (<code className="font-mono text-sm">:8025</code>); in prod set{" "}
+        <code className="font-mono text-sm">SMTP_URL=smtp://user:pass@smtp.resend.com:587</code>{" "}
+        (+ <code className="font-mono text-sm">SMTP_FROM</code>) and alert links point at{" "}
+        <code className="font-mono text-sm">DASHBOARD_URL</code>.
       </P>
 
       <H2>Self-hosting &amp; cloud</H2>
@@ -87,17 +87,17 @@ terraform init && terraform plan -var="key_name=your-key"`}</Code>
         AWS module provisions VPC, RDS Postgres, S3, ECS Fargate services (api, consumer,
         notifier, dashboard, pr-bot) and single-node ClickHouse + Redpanda on ECS with EBS
         volumes. A GCP skeleton (Compute Engine + Cloud SQL + GCS) is in{" "}
-        <code className="font-mono text-[12px]">infra/terraform/gcp</code>.
+        <code className="font-mono text-sm">infra/terraform/gcp</code>.
       </P>
 
       <H2>Auto-instrument with an AI coding agent</H2>
       <P>
-        The <code className="font-mono text-[12px]">agent-analytics</code> skill teaches any
+        The <code className="font-mono text-sm">agent-analytics</code> skill teaches any
         coding agent to instrument a target codebase automatically:
       </P>
       <Code>{`npx skills add shashwat558/diagnost-ai --skill agent-analytics`}</Code>
 
-      <div className="mt-8 flex items-center gap-2 text-[12px] text-gray-400">
+      <div className="mt-8 flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
         <Icon name="shield" className="h-3.5 w-3.5" />
         Self-hostable from the Free tier. PII never leaves your infrastructure unredacted.
       </div>

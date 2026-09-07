@@ -21,7 +21,7 @@ export function PortalButton() {
     }
   };
   return (
-    <Button variant="outline" size="sm" onClick={handle} disabled={busy} className="h-7 text-[12px]">
+    <Button variant="outline" size="sm" onClick={handle} disabled={busy} className="h-7 text-sm">
       {busy ? "…" : "Manage billing"}
     </Button>
   );

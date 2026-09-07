@@ -30,7 +30,7 @@ export function Sparkline({
       <Tooltip
         content={({ active, payload }) =>
           active && payload && payload.length > 0 ? (
-            <div className="rounded-md border border-gray-200 bg-white px-2 py-1 text-[11px] tabular-nums text-gray-700 shadow-lg">
+            <div className="rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-2 py-1 text-xs tabular-nums text-gray-700 dark:text-gray-300 shadow-lg">
               {Number(payload[0]!.value).toLocaleString()}
             </div>
           ) : null

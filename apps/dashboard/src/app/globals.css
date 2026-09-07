@@ -2,11 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
 body {
-  @apply bg-white text-gray-900 antialiased;
+  @apply bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
+  line-height: 1.55;
 }
 
 ::selection {
@@ -17,4 +26,8 @@ body {
 * {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db transparent;
+}
+
+.dark * {
+  scrollbar-color: #374151 transparent;
 }

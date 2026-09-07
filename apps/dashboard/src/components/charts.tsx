@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 
-const AXIS = { stroke: "#9ca3af", fontSize: 11 };
+const AXIS = { stroke: "#9ca3af", fontSize: 12 };
 const GRID = "#eef1f5";
 const TOOLTIP_STYLE = {
   backgroundColor: "#ffffff",
@@ -36,9 +36,9 @@ function EventsTooltip({
   if (!active || !payload || payload.length === 0) return null;
   return (
     <div style={TOOLTIP_STYLE}>
-      <div className="mb-1 text-[11px] font-medium text-gray-400">Time {label}</div>
+      <div className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">Time {label}</div>
       {payload.map((p) => (
-        <div key={p.name} className="flex items-center gap-2 text-[12px] tabular-nums text-gray-700">
+        <div key={p.name} className="flex items-center gap-2 text-sm tabular-nums text-gray-700 dark:text-gray-300">
           <span
             className="inline-block h-2 w-2 rounded-full"
             style={{ backgroundColor: p.name === "ok" ? "#7c3aed" : "#ef4444" }}
@@ -62,9 +62,9 @@ function MsTooltip({
   if (!active || !payload || payload.length === 0) return null;
   return (
     <div style={TOOLTIP_STYLE}>
-      <div className="mb-1 text-[11px] font-medium text-gray-400">Time {label}</div>
+      <div className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">Time {label}</div>
       {payload.map((p) => (
-        <div key={p.name} className="flex items-center gap-2 text-[12px] tabular-nums text-gray-700">
+        <div key={p.name} className="flex items-center gap-2 text-sm tabular-nums text-gray-700 dark:text-gray-300">
           <span
             className="inline-block h-2 w-2 rounded-full"
             style={{ backgroundColor: p.name === "p50" ? "#7c3aed" : "#a78bfa" }}
@@ -100,7 +100,7 @@ export function VolumeChart({
         <YAxis tick={AXIS} tickLine={false} axisLine={false} allowDecimals={false} width={44} />
         <Tooltip content={<EventsTooltip />} cursor={{ stroke: "#d1d5db", strokeDasharray: "3 3" }} />
         <Legend
-          wrapperStyle={{ fontSize: 12 }}
+          wrapperStyle={{ fontSize: 13 }}
           iconType="circle"
           iconSize={8}
           formatter={(v) => (v === "ok" ? "Passed" : "Failed")}
@@ -125,7 +125,7 @@ export function LatencyChart({
         <YAxis tick={AXIS} tickLine={false} axisLine={false} width={44} />
         <Tooltip content={<MsTooltip />} cursor={{ stroke: "#d1d5db", strokeDasharray: "3 3" }} />
         <Legend
-          wrapperStyle={{ fontSize: 12 }}
+          wrapperStyle={{ fontSize: 13 }}
           iconType="circle"
           iconSize={8}
           formatter={(v) => (v === "p50" ? "Typical (p50)" : "Slowest 5% (p95)")}

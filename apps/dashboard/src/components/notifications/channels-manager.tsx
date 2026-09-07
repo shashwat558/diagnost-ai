@@ -65,9 +65,9 @@ export function ChannelsManager() {
 
   return (
     <div>
-      {isLoading && <p className="mt-2 text-[12px] text-gray-400">Loading channels…</p>}
+      {isLoading && <p className="mt-2 text-sm text-gray-400 dark:text-gray-500">Loading channels…</p>}
       {error && (
-        <p className="mt-2 text-[12px] text-red-600">
+        <p className="mt-2 text-sm text-red-600">
           Couldn't load channels.{" "}
           <button className="underline hover:text-red-700" onClick={() => window.location.reload()}>
             Retry
@@ -75,38 +75,38 @@ export function ChannelsManager() {
         </p>
       )}
 
-      <table className="mt-2 w-full text-[13px]">
+      <table className="mt-2 w-full text-sm">
         <tbody>
           {(channels ?? []).map((c) => (
-            <tr key={c.id} className="border-b border-gray-100 last:border-0">
+            <tr key={c.id} className="border-b border-gray-100 dark:border-gray-800 last:border-0">
               <td className="py-2">
                 <Badge variant="secondary">{c.channel}</Badge>
               </td>
-              <td className="max-w-[220px] truncate px-3 py-2 font-mono text-[12px] text-gray-700">
+              <td className="max-w-[220px] truncate px-3 py-2 font-mono text-sm text-gray-700 dark:text-gray-300">
                 {c.target}
               </td>
               <td className="py-2 text-right">
                 <span
-                  className={`mr-2 text-[11px] ${c.enabled ? "text-emerald-600" : "text-gray-400"}`}
+                  className={`mr-2 text-xs ${c.enabled ? "text-emerald-600" : "text-gray-400 dark:text-gray-500"}`}
                 >
                   {c.enabled ? "on" : "off"}
                 </span>
                 <button
                   onClick={() => toggle.mutate({ id: c.id, enabled: !c.enabled })}
-                  className="mr-2 text-[11px] text-gray-500 hover:text-gray-800"
+                  className="mr-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-800"
                 >
                   {c.enabled ? "Disable" : "Enable"}
                 </button>
                 <button
                   onClick={() => onTest(c.id)}
                   disabled={test.isPending}
-                  className="mr-2 text-[11px] text-gray-500 hover:text-gray-800 disabled:opacity-50"
+                  className="mr-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-800 disabled:opacity-50"
                 >
                   Test
                 </button>
                 <button
                   onClick={() => remove.mutate(c.id)}
-                  className="text-[11px] text-red-500 hover:text-red-700"
+                  className="text-xs text-red-500 hover:text-red-700"
                 >
                   Remove
                 </button>
@@ -115,17 +115,17 @@ export function ChannelsManager() {
           ))}
           {!isLoading && (channels ?? []).length === 0 && (
             <tr>
-              <td className="py-2 text-gray-400">No channels yet — add one below.</td>
+              <td className="py-2 text-gray-400 dark:text-gray-500">No channels yet — add one below.</td>
             </tr>
           )}
         </tbody>
       </table>
-      {testResult && <p className="mt-1 text-[12px] text-gray-600">{testResult}</p>}
+      {testResult && <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{testResult}</p>}
 
       <form onSubmit={onSubmit} className="mt-3 flex gap-2" noValidate>
         <select
           {...register("channel")}
-          className="h-9 rounded-md border border-gray-200 bg-white px-2 text-[13px] outline-none focus:border-gray-300"
+          className="h-9 rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-2 text-sm text-gray-900 dark:text-gray-100 outline-none focus:border-gray-300"
           aria-label="Channel type"
         >
           <option value="email">Email</option>
@@ -141,7 +141,7 @@ export function ChannelsManager() {
         </Button>
       </form>
       {(errors.target || errors.channel) && (
-        <p className="mt-1 text-[12px] text-red-600">
+        <p className="mt-1 text-sm text-red-600">
           {errors.target?.message ?? errors.channel?.message}
         </p>
       )}

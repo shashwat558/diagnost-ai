@@ -60,20 +60,20 @@ export default async function TraceDetailPage({
 
   return (
     <div className="px-6 pt-5">
-      <Link href="/traces" className="text-[12px] text-gray-500 hover:text-gray-800">
+      <Link href="/traces" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800">
         ← Conversations
       </Link>
       <div className="mt-1 flex items-baseline gap-3">
-        <h1 className="font-mono text-[15px] font-semibold text-gray-900" title={id}>…{id.slice(-16)}</h1>
-        <span className="text-[12px] text-gray-400">
+        <h1 className="font-mono text-base font-semibold text-gray-900 dark:text-gray-100" title={id}>…{id.slice(-16)}</h1>
+        <span className="text-sm text-gray-400 dark:text-gray-500">
           {events.length} steps · {failed} failed
         </span>
       </div>
 
       {failed > 0 && (
         <div className="mt-3 max-w-3xl rounded-lg border border-red-200 bg-red-50 p-3">
-          <div className="text-[12px] font-semibold text-red-700">What happened</div>
-          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[12px] leading-5 text-red-900">
+          <div className="text-sm font-semibold text-red-700">What happened</div>
+          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-sm leading-5 text-red-900">
             {events
               .filter((e) => e.status === "error")
               .slice(0, 3)
@@ -84,24 +84,24 @@ export default async function TraceDetailPage({
                 </li>
               ))}
           </ul>
-          <p className="mt-1.5 text-[11px] text-red-700/80">
+          <p className="mt-1.5 text-xs text-red-700/80">
             Fix the step above (or add an instruction for its intent) and this conversation type recovers.
           </p>
         </div>
       )}
 
-      <table className="mt-4 w-full border-separate border-spacing-0 text-[13px]">
+      <table className="mt-4 w-full border-separate border-spacing-0 text-sm">
         <thead>
-          <tr className="text-left text-[12px] text-gray-500">
-            <th className="w-8 border-b border-gray-200 py-2" title="Position in time"></th>
-            <th className="border-b border-gray-200 py-2 pr-4 font-normal">Step</th>
-            <th className="border-b border-gray-200 py-2 pr-4 font-normal">Type</th>
-            <th className="border-b border-gray-200 py-2 pr-4 font-normal">Outcome</th>
-            <th className="border-b border-gray-200 py-2 pr-4 text-right font-normal">
+          <tr className="text-left text-sm text-gray-500 dark:text-gray-400">
+            <th className="w-8 border-b border-gray-200 dark:border-gray-800 py-2" title="Position in time"></th>
+            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 font-normal">Step</th>
+            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 font-normal">Type</th>
+            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 font-normal">Outcome</th>
+            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 text-right font-normal">
               Time
               <HelpTip text="How long this step took, plus AI tokens used (in → out)." />
             </th>
-            <th className="border-b border-gray-200 py-2 font-normal">
+            <th className="border-b border-gray-200 dark:border-gray-800 py-2 font-normal">
               Privacy
               <HelpTip text="Sensitive data hidden before storage. Violet = something was redacted." />
             </th>
@@ -119,41 +119,41 @@ export default async function TraceDetailPage({
             }
             const piiCount = (e.pii_redactions ?? []).reduce((a, r) => a + Number(r.count), 0);
             return (
-              <tr key={e.id} className="align-top hover:bg-gray-50">
-                <td className="border-b border-gray-100 py-2.5">
+              <tr key={e.id} className="align-top hover:bg-gray-50 dark:hover:bg-gray-800/60">
+                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5">
                   <span
                     className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-accent"
                     style={{ marginLeft: `${offsetPct}%` }}
                     title={`t+${t - minT}ms`}
                   />
                 </td>
-                <td className="border-b border-gray-100 py-2.5 pr-4">
-                  <span className="font-medium text-gray-900">{e.name}</span>
+                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{e.name}</span>
                   {e.error_message && (
-                    <span className="mt-0.5 block max-w-md whitespace-normal break-words font-mono text-[11px] leading-4 text-red-600">
+                    <span className="mt-0.5 block max-w-md whitespace-normal break-words font-mono text-xs leading-4 text-red-600">
                       {e.error_message}
                     </span>
                   )}
                   {attrsPreview !== "{}" && (
                     <details className="mt-0.5">
-                      <summary className="cursor-pointer text-[11px] text-gray-400 hover:text-gray-600">
+                      <summary className="cursor-pointer text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600">
                         Show step details
                       </summary>
-                      <pre className="mt-1 max-h-48 max-w-xl overflow-auto rounded-md border border-gray-200 bg-gray-50 p-2 font-mono text-[11px] leading-4 text-gray-600">
+                      <pre className="mt-1 max-h-48 max-w-xl overflow-auto rounded-md border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-2 font-mono text-xs leading-4 text-gray-600 dark:text-gray-400">
                         {attrsPreview}
                       </pre>
                     </details>
                   )}
                 </td>
-                <td className="border-b border-gray-100 py-2.5 pr-4 text-gray-600">
+                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4 text-gray-600 dark:text-gray-400">
                   <span title={KIND_TIP[e.kind] ?? e.kind}>{KIND_LABEL[e.kind] ?? e.kind}</span>
                   {idx === 0 && (
-                    <span className="ml-1.5 text-[10px] uppercase tracking-wide text-gray-400" title="First step of the conversation">start</span>
+                    <span className="ml-1.5 text-[11px] uppercase tracking-wide text-gray-400 dark:text-gray-500" title="First step of the conversation">start</span>
                   )}
                 </td>
-                <td className="border-b border-gray-100 py-2.5 pr-4">
+                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4">
                   <span
-                    className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${
+                    className={`rounded px-1.5 py-0.5 text-xs font-medium ${
                       e.status === "error" ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
                     }`}
                     title={e.status === "error" ? "This step failed — see the message above." : "This step completed fine."}
@@ -161,17 +161,17 @@ export default async function TraceDetailPage({
                     {e.status === "error" ? "Failed" : "Passed"}
                   </span>
                 </td>
-                <td className="border-b border-gray-100 py-2.5 pr-4 text-right tabular-nums text-gray-600">
+                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4 text-right tabular-nums text-gray-600 dark:text-gray-400">
                   {e.latency_ms != null ? `${Math.round(Number(e.latency_ms))} ms` : "—"}
                   {(e.tokens_in != null || e.tokens_out != null) && (
-                    <span className="block text-[11px] text-gray-400" title="AI tokens consumed (in) and produced (out) — drives cost.">
+                    <span className="block text-xs text-gray-400 dark:text-gray-500" title="AI tokens consumed (in) and produced (out) — drives cost.">
                       {Number(e.tokens_in ?? 0)} in · {Number(e.tokens_out ?? 0)} out
                     </span>
                   )}
                 </td>
-                <td className="border-b border-gray-100 py-2.5">
+                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5">
                   {piiCount > 0 ? (
-                    <span className="inline-flex items-center gap-1 rounded bg-violet-50 px-1.5 py-0.5 text-[11px] font-medium text-accent" title="Sensitive values in this step were hidden before storage.">
+                    <span className="inline-flex items-center gap-1 rounded bg-violet-50 px-1.5 py-0.5 text-xs font-medium text-accent" title="Sensitive values in this step were hidden before storage.">
                       <Icon name="shield" className="h-3 w-3" />
                       {piiCount} hidden
                     </span>
@@ -179,7 +179,7 @@ export default async function TraceDetailPage({
                     <span className="text-gray-300">—</span>
                   )}
                   {e.zero_pii_mode && (
-                    <span className="ml-1 text-[10px] text-gray-400" title="Strict mode: all text content was stripped from this step.">strict privacy</span>
+                    <span className="ml-1 text-[11px] text-gray-400 dark:text-gray-500" title="Strict mode: all text content was stripped from this step.">strict privacy</span>
                   )}
                 </td>
               </tr>
@@ -189,7 +189,7 @@ export default async function TraceDetailPage({
       </table>
 
       {events.length === 0 && (
-        <p className="mt-6 rounded-lg border border-gray-200 p-8 text-center text-[13px] text-gray-400">
+        <p className="mt-6 rounded-lg border border-gray-200 dark:border-gray-800 p-8 text-center text-sm text-gray-400 dark:text-gray-500">
           No steps found for this conversation. The link may be wrong, or old data may have
           expired under your plan&apos;s retention window.
         </p>

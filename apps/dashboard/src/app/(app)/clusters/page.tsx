@@ -29,12 +29,12 @@ export default async function ClustersPage() {
   return (
     <div className="pb-0">
       <div className="px-6 pt-5">
-        <div className="rounded-lg border border-gray-200 p-4">
+        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
           <div className="flex items-baseline justify-between">
-            <h1 className="text-[15px] font-semibold text-gray-900">
+            <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">
               {total} conversations across {rows.length} intents
             </h1>
-            <span className="text-[12px] text-gray-400">last 7 days</span>
+            <span className="text-sm text-gray-400 dark:text-gray-500">last 7 days</span>
           </div>
           <div className="mt-2">
             <Sparkline points={days} width={1120} height={72} />

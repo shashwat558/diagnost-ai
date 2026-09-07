@@ -62,14 +62,14 @@ export default async function SettingsPage({
 
   return (
     <div className="px-6 pt-5">
-      <h1 className="text-[15px] font-semibold text-gray-900">Settings</h1>
+      <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">Settings</h1>
       {sp?.checkout === "success" && (
-        <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-[12px] text-emerald-700">
+        <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
           Checkout completed — your plan will update shortly. If Stripe is configured, the webhook will flip the plan; in dev mode it’s already active.
         </div>
       )}
       {sp?.checkout === "cancel" && (
-        <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-700">
+        <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
           Checkout canceled.
         </div>
       )}
@@ -78,10 +78,10 @@ export default async function SettingsPage({
       <Card className="mt-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-[13px] font-semibold text-gray-900">
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
               Billing — <span className="capitalize">{plan}</span> plan
             </h2>
-            <p className="mt-0.5 text-[12px] text-gray-500">
+            <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
               {TIER_INFO[plan]?.events} · {TIER_INFO[plan]?.retention}
             </p>
           </div>
@@ -91,13 +91,13 @@ export default async function SettingsPage({
           </div>
         </div>
         <div className="mt-3">
-          <div className="flex justify-between text-[11px] text-gray-500">
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
             <span>Events this period ({usage?.[0]?.period ?? "—"})</span>
             <span className="tabular-nums">
               {used.toLocaleString()} / {limit.toLocaleString()}
             </span>
           </div>
-          <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+          <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
             <div
               className={`h-full rounded-full ${pct > 90 ? "bg-red-500" : "bg-accent"}`}
               style={{ width: `${Math.max(1, pct)}%` }}
@@ -110,35 +110,35 @@ export default async function SettingsPage({
             <div
               key={t}
               className={`rounded-md border p-3 ${
-                t === plan ? "border-accent/50 bg-accent-soft/50" : "border-gray-200"
+                t === plan ? "border-accent/50 bg-accent-soft/50" : "border-gray-200 dark:border-gray-800"
               }`}
             >
-              <div className="text-[13px] font-medium capitalize text-gray-900">{t}</div>
-              <div className="mt-0.5 text-[12px] text-gray-500">{TIER_INFO[t].price}</div>
-              <div className="text-[11px] text-gray-400">{TIER_INFO[t].events}</div>
+              <div className="text-sm font-medium capitalize text-gray-900 dark:text-gray-100">{t}</div>
+              <div className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{TIER_INFO[t].price}</div>
+              <div className="text-xs text-gray-400 dark:text-gray-500">{TIER_INFO[t].events}</div>
               <UpgradeButton plan={t as "free" | "starter" | "pro" | "enterprise"} current={t === plan} />
             </div>
           ))}
         </div>
-        <p className="mt-3 text-[11px] text-gray-400">
+        <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
           Plan changes are owner/admin actions and are recorded in the audit log.
         </p>
       </Card>
 
       {/* api key */}
       <Card className="mt-4">
-        <h2 className="text-[13px] font-semibold text-gray-900">API credentials</h2>
-        <div className="mt-2 flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 font-mono text-[12px] text-gray-600">
-          <Icon name="database" className="h-3.5 w-3.5 text-gray-400" />
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">API credentials</h2>
+        <div className="mt-2 flex items-center gap-2 rounded-md border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 px-3 py-2 font-mono text-sm text-gray-600 dark:text-gray-400">
+          <Icon name="database" className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500" />
           dw_local_••••••••••••0000
-          <span className="ml-auto text-[11px] text-gray-400">created {ws ? String(ws.created_at).slice(0, 10) : "—"}</span>
+          <span className="ml-auto text-xs text-gray-400 dark:text-gray-500">created {ws ? String(ws.created_at).slice(0, 10) : "—"}</span>
         </div>
       </Card>
 
       {/* notifications */}
       <Card className="mt-4">
-        <h2 className="text-[13px] font-semibold text-gray-900">Alert notifications</h2>
-        <p className="mt-0.5 text-[12px] text-gray-500">
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Alert notifications</h2>
+        <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
           Drift alerts fan out to these channels (rate-limited: one per intent per hour).
           Delivery runs on <code className="font-mono">SMTP_URL</code> — MailHog locally,
           Resend/SES in prod.
@@ -148,12 +148,12 @@ export default async function SettingsPage({
 
       {/* roles */}
       <Card className="mt-4">
-        <h2 className="text-[13px] font-semibold text-gray-900">Members & roles</h2>
-        <table className="mt-2 w-full text-[13px]">
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Members & roles</h2>
+        <table className="mt-2 w-full text-sm">
           <tbody>
             {users.map((u) => (
-              <tr key={u.id} className="border-b border-gray-100 last:border-0">
-                <td className="py-2 text-gray-800">{u.email ?? u.id}</td>
+              <tr key={u.id} className="border-b border-gray-100 dark:border-gray-800 last:border-0">
+                <td className="py-2 text-gray-800 dark:text-gray-200">{u.email ?? u.id}</td>
                 <td className="py-2 text-right">
                   <Badge variant="secondary" className="capitalize">
                     {u.role}
@@ -163,12 +163,12 @@ export default async function SettingsPage({
             ))}
             {users.length === 0 && (
               <tr>
-                <td className="py-2 text-gray-400">No members yet.</td>
+                <td className="py-2 text-gray-400 dark:text-gray-500">No members yet.</td>
               </tr>
             )}
           </tbody>
         </table>
-        <p className="mt-2 text-[11px] text-gray-400">
+        <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
           Roles: owner &gt; admin &gt; member &gt; viewer. SSO via OIDC is available
           (<code className="font-mono">OIDC_ISSUER_URL</code> env) and maps IdP groups to roles.
         </p>

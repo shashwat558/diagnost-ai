@@ -17,7 +17,7 @@ export function UpgradeButton({
   const router = useRouter();
 
   if (current) {
-    return <div className="mt-2 text-[11px] font-medium text-accent">Current</div>;
+    return <div className="mt-2 text-xs font-medium text-accent">Current</div>;
   }
 
   const handle = async () => {
@@ -53,10 +53,10 @@ export function UpgradeButton({
 
   return (
     <div>
-      <Button variant="outline" size="sm" className="mt-2 h-6 px-2 text-[11px]" onClick={handle} disabled={busy}>
+      <Button variant="outline" size="sm" className="mt-2 h-6 px-2 text-xs" onClick={handle} disabled={busy}>
         {busy ? "…" : "Upgrade"}
       </Button>
-      {error && <p className="mt-1 text-[11px] text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
   );
 }
