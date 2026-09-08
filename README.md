@@ -1,340 +1,132 @@
 # Diagnost AI
 
-Production analytics and self-improvement platform for teams running AI agents (chat / voice / MCP-based). Ingests production conversation traces via OpenTelemetry, clusters failures and feature requests, detects regressions statistically (EWMA/CUSUM) before LLM-judge labeling, opens self-verifying auto-PRs with eval reports, and fine-tunes small specialist models from accumulated data.
+**Production analytics and self-improvement for AI agents — Sentry + PostHog + auto-PR-bot, purpose-built for LLM agents.**
 
-**Sentry + PostHog + auto-PR-bot — purpose-built for LLM agents.**
+[![CI](https://github.com/shashwat558/diagnost-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/shashwat558/diagnost-ai/actions)
 
-## Differentiators
+Your agent is live. Users talk to it. Some conversations fail — wrong dates, timeouts, hallucinations — and you find out from angry emails, days later. Diagnost fixes that loop: it watches every conversation, clusters failures into ranked intents, alerts you the moment a failure pattern spikes, and opens pull requests with verified fixes. Then it distills your traffic into a small, cheap specialist model.
 
-- **PII redaction default-on** in the SDK (email/phone/SSN/credit-card + lightweight NER), with a per-event redaction audit log and a zero-PII mode.
-- **OpenTelemetry-native ingestion first**: one-line exporter change for existing OTel users; manual `checkpoint()` API second.
-- **Statistical anomaly detection + LLM judge**: control-chart drift detection as cheap explainable first pass; LLM as deeper labeler.
-- **Self-verifying auto-PRs**: every generated fix ships with the eval cases it passed and before/after deltas.
-- **Self-hostable from the lowest tier.**
+## Who it's for
 
-## Stack
+- **Teams running agents in production** (support bots, voice agents, ops copilots) who need to see *why* their agent fails at scale.
+- **Indie agent builders** who want a free tier, 5-minute setup, and room to grow.
+- **Enterprises with compliance needs** — self-host in your VPC, PII redacted by default, audit log, role-based access.
+- **AI coding-agent users** — one-line skill auto-instruments any codebase.
 
-| Layer | Tech |
-|---|---|
-| Ingestion API | Node 20 + Fastify |
-| Queue | Redpanda (Kafka API), single node |
-| Event store | ClickHouse |
-| Blob store | MinIO (S3-compatible) |
-| App DB | Postgres |
-| Analysis workers | Python (embeddings + HDBSCAN + stats) |
-| Dashboard | Next.js 15 + Tailwind + Recharts + Zustand 5 + TanStack Query 5 + React Hook Form + Zod + shadcn/ui |
-| SDKs | TypeScript, Python |
+## Features
 
-## Quickstart
+**Observe**
+- OpenTelemetry-native ingestion (`POST /v1/events`, single or batches ≤1000), API-key auth, per-workspace quotas enforced at the edge (HTTP 402).
+- TypeScript SDK with 3-line OTel exporter swap (LangChain, Vercel AI SDK, LlamaIndex, MCP) or manual `checkpoint()` API; batching + retry, never breaks the host agent.
+- **PII redaction default-on** — email, phone, SSN, credit cards (Luhn-validated) + named-entity heuristics hashed in your process, per-event audit log, zero-PII mode.
 
-```bash
-pnpm install
-docker compose up -d --wait   # Postgres, ClickHouse, Redpanda, MinIO
-pnpm build && pnpm test       # monorepo pipelines
-bash tools/demo/run.sh phase0 # infra acceptance checks
+**Understand**
+- Failure clustering (HDBSCAN + LLM judge) ranked by failure impact, with plain-language stats: error rate, frustration, mood, trend sparklines.
+- Drift detection that only fires on real spikes (z-gate + CUSUM) — no alert fatigue.
+- Feature-request mining: what users keep asking for, ranked with example conversations.
+
+**Alert**
+- Slack + email delivery with per-intent hourly rate limiting and an at-least-once ledger.
+- Self-serve channels in Settings with one-click test delivery; any SMTP provider in prod, MailHog locally.
+
+**Fix**
+- Self-verifying auto-PRs: eval cases generated from your real failing conversations, strict-improvement + zero-regression gate, PRs with diffs, deltas, and evidence links. Works with a GitHub token or fully offline.
+
+**Improve**
+- Specialist model training on your traffic with side-by-side frontier comparison (accuracy, latency, cost) and a winner badge.
+
+**Platform**
+- Workspaces, API keys, roles (owner > admin > member > viewer), audit log, usage-based billing (Free → Enterprise) via DodoPayments, per-plan retention, backups, one-command self-host or Terraform (AWS/GCP).
+
+## How it works
+
+```
+your agent ──SDK/OTel──▶ POST /v1/events ──▶ Redpanda ──▶ consumer ──┬──▶ ClickHouse (analytics)
+                                                                     └──▶ MinIO/S3 (transcripts)
+        ┌────────────────────────────────────────────────────────────────┘
+        ▼
+ Python workers: cluster → judge → drift alerts → feature mining → fine-tune
+        ▼
+ Dashboard (intents, conversations, models) · Slack/email alerts · auto-PR bot
 ```
 
-Services (local):
+## Quickstart (local, ~10 min)
+
+```bash
+git clone https://github.com/shashwat558/diagnost-ai && cd diagnost-ai
+pnpm install
+docker compose up -d --wait        # Postgres :5434, ClickHouse :8123, Redpanda :9092, MinIO :9001
+pnpm --filter @diagnost/db migrate # schema + dev workspace
+pnpm build
+node apps/api/dist/index.js & node apps/api/dist/consumer.js & node apps/api/dist/notifier.js &
+pnpm --filter @diagnost/dashboard start   # :3100
+```
+
+Sign up at `:3100/signup` for an API key, instrument your agent ([docs](http://localhost:3100/docs/instrumentation)), send traffic, and watch the dashboard. For instant demo data: `bash tools/demo/run.sh phase2` (16k conversations, 3 failure patterns, 1 drift alert). Dev login: `owner@dev.local` / `devpassword123`.
 
 | Service | Endpoint |
 |---|---|
-| ClickHouse HTTP | http://localhost:8123 |
-| ClickHouse native | localhost:9009 |
-| Postgres | localhost:5434 (`diagnost` / `diagnost_dev_password`) — host port 5434 avoids clashes with other local Postgres instances |
-| Redpanda (Kafka) | localhost:9092 (external), redpanda:29092 (in-network) |
-| MinIO console | http://localhost:9001 |
-| Ingestion API | http://localhost:4100 |
+| Dashboard / landing | http://localhost:3100 |
+| Ingestion API (`/healthz`, `/readyz`) | http://localhost:4100 |
+| Postgres | localhost:5434 (`diagnost` / `diagnost_dev_password`) |
+| ClickHouse HTTP / native | :8123 / localhost:9009 |
+| Redpanda (Kafka) | localhost:9092 (external), `redpanda:29092` (in-network) |
+| MinIO console / MailHog | :9001 / :8025 |
 
-Copy `.env.example` → `.env` to override defaults.
+## Instrument your agent
 
-## Self-host (concierge / your own VPS)
+```ts
+import { createSpanExporter } from "@diagnost/sdk-ts";
+// existing OTel pipeline? swap the exporter — done.
+dx.checkpoint("order.lookup", { orderId }, { conversationId }); // or manual checkpoints
+```
 
-One command on Ubuntu 22.04 (8 vCPU / 32 GB, ports 80+443, domain pointed at the box):
+Python / anything else: `POST /v1/events` directly. Or let an AI do it: `npx skills add shashwat558/diagnost-ai --skill agent-analytics`.
+
+## Pricing
+
+| Plan | Price | Events/mo | Retention |
+|---|---|---|---|
+| Free | $0 | 50k | 7 days |
+| Starter | $49 | 250k | 30 days |
+| Pro | $299 | 2M | 90 days |
+| Enterprise | Custom | Unlimited | 365 days |
+
+Manage tiers in Settings; every change is audited. Self-hostable from Free.
+
+## Self-host (your VPS, one command)
 
 ```bash
-git clone https://github.com/shashwat558/diagnost-ai /opt/diagnost-ai
-cd /opt/diagnost-ai
 bash tools/install.sh --domain agents.example.com --email owner@example.com
 ```
 
-Provisions `.env.prod`, builds, starts the full stack (infra + api/consumer/notifier/dashboard + retention-cron + Caddy HTTPS), migrates, creates the owner + API key (printed once), installs nightly backups. Full guide: [`docs/self-host.md`](docs/self-host.md).
+Provisions everything (infra + app + HTTPS + backups + owner account). Full guide: [`docs/self-host.md`](docs/self-host.md). Cloud instead? Terraform modules in `infra/terraform/{aws,gcp}`.
 
----
-
-## Phase 0 — Scaffolding ✅
-
-What was built:
-
-- **Monorepo**: pnpm workspaces + Turborepo (`build` / `typecheck` / `test` / `dev` task graph, `^build` dependency ordering).
-- **CI**: GitHub Actions — lint (ESLint 9 flat config), build, typecheck, vitest unit tests, plus an integration job that boots the full Docker stack and runs phase acceptance scripts.
-- **Local infra** (`docker-compose.yml`, healthchecked):
-  - `postgres:16-alpine` — app DB
-  - `clickhouse/clickhouse-server:24.8-alpine` — event store, `events` database created on boot
-  - `redpandadata/redpanda:v24.2.7` — single broker, dual listeners (container-internal `redpanda:29092`, host-advertised `127.0.0.1:9092`)
-  - `minio` + one-shot init job creating buckets `transcripts`, `finetune-datasets`, `eval-artifacts`
-- **Shared event schema** (`packages/core`): versioned, strict zod envelope — OTel trace/span ids, PII audit log fields, zero-PII flag — validated by unit tests.
-- **API skeleton** (`apps/api`): Fastify `/healthz`.
-
-Acceptance criteria & proof:
-
-```bash
-docker compose up -d --wait      # all services report healthy
-bash tools/demo/run.sh phase0    # PASS postgres / clickhouse(+events db) / redpanda / minio+buckets
-pnpm lint && pnpm typecheck && pnpm build && pnpm test   # green
-```
-
-Known port mapping: ClickHouse native is published on host **9009** (container 9000) to avoid colliding with MinIO's API on host 9000.
-
----
-
-## Phase 1 — Ingestion MVP ✅
-
-What was built:
-
-- **Ingestion API** (`apps/api`):
-  - `POST /v1/events` (single event or batch ≤1000) with zod validation of the strict envelope
-  - API-key auth (`Authorization: Bearer dw_…`), sha256-hashed keys in Postgres, per-workspace scoping stamped **server-side**
-  - Produces to Redpanda topic `events.raw`; graceful degraded startup if Kafka is down
-- **Ingestion consumer** (`apps/api/dist/consumer.js`, separate process):
-  - Kafka → ClickHouse batch inserts (MergeTree, daily partitions, 90-day TTL)
-  - Full transcripts → MinIO (`s3://transcripts/<ws>/<conversation>/<span>.json`) whenever a span carries a `diagnost.transcript` JSON attribute; the inline copy stays in ClickHouse for drill-down
-- **TypeScript SDK** (`packages/sdk-ts`):
-  - **OTel-native**: `createSpanExporter()` plugs into any existing OpenTelemetry pipeline (LangChain / Vercel AI SDK / LlamaIndex / MCP instrumentations emit standard spans) — one exporter change, no rewrite
-  - Manual API: `client.checkpoint(name, metadata)` / `client.track(event)`
-  - **Default-on PII redaction before send**: email, phone (digit-count validated), SSN, credit card (Luhn-validated), heuristic named-entity pass; customer custom rules; per-event audit log (`pii_audit`) ships alongside every event; **zero-PII mode** strips all string content
-  - Batching + retry w/ backoff + fail-open (never breaks the host agent)
-- **Dashboard** (`apps/dashboard`, Next.js + Tailwind + Recharts): event volume ok/error timeline, latency p50/p95, per-tool breakdown table+chart, conversation list, and a session drill-down waterfall with PASS/FAIL markers, redacted attribute inspector, and PII-audit badges
-- **Migrations & seed** (`packages/db`): Postgres + ClickHouse migration runner (`pnpm --filter @diagnost/db migrate && … run seed`)
-
-Acceptance criteria & proof:
-
-```bash
-bash tools/demo/run.sh phase1
-```
-
-PASS checks: api healthy · rejects unauthenticated/invalid keys · sample agent executes · traces land in ClickHouse within seconds · no raw PII stored anywhere (CH or S3) · redaction audit log shipped · hashed `[EMAIL:`/`[CARD:` markers present · error spans captured · transcripts in object storage, redacted.
-
-Try the dashboard:
-
-```bash
-pnpm --filter @diagnost/dashboard build && pnpm --filter @diagnost/dashboard start
-# open http://localhost:3100
-```
-
----
-
-## Phase 2 — Conversation intelligence ✅
-
-What was built:
-
-- **Analysis worker** (`apps/analysis`, Python 3.12 + numpy/HDBSCAN/scikit-learn):
-  - **Embeddings**: deterministic hashing embedder offline (`EMBEDDING_PROVIDER=openai` upgrades to real embeddings); pattern discovery embeds **user-side text only** — users describe problems consistently, assistant boilerplate would fragment clusters along response variants
-  - **HDBSCAN** clustering (eom selection + epsilon merge) over conversation embeddings
-  - **LLM judge**: rule-based offline default labeling intent / sentiment / frustration / summary, specific-intent-first taxonomy; `OPENAI_API_KEY` + `LLM_PROVIDER=openai` swaps in model-based judging
-  - **Drift engine**: EWMA baseline + CUSUM control chart per cluster, gated by a two-proportion z-test (z ≥ 3) and minimum effect size; adaptive bucket sizing keeps per-bucket volume statistically meaningful; every alert ships its full rate series as evidence
-- **Pipeline** idempotent via `processed_conversations` checkpointing; alerts deduped per hour
-- **Seeder** (`tools/seed/phase2-seed.mjs`): 5,000 synthetic conversations over 48h — benign base corpus plus three injected failure patterns, one (`date_format_error`) with an accelerating failure-rate ramp
-- **Dashboard**: Patterns page ranked by failure impact with drift-alert banners, cluster detail linking every member conversation to its session drill-down (PASS/FAIL markers)
-- Postgres schema: `clusters`, `cluster_members` (+per-member `has_error`), `alerts`, `processed_conversations`, `feature_requests` (reserved for Phase 3)
-
-Acceptance criteria & proof:
-
-```bash
-bash tools/demo/run.sh phase2   # 12 checks, all PASS
-```
-
-PASS checks: 16k events ingested · analysis ran · all 3 injected patterns surface as top clusters by failure impact · spiking pattern ranks #1 · source-conversation linkage purity 0.83–1.0 · exactly ONE drift alert, on the spiking pattern only · 21 Python unit tests · dashboard renders patterns view.
-
-Run intelligence manually:
-
-```bash
-node tools/seed/phase2-seed.mjs                       # seed data
-apps/analysis/.venv/bin/python apps/analysis/run_analysis.py
-```
-
----
-
-## Phase 3 — Alerts & feedback loop ✅
-
-What was built:
-
-- **Alert notifier** (`apps/api/src/notifier.ts`, separate process):
-  - Fans out undelivered alerts to per-workspace channels: **Slack webhook** + **SMTP email** (MailHog captures locally at http://localhost:8025)
-  - **Rate limiting**: one notification per cluster per 60min window; suppressed duplicates are logged as `skipped` rows, never silently dropped
-  - **At-least-once ledger** (`alert_deliveries`): every attempt recorded as sent / failed / skipped with detail
-- **Feature-request extraction** (`apps/analysis` → `run_features.py`):
-  - Separate pass over transcripts tagging *"user asked for X we don't support"* signals
-  - Offline rule-based judge: sentence-level request-cue detection + signature-keyword slug mapping (`csv_export`, `slack_integration`, …) with stable derived slugs for unmapped asks
-  - OpenAI-compatible LLM path via `FEATURE_JUDGE=openai` + key
-  - Aggregation counts **conversations per slug** (never raw mentions), keeps up to 20 example conversation IDs linked to source sessions
-- **Dashboard**: Features page — ranked requests with frequency bars and example links into session drill-downs
-
-Acceptance criteria & proof:
-
-```bash
-bash tools/demo/run.sh phase3   # 12 checks, all PASS
-```
-
-PASS checks: notifier running · alert delivered as email (MailHog) · duplicate-cluster alert rate-limited to `skipped` · seeded transcripts ingested · ranked list matches seed exactly (#1 csv_export×25, #2 slack_integration×15, #3 dark_mode×8) · webhooks ×5 · one-off requests captured · examples linked · dashboard renders · 29 python unit tests.
-
----
-
-## Phase 4 — Auto-remediation (auto-PR) ✅
-
-What was built (`apps/pr-bot`):
-
-- **Artifact registry** (Postgres): workspaces register versioned patch targets — prompt templates or tool schemas — each owning a failure `intent` (e.g. `booking_assistant_prompt@v3` handles `date_format_error`)
-- **Remediation pipeline** (`node apps/pr-bot/dist/main.js --cluster <id>`):
-  1. Matches the failure cluster to its artifact
-  2. Generates a candidate patch — deterministic offline repair, or model rewrite with `LLM_PROVIDER=openai`
-  3. **Auto-generates eval cases from the cluster's failing conversations** (impossible dates observed in real evidence become probes) plus canonical edge cases
-  4. Runs the patch against them **and a held-out regression set** of previously-passing same-intent conversations
-  5. **Gate**: strict improvement required + zero regressions, or no PR
-  6. Opens a PR containing the unified diff, before/after eval table, and links to source conversations
-- **GitHub dual-mode**: real API via `GITHUB_TOKEN`+`GITHUB_REPO`, or an offline local git fixture (`fixture://…`) so self-hosted/no-token environments get the full flow; PR payloads land in `/tmp/diagnost-pr-outbox`
-- Agent-under-test: deterministic prompt-directive simulator offline (same grading contract as live-model mode); grader + gate covered by unit tests
-
-Acceptance criteria & proof:
-
-```bash
-bash tools/demo/run.sh phase4   # 13 checks, all PASS
-```
-
-PASS checks: failure cluster present · artifact registered · gate passed (baseline 0% → patched 100%, zero held-out regressions) · PR opened & recorded · branch carries the validation-directive fix while main stays untouched · PR body shows deltas + source-conversation links · eval cases are evidence-linked · 9 harness unit tests + 29 python tests.
-
----
-
-## Phase 5 — Custom model training ✅
-
-What was built (`apps/finetune`, Python):
-
-- **Dataset export**: labeled/clustered traces → SFT JSONL (`system router prompt + user text → intent`) with deterministic stratified train/held-out split; uploaded to `s3://finetune-datasets/…` (MinIO). DPO export shares the same loader.
-- **Trainer abstraction**:
-  - `local_specialist` (offline default): a genuinely trained tiny router — TF-IDF + logistic regression via scikit-learn, persisted with joblib. Millisecond inference, zero marginal cost.
-  - `together` / `fireworks`: managed-provider LoRA fine-tune job submission for small open models (Llama-3.2-3B class); activates with `FINETUNE_TRAINER` + `FINETUNE_API_KEY`.
-- **Benchmark harness**: specialist vs frontier on the held-out set — accuracy per intent, p50/p95 latency, cost per 1k requests. Frontier runs live against an OpenAI-compatible model when a key is present; otherwise documented reference figures for gpt-4o-mini are shown clearly marked `measured_latency=false`. Specialist figures are always locally measured.
-- **Dashboard**: Models page — side-by-side cards with winner badge, accuracy bars, latency/cost comparison table, per-intent breakdown.
-
-Acceptance criteria & proof:
-
-```bash
-bash tools/demo/run.sh phase5   # 11 checks, all PASS
-```
-
-PASS checks: labeled corpus available (2,412 conversations) · specialist trained · SFT dataset exported to object storage and readable (1,811 rows) · benchmark side-by-side: **accuracy 1.000 vs 1.000 (matches frontier), p95 latency ~2ms vs 1800ms reference, $0 vs $22.80 per 1k requests** · specialist declared winner · artifact persisted · 5 unit tests · dashboard renders the comparison.
-
----
-
-## Phase 6 — Productionization ✅
-
-What was built:
-
-- **Usage-based billing**: Free (50k events/mo, 7-day retention) · Starter (250k, $49) · Pro (2M, $299) · Enterprise (custom). Monthly usage metered by the ingest consumer; **quotas enforced at the ingestion edge (HTTP 402)** with audit logging; reads never blocked. Settings page shows the usage meter and tier comparison.
-- **Audit log**: every privileged action (quota violations, plan changes, auto-PR openings) recorded with actor/target/metadata/IP — browsable at `/audit`.
-- **Workspace roles**: owner > admin > member > viewer (`users.role`, enforced via `hasAtLeast()`), dev owner seeded. OIDC SSO adapter documented (`OIDC_ISSUER_URL`) with IdP-group→role mapping.
-- **Deployment**: Terraform AWS module (VPC, RDS Postgres, S3, ECS Fargate for api/consumer/notifier/dashboard/pr-bot, ALB) + GCP skeleton (Compute Engine, Cloud SQL, GCS). Fully self-hostable via Docker Compose from the Free tier. Self-host guide in `/docs`.
-- **Docs site**: in-app documentation (quickstart, SDK instrumentation, plans, self-hosting, agent skill).
-- **Skill installer**: `skills/agent-analytics/SKILL.md` — one-line auto-instrumentation for AI coding agents:
-  `npx skills add shashwat558/diagnost-ai --skill agent-analytics`
-
-Acceptance criteria & proof:
-
-```bash
-bash tools/demo/run.sh phase6   # 12 checks, all PASS
-```
-
-PASS checks: over-quota ingestion rejected 402 + audited · ingestion resumes after reset · roles seeded · settings/audit/docs pages render · Terraform AWS + GCP present · skill package present · 4 governance/billing unit tests.
-
----
-
-## Phase 7A — Hosted auth & self-serve signup ✅
-
-What was built:
-
-- **Signup → instant workspace**: `POST /api/auth/signup` provisions workspace + owner user + ingestion API key (shown once) in one transaction; session cookie issued immediately.
-- **Sessions**: opaque tokens, sha256-hashed server-side (`sessions` table, migration `0008_auth`), 30-day expiry, httpOnly cookies, revocable logout.
-- **Passwords**: scrypt (node crypto — no native deps), per-hash random salt, timing-safe compare.
-- **Dashboard gating**: route groups `(app)` / `(auth)`; unauthenticated users redirected to `/login`; role-aware nav (Settings/Audit hidden below admin); member logins blocked from admin pages at page level too.
-- **Per-tenant pages**: Settings and Audit now scope to the logged-in user's workspace instead of hardcoded dev tenant.
-- **Audit trail**: workspace creations recorded (`workspace.created`).
-
-Acceptance criteria & proof:
-
-```bash
-bash tools/demo/run.sh phase7   # 15 checks, all PASS
-```
-
-PASS checks: sessions migrated · signup provisions ws + key · /me resolves owner/free · creation audited · duplicate email & weak password rejected (400) · provisioned key ingests real events (202) · wrong password 401 · unauthenticated `/`→`/login` · owner opens settings · member blocked from settings (page + nav) · logout destroys session · 6 db unit tests incl. scrypt roundtrip.
-
----
-
-## Phase 7B — Retention & Production Hygiene ✅
-
-What was built:
-
-- **Per-plan retention enforcement**: `free 7d / starter 30d / pro 90d / enterprise ∞` — `packages/db/src/retention.ts` (`enforceRetention`) deletes `events.events` via ClickHouse `ALTER TABLE … DELETE` per workspace cutoff, purges expired `sessions` and old `audit_logs` (≥30d). ClickHouse TTL (90d) remains as safety net.
-- **CLI + dry-run**: `pnpm --filter @diagnost/db retention` (or `--dry-run`) — `packages/db/src/bin/retention.ts` loads `.env` + ClickHouse, logs per-workspace `cutoff`/`sessions_purged`. Runs as `retention-cron` in prod (daily `0 2 * * *` or docker `while sleep 86400`).
-- **Enhanced health**: `GET /readyz` — checks Postgres (`SELECT 1`), ClickHouse (`/ping`), queue state; `503` if any fail, `200` if all `ok`. `GET /healthz` stays lightweight. Auth skips both.
-- **Backup script**: `tools/backup/backup.sh` — `pg_dump` → `postgres.sql.gz` + ClickHouse `SELECT … FORMAT CSVWithNames` → `clickhouse_events.csv.gz` + MinIO `mc mirror` hint. Restore one-liner documented.
-
-Usage:
-
-```bash
-pnpm --filter @diagnost/db retention -- --dry-run   # preview cutoffs
-pnpm --filter @diagnost/db retention                # enforce now
-bash tools/backup/backup.sh ./backups/2026-09-03    # full backup
-curl -s http://localhost:4100/readyz | jq           # dependency checks
-```
-
----
-
-## Phase 7C — DodoPayments Billing (test-mode) ✅ — *full replace of Stripe*
-
-What was built:
-
-- **Checkout + portal**: `POST /api/billing/checkout` (owner/admin) — Free downgrades directly, `starter`/`pro` create Dodo Checkout (`product_cart: [{product_id}]` → `checkout_url`) (or dev-mode direct flip when `DODO_PAYMENTS_API_KEY` unset), `enterprise` → contact. `POST /api/billing/portal` creates Dodo Customer Portal. Both respect RBAC and audit (`plan.changed`).
-- **Webhook**: `POST /api/billing/webhook` — verifies Standard Webhooks (`webhook-id` + `webhook-signature` + `webhook-timestamp` via `standardwebhooks`) when `DODO_PAYMENTS_WEBHOOK_KEY` set; handles `payment.succeeded` / `subscription.active` / `subscription.renewed` / `subscription.cancelled` → `workspaces.plan` + `dodo_customer_id`/`dodo_subscription_id`. Dev-mode accepts synthetic `{ workspaceId, plan }` JSON when Dodo not configured (so acceptance works at $0).
-- **Per-workspace Dodo ids**: migration `0010_dodo.sql` adds `dodo_customer_id`, `dodo_subscription_id`, `dodo_product_id` to `workspaces` (keeps `stripe_*` for rollback).
-- **Settings UI**: `UpgradeButton` (client, `useState` + `fetch` → redirect or `router.refresh()` in dev) + `PortalButton` + success/cancel banners via `?checkout=`; quota cache (15s TTL) picks up new `plan.monthlyEvents` immediately.
-
-Env (all optional in dev — dev-mode fallback when unset):
+## Project structure
 
 ```
-DODO_PAYMENTS_API_KEY=dodo_test_...
-DODO_PAYMENTS_WEBHOOK_KEY=whsec_...
-DODO_PAYMENTS_ENVIRONMENT=test_mode
-DODO_PAYMENTS_RETURN_URL=http://localhost:3100/settings?checkout=success
-DODO_PAYMENTS_PRODUCT_STARTER=pdt_...
-DODO_PAYMENTS_PRODUCT_PRO=pdt_...
-NEXT_PUBLIC_APP_URL=http://localhost:3100
+apps/
+  api/          Fastify ingestion API + consumer + notifier workers
+  dashboard/    Next.js 15 app (landing, dashboard, docs, auth, billing)
+  analysis/     Python clustering / judge / drift / feature workers
+  pr-bot/       auto-remediation → eval-gated pull requests
+  finetune/     SFT export, specialist training, benchmarks
+packages/
+  core/         shared zod event schema       db/  pg/CH/S3 + auth/billing/governance
+  queue/        Kafka wrapper                 sdk-ts/  OTel exporter + PII redaction
+skills/         agent-analytics installer     tools/   demo seeds, acceptance, backup, install.sh
+infra/          clickhouse init, Caddy, Terraform
 ```
 
-Usage (dev, no keys):
+**Stack:** Node 20 + Fastify · Redpanda · ClickHouse · MinIO · Postgres 16 · Python (HDBSCAN/scikit-learn) · Next.js 15 + Tailwind + Recharts + Zustand + TanStack Query + RHF + Zod + shadcn/ui · DodoPayments.
 
-```bash
-curl -s -b jar.txt -X POST http://localhost:3100/api/billing/checkout \
-  -H 'content-type: application/json' -d '{"plan":"pro"}' | jq
-# → {"ok":true,"plan":"pro","devMode":true}  (workspace plan flips, quota 2M)
-curl -s http://localhost:3100/readyz | jq  # still ok
-```
+## Docs & development
 
-*(Next up: Concierge installer, real SMTP, docs polish.)*
+- In-app docs site: `:3100/docs` — overview, quickstart, instrumentation, concepts, dashboard tour, alerts, billing, self-host, API reference, skill.
+- `pnpm lint && pnpm typecheck && pnpm build && pnpm test` — all green required.
+- Acceptance per area: `bash tools/demo/run.sh phase{0..8,7e,7f}` (CI runs them all against real Docker infra).
+- Build history, phase by phase: [`docs/BUILD_LOG.md`](docs/BUILD_LOG.md).
 
----
+## License
 
-## Phase 7F — Notifications (real SMTP + channels UI) ✅
-
-What was built:
-
-- **Real SMTP providers**: `SMTP_URL` already accepted URL auth — now documented + wired with `SMTP_FROM` and `DASHBOARD_URL` (`packages/db/src/config.ts`). Resend/SES work as `smtp://user:pass@smtp.resend.com:587` (STARTTLS automatic; `?secure=true` for 465). Notifier uses `cfg.smtpFrom` / `cfg.dashboardUrl` instead of hardcoded values.
-- **Channels CRUD API** (owner/admin, workspace-scoped): `GET/POST /api/channels` (409 on duplicate, 400 on invalid email/webhook), `PATCH/DELETE /api/channels/:id`, `POST /api/channels/:id/test` (sends a real test email/Slack message; 502 with provider error on failure). Slack targets masked in list responses.
-- **Settings UI**: `Alert notifications` card with `ChannelsManager` (TanStack Query: list, add with RHF+zod validation, enable/disable, test, remove).
-- **Docs**: in-app `/docs` gains `Alerts & notifications`; stale skill URL fixed.
-
-Acceptance criteria & proof:
-
-```bash
-bash tools/demo/run.sh phase7f   # 12 checks, all PASS
-```
-
-PASS checks: seeded channel listed · invalid email 400 · create 201 · duplicate 409 · disable/enable · test accepted + email lands in MailHog · delete + gone · member 403 · anon 401 · settings section renders.
+TBD — pick one before public launch (MIT recommended for open-source-led growth; proprietary license if going closed-source).
