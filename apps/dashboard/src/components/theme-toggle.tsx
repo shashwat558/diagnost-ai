@@ -20,7 +20,7 @@ function MoonIcon({ className }: { className?: string }) {
   );
 }
 
-export function ThemeToggle({ className }: { className?: string }) {
+export function ThemeToggle({ className, iconOnly = false }: { className?: string; iconOnly?: boolean }) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -36,7 +36,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       className={`flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 ${className ?? ""}`}
     >
       {dark ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
-      {dark ? "Light mode" : "Dark mode"}
+      {!iconOnly && (dark ? "Light mode" : "Dark mode")}
     </button>
   );
 }

@@ -6,8 +6,8 @@ export default {
     extend: {
       colors: {
         accent: {
-          DEFAULT: "#7c3aed",
-          soft: "#f3eefe",
+          DEFAULT: "#ea580c",
+          soft: "#ffedd5",
         },
       },
       fontSize: {

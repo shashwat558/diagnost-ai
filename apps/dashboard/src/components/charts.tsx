@@ -41,7 +41,7 @@ function EventsTooltip({
         <div key={p.name} className="flex items-center gap-2 text-sm tabular-nums text-gray-700 dark:text-gray-300">
           <span
             className="inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: p.name === "ok" ? "#7c3aed" : "#ef4444" }}
+            style={{ backgroundColor: p.name === "ok" ? "#ea580c" : "#ef4444" }}
           />
           {p.name === "ok" ? "Passed" : "Failed"} · <strong>{Number(p.value ?? 0).toLocaleString()}</strong>&nbsp;events
         </div>
@@ -67,7 +67,7 @@ function MsTooltip({
         <div key={p.name} className="flex items-center gap-2 text-sm tabular-nums text-gray-700 dark:text-gray-300">
           <span
             className="inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: p.name === "p50" ? "#7c3aed" : "#a78bfa" }}
+            style={{ backgroundColor: p.name === "p50" ? "#ea580c" : "#fdba74" }}
           />
           {p.name === "p50" ? "Typical (p50)" : "Slowest 5% (p95)"} ·{" "}
           <strong>{Math.round(Number(p.value ?? 0)).toLocaleString()} ms</strong>
@@ -87,8 +87,8 @@ export function VolumeChart({
       <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
         <defs>
           <linearGradient id="volOk" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.28} />
-            <stop offset="100%" stopColor="#7c3aed" stopOpacity={0.02} />
+            <stop offset="0%" stopColor="#ea580c" stopOpacity={0.28} />
+            <stop offset="100%" stopColor="#ea580c" stopOpacity={0.02} />
           </linearGradient>
           <linearGradient id="volErr" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#ef4444" stopOpacity={0.25} />
@@ -105,7 +105,7 @@ export function VolumeChart({
           iconSize={8}
           formatter={(v) => (v === "ok" ? "Passed" : "Failed")}
         />
-        <Area type="monotone" dataKey="ok" stroke="#7c3aed" strokeWidth={2} fill="url(#volOk)" dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="ok" />
+        <Area type="monotone" dataKey="ok" stroke="#ea580c" strokeWidth={2} fill="url(#volOk)" dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="ok" />
         <Area type="monotone" dataKey="error" stroke="#ef4444" strokeWidth={2} fill="url(#volErr)" dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="error" />
       </AreaChart>
     </ResponsiveContainer>
@@ -130,8 +130,8 @@ export function LatencyChart({
           iconSize={8}
           formatter={(v) => (v === "p50" ? "Typical (p50)" : "Slowest 5% (p95)")}
         />
-        <Line type="monotone" dataKey="p50" stroke="#7c3aed" strokeWidth={2} dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="p50" />
-        <Line type="monotone" dataKey="p95" stroke="#a78bfa" strokeWidth={2} strokeDasharray="5 4" dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="p95" />
+        <Line type="monotone" dataKey="p50" stroke="#ea580c" strokeWidth={2} dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="p50" />
+        <Line type="monotone" dataKey="p95" stroke="#fdba74" strokeWidth={2} strokeDasharray="5 4" dot={false} activeDot={{ r: 3.5, strokeWidth: 1, stroke: "#fff" }} name="p95" />
       </LineChart>
     </ResponsiveContainer>
   );

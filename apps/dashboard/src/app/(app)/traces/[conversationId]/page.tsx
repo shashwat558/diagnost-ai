@@ -171,7 +171,7 @@ export default async function TraceDetailPage({
                 </td>
                 <td className="border-b border-gray-100 dark:border-gray-800 py-2.5">
                   {piiCount > 0 ? (
-                    <span className="inline-flex items-center gap-1 rounded bg-violet-50 px-1.5 py-0.5 text-xs font-medium text-accent" title="Sensitive values in this step were hidden before storage.">
+                    <span className="inline-flex items-center gap-1 rounded bg-orange-50 px-1.5 py-0.5 text-xs font-medium text-accent" title="Sensitive values in this step were hidden before storage.">
                       <Icon name="shield" className="h-3 w-3" />
                       {piiCount} hidden
                     </span>

@@ -38,7 +38,7 @@ export function Inline({ children }: { children: React.ReactNode }) {
 
 export function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="my-3 max-w-3xl rounded-lg border border-violet-200 bg-violet-50 px-3.5 py-2.5 text-sm leading-6 text-violet-900 dark:border-violet-900 dark:bg-violet-950/50 dark:text-violet-200">
+    <div className="my-3 max-w-3xl rounded-lg border border-orange-200 bg-orange-50 px-3.5 py-2.5 text-sm leading-6 text-orange-900 dark:border-orange-900 dark:bg-orange-950/50 dark:text-orange-200">
       {children}
     </div>
   );

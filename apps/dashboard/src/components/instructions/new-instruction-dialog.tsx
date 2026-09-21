@@ -112,7 +112,7 @@ export function NewInstructionDialog({
           <textarea
             {...register("content")}
             rows={6}
-            className="mt-1 w-full rounded-md border border-gray-200 dark:border-gray-800 px-3 py-2 font-mono text-sm outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-gray-300 focus:ring-2 focus:ring-violet-100"
+            className="mt-1 w-full rounded-md border border-gray-200 dark:border-gray-800 px-3 py-2 font-mono text-sm outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-gray-300 focus:ring-2 focus:ring-orange-100"
             placeholder="You are a booking assistant. Always validate dates (month 1-12) before confirming…"
           />
           {errors.content && (

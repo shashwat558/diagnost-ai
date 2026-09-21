@@ -1,42 +1,47 @@
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
-      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur dark:border-gray-800 dark:bg-gray-950/80">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+    <div className="min-h-screen bg-[#fafaf9] text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+      <div className="sticky top-3 z-50 mx-auto max-w-6xl px-4 sm:px-6">
+        <header className="flex h-12 items-center justify-between gap-4 rounded-full bg-gray-950 py-1 pl-4 pr-1.5 text-white shadow-lg dark:bg-gray-900 dark:ring-1 dark:ring-gray-800">
           <Link href="/" className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-sm font-bold text-white">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-white">
               D
             </span>
-            <span className="text-base font-semibold text-gray-900 dark:text-gray-100">Diagnost AI</span>
+            <span className="text-sm font-semibold tracking-wide">DIAGNOST</span>
           </Link>
-          <nav className="hidden items-center gap-6 text-sm text-gray-600 md:flex dark:text-gray-400">
-            <a href="#features" className="hover:text-gray-900 dark:hover:text-gray-100">
-              Features
+          <nav className="hidden items-center gap-6 text-sm text-gray-300 md:flex">
+            <a href="#product" className="hover:text-white">
+              Product
             </a>
-            <a href="#pricing" className="hover:text-gray-900 dark:hover:text-gray-100">
+            <a href="#pricing" className="hover:text-white">
               Pricing
             </a>
-            <a href="/docs" className="hover:text-gray-900 dark:hover:text-gray-100">
+            <Link href="/docs" className="hover:text-white">
               Docs
-            </a>
-          </nav>
-          <div className="flex items-center gap-2">
-            <ThemeToggle className="hidden sm:flex" />
-            <Link href="/login" className={buttonVariants({ variant: "ghost", size: "sm" })}>
-              Log in
             </Link>
-            <Link href="/signup" className={buttonVariants({ size: "sm" })}>
+          </nav>
+          <div className="flex items-center gap-1.5">
+            <ThemeToggle iconOnly className="hidden !gap-0 !px-2 !text-gray-200 hover:!bg-gray-800 hover:!text-white sm:flex" />
+            <Link
+              href="/login"
+              className="rounded-full px-3 py-1.5 text-sm text-gray-200 hover:bg-gray-800 hover:text-white"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/signup"
+              className="rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-white hover:bg-orange-700"
+            >
               Start free
             </Link>
           </div>
-        </div>
-      </header>
+        </header>
+      </div>
       {children}
-      <footer className="border-t border-gray-100 py-8 dark:border-gray-800">
+      <footer className="border-t border-gray-200 py-8 dark:border-gray-800">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-gray-500 md:flex-row dark:text-gray-400">
           <span>© {new Date().getFullYear()} Diagnost AI · Production analytics for AI agents</span>
           <div className="flex gap-4">

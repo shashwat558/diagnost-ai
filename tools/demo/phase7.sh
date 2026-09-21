@@ -83,11 +83,11 @@ CODE=$(curl -s -o /dev/null -w "%{http_code}" -c "$JAR_O" -X POST "$DASH/api/aut
 # ── dashboard gating ────────────────────────────────────────────────
 LOC=$(curl -s -o /dev/null -w "%{redirect_url}" "$DASH/dashboard")
 [[ "$LOC" == *"/login"* ]] && pass "unauthenticated /dashboard redirects to /login" || fail "redirect=$LOC"
-# landing page is public with hero background
+# landing page is public with accountability-style hero
 CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DASH/")
 BODY=$(curl -s "$DASH/")
-[[ "$CODE" == "200" ]] && echo "$BODY" | grep -q "Production analytics" && echo "$BODY" | grep -q "hero.jpg" \
-  && pass "landing page renders hero with background image" || fail "landing broken ($CODE)"
+[[ "$CODE" == "200" ]] && echo "$BODY" | grep -q "held to account" && echo "$BODY" | grep -q "Create workspace" \
+  && pass "landing page renders accountability hero" || fail "landing broken ($CODE)"
 CODE=$(curl -s -o /dev/null -w "%{http_code}" -b "$JAR_O" "$DASH/settings")
 [[ "$CODE" == "200" ]] && pass "owner can open /settings" || fail "owner settings=$CODE"
 

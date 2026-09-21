@@ -6,7 +6,7 @@ import { Area, AreaChart, Tooltip } from "recharts";
 /** Recharts-based sparkline (table trend column, header card). */
 export function Sparkline({
   points,
-  color = "#7c3aed",
+  color = "#ea580c",
   width = 64,
   height = 20,
 }: {
