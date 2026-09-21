@@ -85,9 +85,9 @@ export function HeroDashboard() {
             <span className="text-xs font-medium text-gray-300">Conversations and failures</span>
             <span className="text-[10px] text-gray-600">daily · last 7 days</span>
           </div>
-          <div className="mt-2 h-60">
+          <div className="mt-2 h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={SERIES} margin={{ top: 4, right: 4, bottom: 0, left: -18 }}>
+              <AreaChart data={SERIES} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
                 <defs>
                   <linearGradient id="heroOk" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#ea580c" stopOpacity={0.45} />
@@ -99,7 +99,7 @@ export function HeroDashboard() {
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="d" tick={{ fill: "#9ca3af", fontSize: 10 }} tickLine={false} axisLine={false} />
-                <YAxis tick={{ fill: "#9ca3af", fontSize: 10 }} tickLine={false} axisLine={false} width={36} />
+                <YAxis tick={{ fill: "#9ca3af", fontSize: 10 }} tickLine={false} axisLine={false} width={44} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "#27272a",
