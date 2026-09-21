@@ -5,9 +5,9 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-[#fafaf9] text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       <div className="sticky top-3 z-50 mx-auto max-w-6xl px-4 sm:px-6">
-        <header className="flex h-12 items-center justify-between gap-4 rounded-full bg-zinc-800 py-1 pl-4 pr-1.5 text-white shadow-lg dark:bg-zinc-800 dark:ring-1 dark:ring-zinc-700">
+        <header className="flex h-12 items-center justify-between gap-4 rounded-none bg-zinc-800 py-1 pl-4 pr-1.5 text-white shadow-lg dark:bg-zinc-800 dark:ring-1 dark:ring-zinc-700">
           <Link href="/" className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-white">
+            <span className="flex h-6 w-6 items-center justify-center rounded-none bg-accent text-[13px] font-bold text-white">
               D
             </span>
             <span className="text-sm font-semibold tracking-wide">DIAGNOST</span>
@@ -33,7 +33,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             </Link>
             <Link
               href="/signup"
-              className="rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-white hover:bg-orange-700"
+              className="rounded-none bg-accent px-4 py-1.5 text-sm font-medium text-white hover:bg-orange-700"
             >
               Start free
             </Link>

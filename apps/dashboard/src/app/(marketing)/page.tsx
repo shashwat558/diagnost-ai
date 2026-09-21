@@ -3,6 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Icon } from "@/components/icon";
 import { HeroDashboard } from "@/components/hero-dashboard";
+import { DitherWave } from "@/components/dither-wave";
 
 const INTEGRATIONS = ["LangChain", "Vercel AI SDK", "MCP", "OpenAI", "Anthropic"];
 
@@ -15,44 +16,50 @@ const STATS = [
 export default function LandingPage() {
   return (
     <div>
-      {/* Hero */}
-      <section id="product" className="mx-auto max-w-6xl px-6 pb-10 pt-14 text-center md:pt-20">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1 text-[11px] font-medium tracking-wide text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          ANALYTICS LAYER FOR AI AGENTS
-        </span>
-
-        <h1 className="mx-auto mt-5 max-w-3xl text-5xl font-semibold leading-[1.05] tracking-tight text-gray-950 md:text-6xl dark:text-white">
-          Agent work,
-          <br />
-          held to account.
-        </h1>
-
-        <p className="mx-auto mt-4 max-w-xl text-base leading-6 text-gray-500 dark:text-gray-400">
-          Capture every agent conversation, surface the failures that matter, and ship verified
-          fixes — with the evidence attached.
-        </p>
-
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/signup"
-            className="rounded-full bg-zinc-800 px-6 py-2.5 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200"
-          >
-            Create workspace
-          </Link>
-          <Link
-            href="/login"
-            className="rounded-full border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
-          >
-            Explore the live dashboard
-          </Link>
+      {/* Hero — DitherWave shader background, copy floats above it */}
+      <section id="product" className="relative overflow-hidden">
+        <div className="absolute inset-x-0 bottom-0 top-12 blur-[1px]" aria-hidden="true">
+          <DitherWave colorFront="#c2410c" />
         </div>
-        <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
-          Free plan included · no card · first agent connected in one afternoon
-        </p>
+        {/* blend into the page background below */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-[#fafaf9] dark:to-gray-950" />
 
-        <div className="mx-auto mt-10 max-w-6xl text-left">
-          <HeroDashboard />
+        <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-14 text-center md:pt-20">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-medium tracking-wide text-gray-300 backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            ANALYTICS LAYER FOR AI AGENTS
+          </span>
+
+          <h1 className="mx-auto mt-5 max-w-3xl text-5xl font-semibold leading-[1.05] tracking-tight text-white md:text-6xl">
+            Agent work, held to account.
+          </h1>
+
+          <p className="mx-auto mt-4 max-w-xl text-base leading-6 text-gray-300">
+            Capture every agent conversation, surface the failures that matter, and ship verified
+            fixes — with the evidence attached.
+          </p>
+
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/signup"
+              className="rounded-full bg-white px-6 py-2.5 text-sm font-medium text-gray-950 hover:bg-gray-200"
+            >
+              Create workspace
+            </Link>
+            <Link
+              href="/login"
+              className="rounded-full border border-white/25 px-6 py-2.5 text-sm font-medium text-white hover:bg-white/10"
+            >
+              Explore the live dashboard
+            </Link>
+          </div>
+          <p className="mt-3 text-xs text-gray-400">
+            Free plan included · no card · first agent connected in one afternoon
+          </p>
+
+          <div className="mx-auto mt-10 max-w-6xl text-left">
+            <HeroDashboard />
+          </div>
         </div>
       </section>
 
@@ -105,10 +112,12 @@ export default function LandingPage() {
               Catch the spike, not the noise.
             </h3>
             <p className="mt-3 max-w-md text-sm leading-6 text-orange-50">
-              Failure-rate spikes stop at a named intent with the exact conversations attached.
-              Flat failure rates stay quiet — no alert fatigue.
+              Failure-rate spikes stop at a named intent with the exact conversations attached. Flat
+              failure rates stay quiet — no alert fatigue.
             </p>
-            <p className="mt-4 text-xs text-orange-100/80">One alert on the real spike. Nothing else.</p>
+            <p className="mt-4 text-xs text-orange-100/80">
+              One alert on the real spike. Nothing else.
+            </p>
           </div>
 
           {/* live intent map */}
@@ -116,7 +125,9 @@ export default function LandingPage() {
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-100 text-accent dark:bg-orange-950">
               <Icon name="activity" className="h-4 w-4" />
             </span>
-            <h3 className="mt-3 text-base font-semibold text-gray-950 dark:text-white">Live intent map</h3>
+            <h3 className="mt-3 text-base font-semibold text-gray-950 dark:text-white">
+              Live intent map
+            </h3>
             <p className="mt-1.5 text-sm leading-6 text-gray-500 dark:text-gray-400">
               Know which intent is failing, what it is attempting, and how fast it is growing.
             </p>
@@ -141,7 +152,9 @@ export default function LandingPage() {
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
               <Icon name="shield" className="h-4 w-4" />
             </span>
-            <h3 className="mt-3 text-base font-semibold text-gray-950 dark:text-white">Quota guardrails</h3>
+            <h3 className="mt-3 text-base font-semibold text-gray-950 dark:text-white">
+              Quota guardrails
+            </h3>
             <p className="mt-1.5 text-sm leading-6 text-gray-500 dark:text-gray-400">
               Limit each workspace and the month as a whole. Over-quota workspaces get HTTP 402
               before the budget is crossed.
@@ -166,7 +179,8 @@ export default function LandingPage() {
               A history built for investigation
             </h3>
             <p className="mt-1.5 text-sm leading-6 text-gray-500 dark:text-gray-400">
-              Open any conversation to see its steps in order. Failures stay attached to their cause.
+              Open any conversation to see its steps in order. Failures stay attached to their
+              cause.
             </p>
             <div className="mt-4 space-y-1.5 rounded-lg bg-gray-50 p-3 font-mono text-[11px] dark:bg-gray-950">
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
@@ -189,7 +203,9 @@ export default function LandingPage() {
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
               <Icon name="bell" className="h-4 w-4" />
             </span>
-            <h3 className="mt-3 text-base font-semibold text-gray-950 dark:text-white">Reliable alerts</h3>
+            <h3 className="mt-3 text-base font-semibold text-gray-950 dark:text-white">
+              Reliable alerts
+            </h3>
             <p className="mt-1.5 text-sm leading-6 text-gray-500 dark:text-gray-400">
               Drift scans with dedup, hourly rate limits, and one-click test delivery. Slack and
               email, on your own SMTP.
@@ -200,21 +216,56 @@ export default function LandingPage() {
 
       {/* Pricing */}
       <section id="pricing" className="mx-auto max-w-6xl px-6 py-10">
-        <h2 className="text-base font-semibold text-gray-950 dark:text-gray-100">Simple, usage-based pricing</h2>
+        <h2 className="text-base font-semibold text-gray-950 dark:text-gray-100">
+          Simple, usage-based pricing
+        </h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Start free, upgrade when you need more. Self-host from Free.
         </p>
 
         <div className="mt-6 grid gap-3 md:grid-cols-4">
           {[
-            { name: "Free", price: "$0", events: "50k / mo", retention: "7-day", cta: "Start free", href: "/signup", current: true },
-            { name: "Starter", price: "$49", events: "250k / mo", retention: "30-day", cta: "Upgrade", href: "/signup" },
-            { name: "Pro", price: "$299", events: "2M / mo", retention: "90-day", cta: "Upgrade", href: "/signup" },
-            { name: "Enterprise", price: "Custom", events: "Unlimited", retention: "365-day", cta: "Contact us", href: "/docs" },
+            {
+              name: "Free",
+              price: "$0",
+              events: "50k / mo",
+              retention: "7-day",
+              cta: "Start free",
+              href: "/signup",
+              current: true,
+            },
+            {
+              name: "Starter",
+              price: "$49",
+              events: "250k / mo",
+              retention: "30-day",
+              cta: "Upgrade",
+              href: "/signup",
+            },
+            {
+              name: "Pro",
+              price: "$299",
+              events: "2M / mo",
+              retention: "90-day",
+              cta: "Upgrade",
+              href: "/signup",
+            },
+            {
+              name: "Enterprise",
+              price: "Custom",
+              events: "Unlimited",
+              retention: "365-day",
+              cta: "Contact us",
+              href: "/docs",
+            },
           ].map((tier) => (
             <Card key={tier.name} className={tier.current ? "border-accent/40" : ""}>
-              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{tier.name}</div>
-              <div className="mt-1 text-2xl font-semibold text-gray-950 dark:text-white">{tier.price}</div>
+              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {tier.name}
+              </div>
+              <div className="mt-1 text-2xl font-semibold text-gray-950 dark:text-white">
+                {tier.price}
+              </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 {tier.events} · {tier.retention} retention
               </div>
@@ -232,14 +283,17 @@ export default function LandingPage() {
           ))}
         </div>
         <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
-          All plans include PII redaction, audit log, and roles. Over-quota ingestion returns HTTP 402.
+          All plans include PII redaction, audit log, and roles. Over-quota ingestion returns HTTP
+          402.
         </p>
       </section>
 
       {/* Bottom CTA */}
       <section className="mx-auto max-w-6xl px-6 pb-14">
         <div className="rounded-2xl bg-gray-950 px-6 py-12 text-center text-white dark:bg-black dark:ring-1 dark:ring-gray-800">
-          <h3 className="text-2xl font-semibold tracking-tight md:text-3xl">Ship agents with confidence</h3>
+          <h3 className="text-2xl font-semibold tracking-tight md:text-3xl">
+            Ship agents with confidence
+          </h3>
           <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-400">
             Hosted or self-hosted. One `npx skills add` to instrument, one dashboard to see, fix,
             and improve.

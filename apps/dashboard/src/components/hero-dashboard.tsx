@@ -24,9 +24,9 @@ const WEEK = [
 
 export function HeroDashboard() {
   return (
-    <div className="overflow-hidden rounded-2xl bg-zinc-800 text-gray-200 shadow-2xl ring-1 ring-zinc-700">
+    <div className="min-h-[780px] overflow-hidden rounded-none bg-zinc-800 text-gray-200 shadow-2xl ring-1 ring-zinc-700">
       {/* window bar */}
-      <div className="flex items-center gap-3 border-b border-zinc-700/70 px-4 py-2.5">
+      <div className="flex items-center gap-3 border-b border-zinc-700/70 px-5 py-3">
         <span className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-white">
           <span className="flex h-4 w-4 items-center justify-center rounded bg-accent text-[10px] font-bold text-white">
             D
@@ -39,13 +39,13 @@ export function HeroDashboard() {
         <span className="mx-auto hidden w-full max-w-xs truncate rounded-md bg-zinc-900 px-3 py-1 text-center text-[11px] text-gray-500 md:block">
           Search conversations, intents, errors…
         </span>
-        <span className="ml-auto text-[11px] text-gray-500 md:ml-0">Docs</span>
+        <span className="ml-auto text-[11px] text-gray-400 md:ml-0">Docs</span>
       </div>
 
-      <div className="grid md:grid-cols-[170px_1fr_200px]">
+      <div className="grid md:grid-cols-[200px_1fr_230px]">
         {/* mini sidebar */}
-        <div className="hidden border-r border-zinc-700/70 p-3 text-[11px] md:block">
-          <div className="px-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-600">
+        <div className="hidden border-r border-zinc-700/70 p-4 text-xs md:block">
+          <div className="px-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500">
             Observe
           </div>
           {[
@@ -54,17 +54,17 @@ export function HeroDashboard() {
             { icon: "target", label: "Intents", badge: "3" },
             { icon: "database", label: "Events" },
           ].map((i) => (
-            <div key={i.label} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-gray-400">
+            <div key={i.label} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-gray-300">
               <Icon name={i.icon} className="h-3.5 w-3.5" />
               {i.label}
               {i.badge && (
-                <span className="ml-auto rounded bg-zinc-700 px-1.5 text-[10px] text-gray-300">
+                <span className="ml-auto rounded bg-zinc-700 px-1.5 text-[10px] text-gray-200">
                   {i.badge}
                 </span>
               )}
             </div>
           ))}
-          <div className="px-1 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wider text-gray-600">
+          <div className="px-1 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wider text-gray-500">
             Act
           </div>
           {[
@@ -72,7 +72,7 @@ export function HeroDashboard() {
             { icon: "sparkles", label: "Auto-fix" },
             { icon: "shield", label: "Audit log" },
           ].map((i) => (
-            <div key={i.label} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-gray-400">
+            <div key={i.label} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-gray-300">
               <Icon name={i.icon} className="h-3.5 w-3.5" />
               {i.label}
             </div>
@@ -80,12 +80,12 @@ export function HeroDashboard() {
         </div>
 
         {/* chart */}
-        <div className="border-zinc-700/70 p-4 md:border-r">
+        <div className="border-zinc-700/70 p-5 md:border-r">
           <div className="flex items-baseline justify-between">
-            <span className="text-xs font-medium text-gray-300">Conversations and failures</span>
-            <span className="text-[10px] text-gray-600">daily · last 7 days</span>
+            <span className="text-sm font-medium text-gray-300">Conversations and failures</span>
+            <span className="text-[11px] text-gray-500">daily · last 7 days</span>
           </div>
-          <div className="mt-2 h-80">
+          <div className="mt-2 h-[620px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={SERIES} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
                 <defs>
@@ -113,12 +113,12 @@ export function HeroDashboard() {
                     name === "ok" ? "Passed" : "Failed",
                   ]}
                 />
-                <Area type="monotone" dataKey="ok" stroke="#ea580c" strokeWidth={2} fill="url(#heroOk)" dot={false} name="ok" />
-                <Area type="monotone" dataKey="failed" stroke="#ef4444" strokeWidth={2} fill="url(#heroErr)" dot={false} name="failed" />
+                <Area type="monotone" dataKey="ok" stroke="#ea580c" strokeWidth={2} fill="url(#heroOk)" dot={false} name="ok" isAnimationActive={false} />
+                <Area type="monotone" dataKey="failed" stroke="#ef4444" strokeWidth={2} fill="url(#heroErr)" dot={false} name="failed" isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-1 flex items-center gap-4 text-[10px] text-gray-500">
+          <div className="mt-1 flex items-center gap-4 text-[10px] text-gray-400">
             <span className="flex items-center gap-1.5">
               <span className="h-1.5 w-4 rounded-full bg-accent" /> Passed
             </span>
@@ -129,12 +129,12 @@ export function HeroDashboard() {
         </div>
 
         {/* stats column */}
-        <div className="hidden p-4 md:block">
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-600">This week</div>
-          <dl className="mt-2 space-y-2.5">
+        <div className="hidden p-5 md:block">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">This week</div>
+          <dl className="mt-3 space-y-3">
             {WEEK.map((s) => (
-              <div key={s.label} className="flex items-baseline justify-between text-xs">
-                <dt className="text-gray-500">{s.label}</dt>
+              <div key={s.label} className="flex items-baseline justify-between text-sm">
+                <dt className="text-gray-400">{s.label}</dt>
                 <dd className={`font-semibold tabular-nums ${s.danger ? "text-red-400" : "text-gray-100"}`}>
                   {s.value}
                 </dd>
@@ -149,7 +149,7 @@ export function HeroDashboard() {
             <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-700">
               <div className="h-full w-1/3 rounded-full bg-accent" />
             </div>
-            <div className="mt-1 text-[10px] text-gray-600">16k of 50k events</div>
+            <div className="mt-1 text-[10px] text-gray-500">16k of 50k events</div>
           </div>
         </div>
       </div>

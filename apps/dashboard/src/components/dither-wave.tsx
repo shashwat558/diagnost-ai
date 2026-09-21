@@ -16,7 +16,7 @@ export type DitherWaveProps = {
 };
 
 const DEFAULTS = {
-  colorFront: "#FF6A00",
+  colorFront: "#ff8e3d",
   colorBack: "#0B0F1A",
   pixelSize: 6,
   gap: 1,
