@@ -5,7 +5,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-[#fafaf9] text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       <div className="sticky top-3 z-50 mx-auto max-w-6xl px-4 sm:px-6">
-        <header className="flex h-12 items-center justify-between gap-4 rounded-full bg-gray-950 py-1 pl-4 pr-1.5 text-white shadow-lg dark:bg-gray-900 dark:ring-1 dark:ring-gray-800">
+        <header className="flex h-12 items-center justify-between gap-4 rounded-full bg-zinc-800 py-1 pl-4 pr-1.5 text-white shadow-lg dark:bg-zinc-800 dark:ring-1 dark:ring-zinc-700">
           <Link href="/" className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent text-[13px] font-bold text-white">
               D
@@ -27,7 +27,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <ThemeToggle iconOnly className="hidden !gap-0 !px-2 !text-gray-200 hover:!bg-gray-800 hover:!text-white sm:flex" />
             <Link
               href="/login"
-              className="rounded-full px-3 py-1.5 text-sm text-gray-200 hover:bg-gray-800 hover:text-white"
+              className="rounded-full px-3 py-1.5 text-sm text-gray-200 hover:bg-zinc-700 hover:text-white"
             >
               Sign in
             </Link>

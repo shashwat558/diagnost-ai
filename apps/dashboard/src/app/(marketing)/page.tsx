@@ -36,7 +36,7 @@ export default function LandingPage() {
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/signup"
-            className="rounded-full bg-gray-950 px-6 py-2.5 text-sm font-medium text-white hover:bg-gray-800 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200"
+            className="rounded-full bg-zinc-800 px-6 py-2.5 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200"
           >
             Create workspace
           </Link>
@@ -51,7 +51,7 @@ export default function LandingPage() {
           Free plan included · no card · first agent connected in one afternoon
         </p>
 
-        <div className="mx-auto mt-10 max-w-5xl text-left">
+        <div className="mx-auto mt-10 max-w-6xl text-left">
           <HeroDashboard />
         </div>
       </section>

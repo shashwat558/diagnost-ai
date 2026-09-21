@@ -24,27 +24,27 @@ const WEEK = [
 
 export function HeroDashboard() {
   return (
-    <div className="overflow-hidden rounded-2xl bg-gray-950 text-gray-200 shadow-2xl ring-1 ring-gray-800">
+    <div className="overflow-hidden rounded-2xl bg-zinc-800 text-gray-200 shadow-2xl ring-1 ring-zinc-700">
       {/* window bar */}
-      <div className="flex items-center gap-3 border-b border-gray-800/80 px-4 py-2.5">
+      <div className="flex items-center gap-3 border-b border-zinc-700/70 px-4 py-2.5">
         <span className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-white">
           <span className="flex h-4 w-4 items-center justify-center rounded bg-accent text-[10px] font-bold text-white">
             D
           </span>
           DIAGNOST
         </span>
-        <span className="hidden rounded bg-gray-800 px-2 py-0.5 text-[11px] text-gray-400 sm:inline">
+        <span className="hidden rounded bg-zinc-700 px-2 py-0.5 text-[11px] text-gray-400 sm:inline">
           ● Production
         </span>
-        <span className="mx-auto hidden w-full max-w-xs truncate rounded-md bg-gray-900 px-3 py-1 text-center text-[11px] text-gray-500 md:block">
+        <span className="mx-auto hidden w-full max-w-xs truncate rounded-md bg-zinc-900 px-3 py-1 text-center text-[11px] text-gray-500 md:block">
           Search conversations, intents, errors…
         </span>
         <span className="ml-auto text-[11px] text-gray-500 md:ml-0">Docs</span>
       </div>
 
-      <div className="grid md:grid-cols-[150px_1fr_180px]">
+      <div className="grid md:grid-cols-[170px_1fr_200px]">
         {/* mini sidebar */}
-        <div className="hidden border-r border-gray-800/80 p-3 text-[11px] md:block">
+        <div className="hidden border-r border-zinc-700/70 p-3 text-[11px] md:block">
           <div className="px-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-600">
             Observe
           </div>
@@ -58,7 +58,7 @@ export function HeroDashboard() {
               <Icon name={i.icon} className="h-3.5 w-3.5" />
               {i.label}
               {i.badge && (
-                <span className="ml-auto rounded bg-gray-800 px-1.5 text-[10px] text-gray-300">
+                <span className="ml-auto rounded bg-zinc-700 px-1.5 text-[10px] text-gray-300">
                   {i.badge}
                 </span>
               )}
@@ -80,12 +80,12 @@ export function HeroDashboard() {
         </div>
 
         {/* chart */}
-        <div className="border-gray-800/80 p-4 md:border-r">
+        <div className="border-zinc-700/70 p-4 md:border-r">
           <div className="flex items-baseline justify-between">
             <span className="text-xs font-medium text-gray-300">Conversations and failures</span>
             <span className="text-[10px] text-gray-600">daily · last 7 days</span>
           </div>
-          <div className="mt-2 h-44">
+          <div className="mt-2 h-60">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={SERIES} margin={{ top: 4, right: 4, bottom: 0, left: -18 }}>
                 <defs>
@@ -98,12 +98,12 @@ export function HeroDashboard() {
                     <stop offset="100%" stopColor="#ef4444" stopOpacity={0.03} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="d" tick={{ fill: "#4b5563", fontSize: 10 }} tickLine={false} axisLine={false} />
-                <YAxis tick={{ fill: "#4b5563", fontSize: 10 }} tickLine={false} axisLine={false} width={36} />
+                <XAxis dataKey="d" tick={{ fill: "#9ca3af", fontSize: 10 }} tickLine={false} axisLine={false} />
+                <YAxis tick={{ fill: "#9ca3af", fontSize: 10 }} tickLine={false} axisLine={false} width={36} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#111827",
-                    border: "1px solid #1f2937",
+                    backgroundColor: "#27272a",
+                    border: "1px solid #3f3f46",
                     borderRadius: 8,
                     fontSize: 11,
                     color: "#e5e7eb",
@@ -141,12 +141,12 @@ export function HeroDashboard() {
               </div>
             ))}
           </dl>
-          <div className="mt-4 rounded-lg bg-gray-900 p-2.5">
+          <div className="mt-4 rounded-lg bg-zinc-900 p-2.5">
             <div className="flex items-baseline justify-between text-[11px]">
               <span className="text-gray-400">Quota used</span>
               <span className="font-semibold text-gray-100">32%</span>
             </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-gray-800">
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-700">
               <div className="h-full w-1/3 rounded-full bg-accent" />
             </div>
             <div className="mt-1 text-[10px] text-gray-600">16k of 50k events</div>
