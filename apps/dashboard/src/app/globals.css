@@ -113,13 +113,8 @@ body {
   animation-play-state: paused;
 }
 
-.animate-landing-float {
-  animation: landing-float 5s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .animate-landing-rise,
-  .animate-landing-float,
   .animate-landing-marquee {
     animation: none;
     opacity: 1;

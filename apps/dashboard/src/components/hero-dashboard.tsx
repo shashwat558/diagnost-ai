@@ -24,27 +24,13 @@ const WEEK = [
 
 export function HeroDashboard() {
   return (
-    <div className="min-h-[780px] overflow-hidden rounded-none bg-zinc-800 text-gray-200 shadow-2xl ring-1 ring-zinc-700">
+    <div className=" overflow-hidden rounded-none bg-black text-gray-200 shadow-2xl ring-1 ring-zinc-700">
       {/* window bar */}
-      <div className="flex items-center gap-3 border-b border-zinc-700/70 px-5 py-3">
-        <span className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-white">
-          <span className="flex h-4 w-4 items-center justify-center rounded bg-accent text-[10px] font-bold text-white">
-            D
-          </span>
-          DIAGNOST
-        </span>
-        <span className="hidden rounded bg-zinc-700 px-2 py-0.5 text-[11px] text-gray-400 sm:inline">
-          ● Production
-        </span>
-        <span className="mx-auto hidden w-full max-w-xs truncate rounded-md bg-zinc-900 px-3 py-1 text-center text-[11px] text-gray-500 md:block">
-          Search conversations, intents, errors…
-        </span>
-        <span className="ml-auto text-[11px] text-gray-400 md:ml-0">Docs</span>
-      </div>
+
 
       <div className="grid md:grid-cols-[200px_1fr_230px]">
         {/* mini sidebar */}
-        <div className="hidden border-r border-zinc-700/70 p-4 text-xs md:block">
+        <div className="hidden border-r border-slate-700/70 p-4 text-xs md:block">
           <div className="px-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500">
             Observe
           </div>
@@ -54,11 +40,11 @@ export function HeroDashboard() {
             { icon: "target", label: "Intents", badge: "3" },
             { icon: "database", label: "Events" },
           ].map((i) => (
-            <div key={i.label} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-gray-300">
+            <div key={i.label} className="flex items-center gap-2 rounded-none px-2 py-1.5 text-gray-300">
               <Icon name={i.icon} className="h-3.5 w-3.5" />
               {i.label}
               {i.badge && (
-                <span className="ml-auto rounded bg-zinc-700 px-1.5 text-[10px] text-gray-200">
+                <span className="ml-auto rounded-none bg-slate-700 px-1.5 text-[10px] text-gray-200">
                   {i.badge}
                 </span>
               )}
@@ -72,7 +58,7 @@ export function HeroDashboard() {
             { icon: "sparkles", label: "Auto-fix" },
             { icon: "shield", label: "Audit log" },
           ].map((i) => (
-            <div key={i.label} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-gray-300">
+            <div key={i.label} className="flex items-center gap-2 rounded-none px-2 py-1.5 text-gray-300">
               <Icon name={i.icon} className="h-3.5 w-3.5" />
               {i.label}
             </div>
@@ -80,12 +66,12 @@ export function HeroDashboard() {
         </div>
 
         {/* chart */}
-        <div className="border-zinc-700/70 p-5 md:border-r">
+        <div className="border-slate-700/70 p-5 md:border-r">
           <div className="flex items-baseline justify-between">
             <span className="text-sm font-medium text-gray-300">Conversations and failures</span>
             <span className="text-[11px] text-gray-500">daily · last 7 days</span>
           </div>
-          <div className="mt-2 h-[620px]">
+          <div className="mt-2 h-[420px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={SERIES} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
                 <defs>
@@ -102,9 +88,9 @@ export function HeroDashboard() {
                 <YAxis tick={{ fill: "#9ca3af", fontSize: 10 }} tickLine={false} axisLine={false} width={44} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#27272a",
-                    border: "1px solid #3f3f46",
-                    borderRadius: 8,
+                    backgroundColor: "#1e293b",
+                    border: "1px solid #334155",
+                    borderRadius: 0,
                     fontSize: 11,
                     color: "#e5e7eb",
                   }}
@@ -120,10 +106,10 @@ export function HeroDashboard() {
           </div>
           <div className="mt-1 flex items-center gap-4 text-[10px] text-gray-400">
             <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-4 rounded-full bg-accent" /> Passed
+              <span className="h-1.5 w-4 rounded-none bg-accent" /> Passed
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-4 rounded-full bg-red-500" /> Failed — spiked Thu
+              <span className="h-1.5 w-4 rounded-none bg-red-500" /> Failed — spiked Thu
             </span>
           </div>
         </div>
@@ -141,13 +127,13 @@ export function HeroDashboard() {
               </div>
             ))}
           </dl>
-          <div className="mt-4 rounded-lg bg-zinc-900 p-2.5">
+          <div className="mt-4 rounded-none bg-slate-900 p-2.5">
             <div className="flex items-baseline justify-between text-[11px]">
               <span className="text-gray-400">Quota used</span>
               <span className="font-semibold text-gray-100">32%</span>
             </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-700">
-              <div className="h-full w-1/3 rounded-full bg-accent" />
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-none bg-gray-950">
+              <div className="h-full w-1/3 rounded-none bg-accent" />
             </div>
             <div className="mt-1 text-[10px] text-gray-500">16k of 50k events</div>
           </div>

@@ -13,6 +13,9 @@ export default {
       fontSize: {
         "2xs": ["11px", "14px"],
       },
+      fontFamily: {
+        display: ["Karrik", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
     },
   },
   plugins: [],

@@ -1,9 +1,16 @@
 import Link from "next/link";
 import { MarketingHeader } from "@/components/marketing-header";
+import FireflyBackground from "@/components/FireflyBackground";
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-black font-display text-white antialiased">
+
+      <FireflyBackground
+        zIndex={1}
+        className="absolute inset-0"
+        style={{ position: "absolute" }}
+      />
       <MarketingHeader />
       {children}
       <footer className="border-t border-white/10 py-10">

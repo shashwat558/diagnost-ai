@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import {
   DiagonalArrow,
-  FloatLabel,
   HeroBackdrop,
   SectionTag,
   SquareCta,
@@ -11,7 +10,9 @@ import {
 } from "@/components/landing-bits";
 import { Reveal } from "@/components/reveal";
 import { CountUp } from "@/components/count-up";
+import FireflyBackground from "@/components/FireflyBackground";
 import {Inter} from "next/font/google"
+import { HeroDashboard } from "@/components/hero-dashboard";
 /* ------------------------------------------------------------------ */
 /* Static demo data (representative trace — mirrors real product rows) */
 /* ------------------------------------------------------------------ */
@@ -74,14 +75,10 @@ export default function LandingPage() {
       {/* ================= HERO · 100svh ================= */}
       <section className="relative flex h-[100svh] min-h-[640px] flex-col justify-end overflow-hidden">
         <HeroBackdrop src="/hero-image.png" alt=""/>
-        <FloatLabel className="absolute right-8 top-28 hidden lg:inline-flex">
-          Live · 2.4k events/min
-        </FloatLabel>
-        <div className="relative mx-auto w-full max-w-7xl px-6 pb-16 md:pb-20">
+
+        <div className={`${font.className} relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 md:pb-20`}>
           <Reveal >
-            <div className={`${font.className} text-xs uppercase tracking-[0.2em] text-[#999999]`}>
-              Analytics layer for AI agents
-            </div>
+
             <h1 className="headline-fluid mt-4 max-w-[752px] font-display font-medium tracking-[-0.03em] text-white">
               Agent work, held to account.
             </h1>
@@ -89,7 +86,7 @@ export default function LandingPage() {
               Capture every agent conversation, surface the failures that matter, and ship verified
             </p>
             <div className="mt-7">
-              <SquareCta href="/signup" className="!px-7 !py-4 !text-xl">
+              <SquareCta href="/signup" className="!px-4 !py-2 !text-xl">
                 Book a demo
                 <DiagonalArrow className="h-3 w-3" />
               </SquareCta>
@@ -106,66 +103,13 @@ export default function LandingPage() {
             Every span, on the record.
           </h2>
           <p className="mt-3 max-w-xl text-base leading-6 text-[#999999]">
-            One trace, fully expanded — steps, timing and outcomes, exactly as the pipeline stores
+            One trace, fully expanded steps, timing and outcomes, exactly as the pipeline stores
             them.
           </p>
         </Reveal>
 
         <Reveal delay={120}>
-          <div className={`${cardCls} relative mt-8 p-5 md:p-6`}>
-            <FloatLabel dot="#52a8ff" delay="1.4s" duration="6s" className="absolute -top-3 right-6">
-              p99 ingest · 41ms
-            </FloatLabel>
-            <div className="flex flex-wrap items-center gap-2">
-              <StatusChip status="pass">trace 4bf92f35</StatusChip>
-              <StatusChip status="warn">duration 1.8s</StatusChip>
-              <span className="ml-auto font-tech text-xs text-[#999999]">conv_seed_3594</span>
-            </div>
-
-            <div className="mt-5 grid gap-5 md:grid-cols-[240px_1fr]">
-              {/* event list */}
-              <div className="max-h-64 overflow-y-auto pr-1">
-                {SIDEBAR_EVENTS.map((e) => (
-                  <div
-                    key={e.id}
-                    className="flex items-center gap-2 border-b border-white/5 py-2 font-tech text-xs text-[#999999]"
-                  >
-                    <span
-                      className="h-1.5 w-1.5 shrink-0 rounded-full"
-                      style={{
-                        backgroundColor:
-                          e.status === "pass" ? "#62c073" : e.status === "warn" ? "#999999" : "#ededed",
-                      }}
-                    />
-                    {e.id}
-                  </div>
-                ))}
-              </div>
-              {/* span table */}
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[420px] text-left">
-                  <thead>
-                    <tr className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
-                      <th className="pb-3 pr-4 font-normal">Span</th>
-                      <th className="pb-3 pr-4 font-normal">Start</th>
-                      <th className="pb-3 font-normal">Duration</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {SPANS.map((s) => (
-                      <tr key={s.name} className="border-t border-white/5">
-                        <td className="py-3 pr-4 font-tech text-xs text-white">{s.name}</td>
-                        <td className="py-3 pr-4 font-tech text-xs text-[#999999]">{s.start}</td>
-                        <td className="py-3">
-                          <TimelineBar left={s.left} width={s.width} active={s.active} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+         <HeroDashboard />
         </Reveal>
       </section>
 
@@ -248,10 +192,7 @@ export default function LandingPage() {
       </section>
 
       {/* ================= METRICS ================= */}
-      <section className="relative mx-auto max-w-6xl px-6 py-10 md:py-14">
-        <FloatLabel delay="2.2s" duration="5.5s" className="absolute right-6 top-4 hidden md:inline-flex">
-          Zero regressions
-        </FloatLabel>
+      <section className="mx-auto max-w-6xl px-6 py-10 md:py-14">
         <Reveal>
           <div className="grid border border-white/10 md:grid-cols-4">
             {METRICS.map((m, i) => (
@@ -288,15 +229,8 @@ export default function LandingPage() {
               <Card
                 className={`flex h-full flex-col rounded-none border-white/[0.145] bg-[#0a0a0a] p-6 ${
                   tier.current ? "ring-1 ring-[#52a8ff]/60" : ""
-                } ${tier.name === "Starter" ? "relative" : ""}`}
+                }`}
               >
-                {tier.name === "Starter" && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <FloatLabel dot="#52a8ff" delay="0.8s" duration="6.5s">
-                      Most popular
-                    </FloatLabel>
-                  </span>
-                )}
                 <div className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
                   {tier.name}
                 </div>

@@ -22,7 +22,7 @@ export function P({ children }: { children: React.ReactNode }) {
 
 export function Code({ children }: { children: string }) {
   return (
-    <pre className="my-3 max-w-3xl overflow-x-auto rounded-lg border border-gray-200 bg-gray-50 p-3.5 font-mono text-[13px] leading-5 text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
+    <pre className="my-3 max-w-3xl overflow-x-auto rounded-none border border-gray-200 bg-gray-50 p-3.5 font-mono text-[13px] leading-5 text-gray-700 dark:border-slate-800 dark:bg-slate-900 dark:text-gray-300">
       {children}
     </pre>
   );
@@ -30,7 +30,7 @@ export function Code({ children }: { children: string }) {
 
 export function Inline({ children }: { children: React.ReactNode }) {
   return (
-    <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-[12px] text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+    <code className="rounded-none bg-gray-100 px-1.5 py-0.5 font-mono text-[12px] text-gray-700 dark:bg-slate-800 dark:text-gray-300">
       {children}
     </code>
   );
@@ -38,7 +38,7 @@ export function Inline({ children }: { children: React.ReactNode }) {
 
 export function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="my-3 max-w-3xl rounded-lg border border-orange-200 bg-orange-50 px-3.5 py-2.5 text-sm leading-6 text-orange-900 dark:border-orange-900 dark:bg-orange-950/50 dark:text-orange-200">
+    <div className="my-3 max-w-3xl rounded-none border border-orange-200 bg-orange-50 px-3.5 py-2.5 text-sm leading-6 text-orange-900 dark:border-orange-900 dark:bg-orange-950/50 dark:text-orange-200">
       {children}
     </div>
   );
@@ -46,10 +46,10 @@ export function Callout({ children }: { children: React.ReactNode }) {
 
 export function DocTable({ head, rows }: { head: string[]; rows: string[][] }) {
   return (
-    <div className="my-3 max-w-3xl overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800">
+    <div className="my-3 max-w-3xl overflow-x-auto rounded-none border border-gray-200 dark:border-slate-800">
       <table className="w-full text-sm">
         <thead>
-          <tr className="bg-gray-50 text-left dark:bg-gray-900">
+          <tr className="bg-gray-50 text-left dark:bg-slate-900">
             {head.map((h) => (
               <th key={h} className="px-3 py-2 text-[13px] font-medium text-gray-500 dark:text-gray-400">
                 {h}
@@ -59,7 +59,7 @@ export function DocTable({ head, rows }: { head: string[]; rows: string[][] }) {
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={i} className="border-t border-gray-100 dark:border-gray-800">
+            <tr key={i} className="border-t border-gray-100 dark:border-slate-800">
               {r.map((c, j) => (
                 <td key={j} className="px-3 py-2 align-top text-[13px] leading-5 text-gray-700 dark:text-gray-300">
                   {c}
@@ -75,7 +75,7 @@ export function DocTable({ head, rows }: { head: string[]; rows: string[][] }) {
 
 export function PrevNext({ prev, next }: { prev?: { href: string; label: string }; next?: { href: string; label: string } }) {
   return (
-    <div className="mt-10 flex max-w-3xl items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-800">
+    <div className="mt-10 flex max-w-3xl items-center justify-between border-t border-gray-200 pt-4 dark:border-slate-800">
       <div>
         {prev && (
           <Link href={prev.href} className="text-sm text-gray-500 hover:text-accent dark:text-gray-400">

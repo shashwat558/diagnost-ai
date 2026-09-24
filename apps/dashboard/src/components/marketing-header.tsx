@@ -3,15 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import { DiagonalArrow } from "@/components/landing-bits";
+import {Inter} from "next/font/google"
+
+const font = Inter({
+  weight: "400",
+  subsets: ["latin"]
+})
 
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2.5">
-      <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden>
-        <rect x="2" y="2" width="28" height="28" rx="0" fill="none" stroke="#fff" strokeWidth="2.5" />
-        <path d="M11 22V10l10 6-10 6Z" fill="#52a8ff" />
-      </svg>
-      <span className="font-display text-xl font-medium tracking-tight text-white">Diagnost</span>
+
+      <span className=" text-xl font-medium tracking-tight text-white">Diagnost</span>
     </Link>
   );
 }
@@ -27,7 +30,7 @@ export function MarketingHeader() {
 
   return (
     <>
-      <header className="absolute inset-x-0 top-[38px] z-50">
+      <header className={`${font.className} absolute inset-x-0 top-[38px] z-50`}>
         <div className="flex items-center justify-between px-14 max-md:px-6">
           <Logo />
           <nav className="hidden items-center gap-8 text-base text-white md:flex">
@@ -79,7 +82,7 @@ export function MarketingHeader() {
                 key={l.label}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="font-display border-b border-white/10 py-4 text-4xl font-medium tracking-tight text-white"
+                className="font-display border-b border-white/10 py-4 text-4xl font-semibold tracking-tight text-white"
               >
                 {l.label}
               </Link>
