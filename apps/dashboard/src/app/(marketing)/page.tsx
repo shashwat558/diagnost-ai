@@ -1,318 +1,332 @@
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Icon } from "@/components/icon";
-import { HeroDashboard } from "@/components/hero-dashboard";
-import { DitherWave } from "@/components/dither-wave";
+import {
+  DiagonalArrow,
+  HeroBackdrop,
+  SectionTag,
+  SquareCta,
+  StatusChip,
+  TimelineBar,
+} from "@/components/landing-bits";
+import { Reveal } from "@/components/reveal";
+import { CountUp } from "@/components/count-up";
 
-const INTEGRATIONS = ["LangChain", "Vercel AI SDK", "MCP", "OpenAI", "Anthropic"];
+/* ------------------------------------------------------------------ */
+/* Static demo data (representative trace — mirrors real product rows) */
+/* ------------------------------------------------------------------ */
 
-const STATS = [
-  { value: "16K", label: "Conversations clustered in the demo" },
-  { value: "1", label: "Alert fired — on the real spike only" },
-  { value: "100%", label: "Fixes gated on zero regressions" },
+const SIDEBAR_EVENTS = [
+  { id: "evt_8f2a41", status: "pass" as const },
+  { id: "evt_8f2a42", status: "pass" as const },
+  { id: "evt_8f2a43", status: "fail" as const },
+  { id: "evt_8f2a44", status: "pass" as const },
+  { id: "evt_8f2a45", status: "warn" as const },
+  { id: "evt_8f2a46", status: "pass" as const },
+  { id: "evt_8f2a47", status: "fail" as const },
+  { id: "evt_8f2a48", status: "pass" as const },
 ];
+
+const SPANS = [
+  { name: "order.lookup", start: "t+0ms", left: 0, width: 38, active: false },
+  { name: "llm.reply", start: "t+212ms", left: 22, width: 47, active: true },
+  { name: "tool.refund", start: "t+640ms", left: 55, width: 30, active: false },
+  { name: "checkpoint.escalate", start: "t+1.1s", left: 78, width: 22, active: false },
+];
+
+const REGRESSION_ROWS = [
+  { intent: "date_format_error", status: "pass" as const, delta: "+100%", note: "0 → 14/14 evals" },
+  { intent: "tool_timeout", status: "pass" as const, delta: "+42%", note: "retry guard added" },
+  { intent: "billing_dispute", status: "fail" as const, delta: "-8%", note: "gate blocked the PR" },
+];
+
+const CLUSTER_BARS = [
+  { intent: "date_format_error", error: 82, total: 100 },
+  { intent: "tool_timeout", error: 54, total: 100 },
+  { intent: "billing_dispute", error: 31, total: 100 },
+];
+
+const METRICS = [
+  { value: 16249, decimals: 0, unit: "", sub: "conversations clustered in the demo" },
+  { value: 8.1, decimals: 1, unit: "%", sub: "failure rate on the spiking pattern" },
+  { value: 1.8, decimals: 1, unit: "s", sub: "slowest-5% reply time" },
+  { value: 100, decimals: 0, unit: "%", sub: "fixes gated on zero regressions" },
+];
+
+const TIERS = [
+  { name: "Free", price: "$0", events: "50k / mo", retention: "7-day", cta: "Start free", href: "/signup", current: true },
+  { name: "Starter", price: "$49", events: "250k / mo", retention: "30-day", cta: "Upgrade", href: "/signup", current: false },
+  { name: "Pro", price: "$299", events: "2M / mo", retention: "90-day", cta: "Upgrade", href: "/signup", current: false },
+  { name: "Enterprise", price: "Custom", events: "Unlimited", retention: "365-day", cta: "Contact us", href: "/docs", current: false },
+];
+
+const cardCls =
+  "rounded-none bg-[#0a0a0a] ring-1 ring-[rgba(255,255,255,0.145)] transition-transform duration-300 hover:-translate-y-1";
 
 export default function LandingPage() {
   return (
-    <div>
-      {/* Hero — DitherWave shader background, copy floats above it */}
-      <section id="product" className="relative overflow-hidden">
-        <div className="absolute inset-x-0 bottom-0 top-12 blur-[1px]" aria-hidden="true">
-          <DitherWave colorFront="#c2410c" />
-        </div>
-        {/* blend into the page background below */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-[#fafaf9] dark:to-gray-950" />
-
-        <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-14 text-center md:pt-20">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-medium tracking-wide text-gray-300 backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            ANALYTICS LAYER FOR AI AGENTS
-          </span>
-
-          <h1 className="mx-auto mt-5 max-w-3xl text-5xl font-semibold leading-[1.05] tracking-tight text-white md:text-6xl">
-            Agent work, held to account.
-          </h1>
-
-          <p className="mx-auto mt-4 max-w-xl text-base leading-6 text-gray-300">
-            Capture every agent conversation, surface the failures that matter, and ship verified
-            fixes — with the evidence attached.
-          </p>
-
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/signup"
-              className="rounded-full bg-white px-6 py-2.5 text-sm font-medium text-gray-950 hover:bg-gray-200"
-            >
-              Create workspace
-            </Link>
-            <Link
-              href="/login"
-              className="rounded-full border border-white/25 px-6 py-2.5 text-sm font-medium text-white hover:bg-white/10"
-            >
-              Explore the live dashboard
-            </Link>
-          </div>
-          <p className="mt-3 text-xs text-gray-400">
-            Free plan included · no card · first agent connected in one afternoon
-          </p>
-
-          <div className="mx-auto mt-10 max-w-6xl text-left">
-            <HeroDashboard />
-          </div>
-        </div>
-      </section>
-
-      {/* Stats + integrations */}
-      <section className="mx-auto max-w-6xl px-6 py-10">
-        <div className="grid gap-3 md:grid-cols-4">
-          <div className="rounded-2xl bg-gray-950 p-6 text-white dark:bg-black dark:ring-1 dark:ring-gray-800">
-            <p className="text-sm font-medium leading-6">
-              A shared source of truth for teams shipping agents into production.
-            </p>
-            <p className="mt-2 text-xs text-gray-400">Built for consequential work</p>
-          </div>
-          {STATS.map((s) => (
-            <div
-              key={s.label}
-              className="rounded-2xl bg-white p-6 text-center ring-1 ring-gray-200/60 dark:bg-gray-900 dark:ring-gray-800"
-            >
-              <div className="text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">
-                {s.value}
-              </div>
-              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">{s.label}</div>
+    <div className="bg-black text-white">
+      {/* ================= HERO · 100svh ================= */}
+      <section className="relative flex h-[100svh] min-h-[640px] flex-col justify-end overflow-hidden">
+        <HeroBackdrop src="/hero-bg.jpg" alt="" />
+        <div className="relative mx-auto w-full max-w-6xl px-6 pb-16 md:pb-20">
+          <Reveal>
+            <div className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
+              Analytics layer for AI agents
             </div>
-          ))}
-        </div>
-
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 border-y border-gray-200 py-5 text-sm font-medium text-gray-400 dark:border-gray-800 dark:text-gray-500">
-          {INTEGRATIONS.map((name) => (
-            <span key={name}>{name}</span>
-          ))}
+            <h1 className="headline-fluid mt-4 max-w-[752px] font-display font-medium tracking-[-0.03em] text-white">
+              Agent work, held to account.
+            </h1>
+            <p className="mt-4 max-w-xl text-base leading-6 text-[#e7e7e7]">
+              Capture every agent conversation, surface the failures that matter, and ship verified
+              fixes — with the evidence attached.
+            </p>
+            <div className="mt-7">
+              <SquareCta href="/signup" className="!px-7 !py-4 !text-xl">
+                Book a demo
+                <DiagonalArrow className="h-3 w-3" />
+              </SquareCta>
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Bento */}
-      <section className="mx-auto max-w-6xl px-6 py-10">
-        <span className="inline-flex items-center rounded-full bg-gray-200/70 px-3 py-1 text-[11px] font-medium tracking-wide text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-          THE ACCOUNTABILITY LAYER
-        </span>
-        <h2 className="mt-4 max-w-xl text-4xl font-semibold tracking-tight text-gray-950 md:text-5xl dark:text-white">
-          The facts behind every failure
-        </h2>
-        <p className="mt-3 max-w-xl text-base leading-6 text-gray-500 dark:text-gray-400">
-          Follow live traffic, inspect what broke, enforce quotas and keep an evidence record —
-          without piecing the story together after an incident.
-        </p>
+      {/* ================= EVENT STREAM ================= */}
+      <section id="product" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-20 md:py-28">
+        <Reveal>
+          <SectionTag>Live evidence</SectionTag>
+          <h2 className="mt-3 max-w-xl font-display text-4xl font-medium tracking-[-0.03em] text-white md:text-5xl">
+            Every span, on the record.
+          </h2>
+          <p className="mt-3 max-w-xl text-base leading-6 text-[#999999]">
+            One trace, fully expanded — steps, timing and outcomes, exactly as the pipeline stores
+            them.
+          </p>
+        </Reveal>
+
+        <Reveal delay={120}>
+          <div className={`${cardCls} mt-8 p-5 md:p-6`}>
+            <div className="flex flex-wrap items-center gap-2">
+              <StatusChip status="pass">trace 4bf92f35</StatusChip>
+              <StatusChip status="warn">duration 1.8s</StatusChip>
+              <span className="ml-auto font-tech text-xs text-[#999999]">conv_seed_3594</span>
+            </div>
+
+            <div className="mt-5 grid gap-5 md:grid-cols-[240px_1fr]">
+              {/* event list */}
+              <div className="max-h-64 overflow-y-auto pr-1">
+                {SIDEBAR_EVENTS.map((e) => (
+                  <div
+                    key={e.id}
+                    className="flex items-center gap-2 border-b border-white/5 py-2 font-tech text-xs text-[#999999]"
+                  >
+                    <span
+                      className="h-1.5 w-1.5 shrink-0 rounded-full"
+                      style={{
+                        backgroundColor:
+                          e.status === "pass" ? "#62c073" : e.status === "warn" ? "#999999" : "#ededed",
+                      }}
+                    />
+                    {e.id}
+                  </div>
+                ))}
+              </div>
+              {/* span table */}
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[420px] text-left">
+                  <thead>
+                    <tr className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
+                      <th className="pb-3 pr-4 font-normal">Span</th>
+                      <th className="pb-3 pr-4 font-normal">Start</th>
+                      <th className="pb-3 font-normal">Duration</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {SPANS.map((s) => (
+                      <tr key={s.name} className="border-t border-white/5">
+                        <td className="py-3 pr-4 font-tech text-xs text-white">{s.name}</td>
+                        <td className="py-3 pr-4 font-tech text-xs text-[#999999]">{s.start}</td>
+                        <td className="py-3">
+                          <TimelineBar left={s.left} width={s.width} active={s.active} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ================= BENTO ================= */}
+      <section className="mx-auto max-w-6xl px-6 py-10 md:py-14">
+        <Reveal>
+          <SectionTag>The accountability layer</SectionTag>
+          <h2 className="mt-3 max-w-2xl font-display text-4xl font-medium tracking-[-0.03em] text-white md:text-5xl">
+            The facts behind every failure
+          </h2>
+        </Reveal>
 
         <div className="mt-8 grid gap-3 md:grid-cols-3">
-          {/* big orange card */}
-          <div className="rounded-2xl bg-accent p-7 text-white md:col-span-2">
-            <h3 className="max-w-sm text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
-              Catch the spike, not the noise.
-            </h3>
-            <p className="mt-3 max-w-md text-sm leading-6 text-orange-50">
-              Failure-rate spikes stop at a named intent with the exact conversations attached. Flat
-              failure rates stay quiet — no alert fatigue.
-            </p>
-            <p className="mt-4 text-xs text-orange-100/80">
-              One alert on the real spike. Nothing else.
-            </p>
-          </div>
-
-          {/* live intent map */}
-          <div className="rounded-2xl bg-white p-6 ring-1 ring-gray-200/60 dark:bg-gray-900 dark:ring-gray-800">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-100 text-accent dark:bg-orange-950">
-              <Icon name="activity" className="h-4 w-4" />
-            </span>
-            <h3 className="mt-3 text-base font-semibold text-gray-950 dark:text-white">
-              Live intent map
-            </h3>
-            <p className="mt-1.5 text-sm leading-6 text-gray-500 dark:text-gray-400">
-              Know which intent is failing, what it is attempting, and how fast it is growing.
-            </p>
-            <div className="mt-4 rounded-lg bg-gray-950 p-3 font-mono text-[11px] leading-5">
-              <div className="flex justify-between text-gray-400">
-                <span>date_format_error</span>
-                <span className="text-red-400">8.1% failed</span>
-              </div>
-              <div className="flex justify-between text-gray-400">
-                <span>tool_timeout</span>
-                <span className="text-gray-500">2.4% failed</span>
-              </div>
-              <div className="flex justify-between text-gray-400">
-                <span>billing_dispute</span>
-                <span className="text-accent">needs instruction</span>
+          {/* regression */}
+          <Reveal className="h-full">
+            <div className={`${cardCls} flex h-full flex-col p-6`}>
+              <div className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">Regression</div>
+              <div className="mt-4 space-y-3">
+                {REGRESSION_ROWS.map((r) => (
+                  <div key={r.intent} className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="truncate font-tech text-xs text-white">{r.intent}</div>
+                      <div className="font-tech text-xs text-[#999999]">{r.note}</div>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span className="font-tech text-xs text-[#999999]">{r.delta}</span>
+                      <StatusChip status={r.status}>{r.status === "pass" ? "PASS" : "FAIL"}</StatusChip>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
+          </Reveal>
 
-          {/* quota guardrails */}
-          <div className="rounded-2xl bg-white p-6 ring-1 ring-gray-200/60 dark:bg-gray-900 dark:ring-gray-800">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-              <Icon name="shield" className="h-4 w-4" />
-            </span>
-            <h3 className="mt-3 text-base font-semibold text-gray-950 dark:text-white">
-              Quota guardrails
-            </h3>
-            <p className="mt-1.5 text-sm leading-6 text-gray-500 dark:text-gray-400">
-              Limit each workspace and the month as a whole. Over-quota workspaces get HTTP 402
-              before the budget is crossed.
-            </p>
-          </div>
-
-          {/* evidence black card */}
-          <div className="rounded-2xl bg-gray-950 p-6 text-white dark:bg-black dark:ring-1 dark:ring-gray-800">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-800 text-accent">
-              <Icon name="message" className="h-4 w-4" />
-            </span>
-            <h3 className="mt-3 text-base font-semibold">Evidence that holds</h3>
-            <p className="mt-1.5 text-sm leading-6 text-gray-400">
-              Every failure links to its conversations. Evals gate every fix — zero regressions
-              shipped.
-            </p>
-          </div>
-
-          {/* history */}
-          <div className="rounded-2xl bg-white p-6 ring-1 ring-gray-200/60 dark:bg-gray-900 dark:ring-gray-800">
-            <h3 className="text-base font-semibold text-gray-950 dark:text-white">
-              A history built for investigation
-            </h3>
-            <p className="mt-1.5 text-sm leading-6 text-gray-500 dark:text-gray-400">
-              Open any conversation to see its steps in order. Failures stay attached to their
-              cause.
-            </p>
-            <div className="mt-4 space-y-1.5 rounded-lg bg-gray-50 p-3 font-mono text-[11px] dark:bg-gray-950">
-              <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                <span>order.lookup</span>
-                <span>42 ms</span>
+          {/* failure clustering */}
+          <Reveal delay={100} className="h-full">
+            <div className={`${cardCls} flex h-full flex-col p-6`}>
+              <div className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
+                Failure clustering
               </div>
-              <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                <span>llm.reply</span>
-                <span>1.2s</span>
-              </div>
-              <div className="flex justify-between text-red-500">
-                <span>tool.refund</span>
-                <span>failed</span>
+              <div className="mt-4 space-y-4">
+                {CLUSTER_BARS.map((c) => (
+                  <div key={c.intent}>
+                    <div className="flex items-baseline justify-between font-tech text-xs">
+                      <span className="text-white">{c.intent}</span>
+                      <span className="text-[#999999]">{c.error}% err</span>
+                    </div>
+                    <div className="mt-1.5 h-2 w-full bg-white/5">
+                      <div className="flex h-full">
+                        <div className="h-full bg-[#52a8ff]" style={{ width: `${c.error}%` }} />
+                        <div className="h-full bg-white/15" style={{ width: `${c.total - c.error}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
+          </Reveal>
 
-          {/* reliable alerts */}
-          <div className="rounded-2xl bg-white p-6 ring-1 ring-gray-200/60 dark:bg-gray-900 dark:ring-gray-800">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-              <Icon name="bell" className="h-4 w-4" />
-            </span>
-            <h3 className="mt-3 text-base font-semibold text-gray-950 dark:text-white">
-              Reliable alerts
-            </h3>
-            <p className="mt-1.5 text-sm leading-6 text-gray-500 dark:text-gray-400">
-              Drift scans with dedup, hourly rate limits, and one-click test delivery. Slack and
-              email, on your own SMTP.
-            </p>
-          </div>
+          {/* version replay */}
+          <Reveal delay={200} className="h-full">
+            <div className={`${cardCls} flex h-full flex-col p-6`}>
+              <div className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
+                Version replay
+              </div>
+              <div className="mt-4 space-y-0 font-tech text-xs leading-6">
+                <div className="border-l-2 border-[#62c073] bg-[#62c073]/5 px-3 text-white">
+                  + validate month 1-12 before confirm
+                </div>
+                <div className="border-l-2 border-[#52a8ff] bg-[#52a8ff]/5 px-3 text-white">
+                  ~ render receipt with YYYY-MM-DD
+                </div>
+                <div className="border-l-2 border-transparent px-3 text-[#999999]">
+                  &nbsp;&nbsp;booking_assistant_prompt v2 → v3
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-6xl px-6 py-10">
-        <h2 className="text-base font-semibold text-gray-950 dark:text-gray-100">
-          Simple, usage-based pricing
-        </h2>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Start free, upgrade when you need more. Self-host from Free.
-        </p>
-
-        <div className="mt-6 grid gap-3 md:grid-cols-4">
-          {[
-            {
-              name: "Free",
-              price: "$0",
-              events: "50k / mo",
-              retention: "7-day",
-              cta: "Start free",
-              href: "/signup",
-              current: true,
-            },
-            {
-              name: "Starter",
-              price: "$49",
-              events: "250k / mo",
-              retention: "30-day",
-              cta: "Upgrade",
-              href: "/signup",
-            },
-            {
-              name: "Pro",
-              price: "$299",
-              events: "2M / mo",
-              retention: "90-day",
-              cta: "Upgrade",
-              href: "/signup",
-            },
-            {
-              name: "Enterprise",
-              price: "Custom",
-              events: "Unlimited",
-              retention: "365-day",
-              cta: "Contact us",
-              href: "/docs",
-            },
-          ].map((tier) => (
-            <Card key={tier.name} className={tier.current ? "border-accent/40" : ""}>
-              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                {tier.name}
-              </div>
-              <div className="mt-1 text-2xl font-semibold text-gray-950 dark:text-white">
-                {tier.price}
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                {tier.events} · {tier.retention} retention
-              </div>
-              <Link
-                href={tier.href}
-                className={buttonVariants({
-                  variant: tier.current ? "default" : "outline",
-                  size: "sm",
-                  className: "mt-4 w-full",
-                })}
+      {/* ================= METRICS ================= */}
+      <section className="mx-auto max-w-6xl px-6 py-10 md:py-14">
+        <Reveal>
+          <div className="grid border border-white/10 md:grid-cols-4">
+            {METRICS.map((m, i) => (
+              <div
+                key={m.sub}
+                className={`bg-black p-8 ${i > 0 ? "border-white/10 max-md:border-t md:border-l" : ""}`}
               >
-                {tier.cta}
-              </Link>
-            </Card>
+                <div className="font-tech text-[56px] font-medium leading-none tracking-[-0.06em] text-white">
+                  <CountUp end={m.value} decimals={m.decimals} />
+                  {m.unit && <span className="ml-1 text-2xl text-[#999999]">{m.unit}</span>}
+                </div>
+                <div className="mt-3 font-tech text-xs leading-5 text-[#999999]">{m.sub}</div>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ================= PRICING ================= */}
+      <section id="pricing" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-10 md:py-14">
+        <Reveal>
+          <SectionTag>Pricing</SectionTag>
+          <h2 className="mt-3 font-display text-4xl font-medium tracking-[-0.03em] text-white md:text-5xl">
+            Simple, usage-based pricing
+          </h2>
+          <p className="mt-3 max-w-xl text-base text-[#999999]">
+            Start free, upgrade when you need more. Self-host from Free.
+          </p>
+        </Reveal>
+
+        <div className="mt-8 grid gap-3 md:grid-cols-4">
+          {TIERS.map((tier, i) => (
+            <Reveal key={tier.name} delay={i * 80} className="h-full">
+              <Card
+                className={`flex h-full flex-col rounded-none border-white/[0.145] bg-[#0a0a0a] p-6 ${
+                  tier.current ? "ring-1 ring-[#52a8ff]/60" : ""
+                }`}
+              >
+                <div className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
+                  {tier.name}
+                </div>
+                <div className="mt-2 font-display text-4xl font-medium tracking-tight text-white">
+                  {tier.price}
+                </div>
+                <div className="mt-1 font-tech text-xs text-[#999999]">
+                  {tier.events} · {tier.retention} retention
+                </div>
+                <Link
+                  href={tier.href}
+                  className="mt-5 inline-flex w-full items-center justify-center rounded-none bg-white px-3 py-2 font-tech text-xs uppercase tracking-[0.15em] text-[#121212] transition-colors hover:bg-[#e7e7e7]"
+                >
+                  {tier.cta}
+                </Link>
+              </Card>
+            </Reveal>
           ))}
         </div>
-        <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
-          All plans include PII redaction, audit log, and roles. Over-quota ingestion returns HTTP
-          402.
+        <p className="mt-4 font-tech text-xs text-[#999999]">
+          All plans include PII redaction, audit log, and roles. Over-quota ingestion returns HTTP 402.
         </p>
       </section>
 
-      {/* Bottom CTA */}
-      <section className="mx-auto max-w-6xl px-6 pb-14">
-        <div className="rounded-2xl bg-gray-950 px-6 py-12 text-center text-white dark:bg-black dark:ring-1 dark:ring-gray-800">
-          <h3 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            Ship agents with confidence
-          </h3>
-          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-400">
-            Hosted or self-hosted. One `npx skills add` to instrument, one dashboard to see, fix,
-            and improve.
-          </p>
-          <div className="mt-6 flex justify-center gap-3">
-            <Link
-              href="/signup"
-              className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-white hover:bg-orange-700"
-            >
-              Create workspace
-            </Link>
-            <Link
-              href="/docs"
-              className="rounded-full border border-gray-700 px-6 py-2.5 text-sm font-medium text-gray-200 hover:bg-gray-800"
-            >
-              Read quickstart
-            </Link>
+      {/* ================= BOTTOM CTA ================= */}
+      <section className="mx-auto max-w-6xl px-6 pb-20 pt-6">
+        <Reveal>
+          <div className="rounded-none bg-[#0a0a0a] px-6 py-14 text-center ring-1 ring-[rgba(255,255,255,0.145)]">
+            <h3 className="mx-auto max-w-xl font-display text-4xl font-medium tracking-[-0.03em] text-white md:text-5xl">
+              Ship agents with confidence
+            </h3>
+            <p className="mx-auto mt-3 max-w-xl text-base text-[#999999]">
+              Hosted or self-hosted. One `npx skills add` to instrument, one dashboard to see, fix,
+              and improve.
+            </p>
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
+              <Link
+                href="/signup"
+                className="rounded-none bg-white px-6 py-3 text-base font-medium text-[#121212] transition-colors hover:bg-[#e7e7e7]"
+              >
+                Create workspace
+              </Link>
+              <Link
+                href="/docs"
+                className="rounded-none border border-white/20 px-6 py-3 text-base font-medium text-white transition-colors hover:border-white/40"
+              >
+                Read quickstart
+              </Link>
+            </div>
           </div>
-        </div>
+        </Reveal>
       </section>
     </div>
   );
