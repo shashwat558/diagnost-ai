@@ -82,6 +82,35 @@ export function SectionTag({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Floating decorative label: small square mono tag with status dot that
+ * drifts gently. Purely ornamental — pointer-transparent and hidden from AT.
+ */
+export function FloatLabel({
+  dot = "#62c073",
+  delay = "0s",
+  duration = "5s",
+  className = "",
+  children,
+}: {
+  dot?: string;
+  delay?: string;
+  duration?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <span
+      aria-hidden
+      className={`animate-landing-float pointer-events-none inline-flex select-none items-center gap-1.5 whitespace-nowrap border border-white/10 bg-black/70 px-2.5 py-1 font-tech text-[11px] uppercase tracking-[0.15em] text-[#999999] shadow-[0_8px_30px_rgba(0,0,0,0.5)] backdrop-blur-md ${className}`}
+      style={{ animationDelay: delay, animationDuration: duration }}
+    >
+      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: dot }} />
+      {children}
+    </span>
+  );
+}
+
 /** Hero backdrop: cover image + heavy bottom scrim, hides gracefully if the image file is missing. */
 export function HeroBackdrop({ src, alt }: { src: string; alt: string }) {
   const [missing, setMissing] = useState(false);
@@ -91,7 +120,7 @@ export function HeroBackdrop({ src, alt }: { src: string; alt: string }) {
         <img
           src={src}
           alt={alt}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover contrast-75"
           onError={() => setMissing(true)}
         />
       )}

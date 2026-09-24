@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import {
   DiagonalArrow,
+  FloatLabel,
   HeroBackdrop,
   SectionTag,
   SquareCta,
@@ -10,7 +11,7 @@ import {
 } from "@/components/landing-bits";
 import { Reveal } from "@/components/reveal";
 import { CountUp } from "@/components/count-up";
-
+import {Inter} from "next/font/google"
 /* ------------------------------------------------------------------ */
 /* Static demo data (representative trace — mirrors real product rows) */
 /* ------------------------------------------------------------------ */
@@ -59,6 +60,11 @@ const TIERS = [
   { name: "Enterprise", price: "Custom", events: "Unlimited", retention: "365-day", cta: "Contact us", href: "/docs", current: false },
 ];
 
+const font = Inter({
+  weight: "400",
+  subsets: ["latin"]
+})
+
 const cardCls =
   "rounded-none bg-[#0a0a0a] ring-1 ring-[rgba(255,255,255,0.145)] transition-transform duration-300 hover:-translate-y-1";
 
@@ -67,10 +73,13 @@ export default function LandingPage() {
     <div className="bg-black text-white">
       {/* ================= HERO · 100svh ================= */}
       <section className="relative flex h-[100svh] min-h-[640px] flex-col justify-end overflow-hidden">
-        <HeroBackdrop src="/hero-bg.jpg" alt="" />
-        <div className="relative mx-auto w-full max-w-6xl px-6 pb-16 md:pb-20">
-          <Reveal>
-            <div className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
+        <HeroBackdrop src="/hero-image.png" alt=""/>
+        <FloatLabel className="absolute right-8 top-28 hidden lg:inline-flex">
+          Live · 2.4k events/min
+        </FloatLabel>
+        <div className="relative mx-auto w-full max-w-7xl px-6 pb-16 md:pb-20">
+          <Reveal >
+            <div className={`${font.className} text-xs uppercase tracking-[0.2em] text-[#999999]`}>
               Analytics layer for AI agents
             </div>
             <h1 className="headline-fluid mt-4 max-w-[752px] font-display font-medium tracking-[-0.03em] text-white">
@@ -78,7 +87,6 @@ export default function LandingPage() {
             </h1>
             <p className="mt-4 max-w-xl text-base leading-6 text-[#e7e7e7]">
               Capture every agent conversation, surface the failures that matter, and ship verified
-              fixes — with the evidence attached.
             </p>
             <div className="mt-7">
               <SquareCta href="/signup" className="!px-7 !py-4 !text-xl">
@@ -104,7 +112,10 @@ export default function LandingPage() {
         </Reveal>
 
         <Reveal delay={120}>
-          <div className={`${cardCls} mt-8 p-5 md:p-6`}>
+          <div className={`${cardCls} relative mt-8 p-5 md:p-6`}>
+            <FloatLabel dot="#52a8ff" delay="1.4s" duration="6s" className="absolute -top-3 right-6">
+              p99 ingest · 41ms
+            </FloatLabel>
             <div className="flex flex-wrap items-center gap-2">
               <StatusChip status="pass">trace 4bf92f35</StatusChip>
               <StatusChip status="warn">duration 1.8s</StatusChip>
@@ -237,7 +248,10 @@ export default function LandingPage() {
       </section>
 
       {/* ================= METRICS ================= */}
-      <section className="mx-auto max-w-6xl px-6 py-10 md:py-14">
+      <section className="relative mx-auto max-w-6xl px-6 py-10 md:py-14">
+        <FloatLabel delay="2.2s" duration="5.5s" className="absolute right-6 top-4 hidden md:inline-flex">
+          Zero regressions
+        </FloatLabel>
         <Reveal>
           <div className="grid border border-white/10 md:grid-cols-4">
             {METRICS.map((m, i) => (
@@ -274,8 +288,15 @@ export default function LandingPage() {
               <Card
                 className={`flex h-full flex-col rounded-none border-white/[0.145] bg-[#0a0a0a] p-6 ${
                   tier.current ? "ring-1 ring-[#52a8ff]/60" : ""
-                }`}
+                } ${tier.name === "Starter" ? "relative" : ""}`}
               >
+                {tier.name === "Starter" && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <FloatLabel dot="#52a8ff" delay="0.8s" duration="6.5s">
+                      Most popular
+                    </FloatLabel>
+                  </span>
+                )}
                 <div className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
                   {tier.name}
                 </div>
