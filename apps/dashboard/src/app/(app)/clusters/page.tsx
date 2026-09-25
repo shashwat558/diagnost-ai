@@ -27,23 +27,35 @@ export default async function ClustersPage() {
   const total = rows.reduce((a, r) => a + r.size, 0);
 
   return (
-    <div className="pb-0">
-      <div className="px-6 pt-5">
-        <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
-          <div className="flex items-baseline justify-between">
-            <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-              {total} conversations across {rows.length} intents
-            </h1>
-            <span className="text-sm text-gray-400 dark:text-gray-500">last 7 days</span>
+    <div className="pb-8 bg-black text-white min-h-screen font-sans">
+      <div className="px-6 pt-6">
+        <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+          <div>
+            <h1 className="font-display text-2xl font-bold tracking-tight text-white">Failure &amp; Intent Clusters</h1>
+            <p className="font-tech text-xs text-[#999999] mt-1">Automatic grouping of execution failure patterns</p>
           </div>
-          <div className="mt-2">
+          <span className="font-tech text-xs text-[#52a8ff] bg-[#52a8ff]/10 px-3 py-1 border border-[#52a8ff]/20">
+            {rows.length} CLUSTERS IDENTIFIED
+          </span>
+        </div>
+
+        <div className="rounded-none border border-white/10 bg-[#0a0a0a] p-5">
+          <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
+            <h2 className="font-display text-base font-semibold text-white">
+              {total.toLocaleString()} conversations across {rows.length} intents
+            </h2>
+            <span className="font-tech text-xs text-[#999999]">last 7 days volume</span>
+          </div>
+          <div className="mt-4">
             <Sparkline points={days} width={1120} height={72} />
           </div>
         </div>
       </div>
 
-      <div className="mt-5">
-        <IntentsTable rows={rows} />
+      <div className="mt-6 px-6">
+        <div className="rounded-none border border-white/10 bg-[#0a0a0a] p-5">
+          <IntentsTable rows={rows} />
+        </div>
       </div>
     </div>
   );

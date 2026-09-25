@@ -25,18 +25,18 @@ export function ThemeToggle({ className, iconOnly = false }: { className?: strin
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  const dark = mounted && resolvedTheme === "dark";
+  const isDark = mounted && resolvedTheme === "dark";
 
   return (
     <button
       type="button"
-      onClick={() => setTheme(dark ? "light" : "dark")}
-      title={dark ? "Switch to light theme" : "Switch to dark theme"}
-      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-      className={`flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 ${className ?? ""}`}
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      title={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      className={`inline-flex items-center justify-center gap-2 rounded-none border border-white/20 bg-black/40 px-3 py-1.5 font-tech text-xs uppercase tracking-wider text-white hover:bg-white/10 dark:border-white/20 dark:bg-black dark:text-white transition-colors ${className ?? ""}`}
     >
-      {dark ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
-      {!iconOnly && (dark ? "Light mode" : "Dark mode")}
+      {isDark ? <SunIcon className="h-3.5 w-3.5 text-amber-400" /> : <MoonIcon className="h-3.5 w-3.5 text-[#52a8ff]" />}
+      {!iconOnly && <span>{isDark ? "Light" : "Dark"}</span>}
     </button>
   );
 }

@@ -48,12 +48,12 @@ export default function SignupPage() {
 
   if (apiKey) {
     return (
-      <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
-        <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">Welcome to Diagnost AI</h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+      <div className="space-y-4 font-sans text-white">
+        <h1 className="font-display text-lg font-bold text-white tracking-tight">Welcome to Diagnost AI</h1>
+        <p className="font-tech text-xs text-[#999999]">
           Your ingestion API key — copy it now, it won&apos;t be shown again.
         </p>
-        <code className="mt-3 block break-all rounded-md border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 px-3 py-2 font-mono text-sm text-gray-700 dark:text-gray-300">
+        <code className="block break-all rounded-none border border-white/20 bg-black px-3 py-2 font-mono text-xs text-[#52a8ff]">
           {apiKey}
         </code>
         <Button
@@ -72,35 +72,44 @@ export default function SignupPage() {
   return (
     <form
       onSubmit={onSubmit}
-      className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm"
+      className="space-y-4 font-sans text-white"
       noValidate
     >
-      <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">Create your workspace</h1>
-      <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Free plan — 50k events/month.</p>
+      <div>
+        <h1 className="font-display text-lg font-bold text-white tracking-tight">Create your workspace</h1>
+        <p className="font-tech text-xs text-[#999999] mt-0.5">Free plan — 50k events/month included.</p>
+      </div>
 
-      <label className="mt-4 block text-sm font-medium text-gray-700 dark:text-gray-300">
-        Workspace name <span className="font-normal text-gray-400 dark:text-gray-500">(optional)</span>
-      </label>
-      <Input {...register("workspaceName")} className="mt-1" placeholder="Acme Agents" />
-      {errors.workspaceName && (
-        <p className="mt-1 text-sm text-red-600">{errors.workspaceName.message}</p>
-      )}
+      <div>
+        <label className="block font-tech text-xs uppercase tracking-wider text-[#999999]">
+          Workspace Name <span className="text-[#999999]/60 font-normal">(optional)</span>
+        </label>
+        <Input {...register("workspaceName")} className="mt-1" placeholder="Acme Agents" />
+        {errors.workspaceName && (
+          <p className="mt-1 font-tech text-xs text-red-400">{errors.workspaceName.message}</p>
+        )}
+      </div>
 
-      <label className="mt-3 block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-      <Input type="email" {...register("email")} className="mt-1" placeholder="you@company.com" />
-      {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+      <div>
+        <label className="block font-tech text-xs uppercase tracking-wider text-[#999999]">Email Address</label>
+        <Input type="email" {...register("email")} className="mt-1" placeholder="you@company.com" />
+        {errors.email && <p className="mt-1 font-tech text-xs text-red-400">{errors.email.message}</p>}
+      </div>
 
-      <label className="mt-3 block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-      <Input type="password" {...register("password")} className="mt-1" placeholder="At least 8 characters" />
-      {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
-      {errors.root && <p className="mt-2 text-sm text-red-600">{errors.root.message}</p>}
+      <div>
+        <label className="block font-tech text-xs uppercase tracking-wider text-[#999999]">Password</label>
+        <Input type="password" {...register("password")} className="mt-1" placeholder="At least 8 characters" />
+        {errors.password && <p className="mt-1 font-tech text-xs text-red-400">{errors.password.message}</p>}
+        {errors.root && <p className="mt-2 font-tech text-xs text-red-400">{errors.root.message}</p>}
+      </div>
 
-      <Button type="submit" disabled={busy} className="mt-4 w-full">
+      <Button type="submit" disabled={busy} className="mt-2 w-full">
         {busy ? "Creating…" : "Create workspace"}
       </Button>
-      <p className="mt-3 text-center text-sm text-gray-500 dark:text-gray-400">
+
+      <p className="mt-4 text-center font-tech text-xs text-[#999999]">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-accent hover:underline">
+        <Link href="/login" className="text-[#52a8ff] hover:underline">
           Log in
         </Link>
       </p>

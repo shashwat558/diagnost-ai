@@ -3,18 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import { DiagonalArrow } from "@/components/landing-bits";
-import {Inter} from "next/font/google"
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Inter } from "next/font/google";
 
 const font = Inter({
   weight: "400",
-  subsets: ["latin"]
-})
+  subsets: ["latin"],
+});
 
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2.5">
-
-      <span className=" text-xl font-medium tracking-tight text-white">Diagnost</span>
+      <span className="text-xl font-medium tracking-tight text-white">Diagnost</span>
     </Link>
   );
 }
@@ -41,6 +41,7 @@ export function MarketingHeader() {
             ))}
           </nav>
           <div className="flex items-center gap-3">
+            <ThemeToggle iconOnly className="!py-2" />
             <Link
               href="/signup"
               className="hidden items-center gap-2 rounded-none bg-white px-3 py-2 text-base font-medium text-[#121212] transition-colors hover:bg-[#e7e7e7] md:inline-flex"
@@ -65,16 +66,19 @@ export function MarketingHeader() {
         <div className="fixed inset-0 z-[60] flex flex-col bg-black px-6 pb-10 pt-[38px]">
           <div className="flex items-center justify-between">
             <Logo />
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Close menu"
-              className="flex h-10 w-10 items-center justify-center rounded-none border border-white/20 text-white"
-            >
-              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden>
-                <path d="M6 6l12 12M18 6L6 18" />
-              </svg>
-            </button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle iconOnly />
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close menu"
+                className="flex h-10 w-10 items-center justify-center rounded-none border border-white/20 text-white"
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden>
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
           </div>
           <nav className="mt-16 flex flex-col gap-2">
             {LINKS.map((l) => (

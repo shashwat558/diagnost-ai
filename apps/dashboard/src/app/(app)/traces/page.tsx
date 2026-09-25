@@ -2,6 +2,7 @@ import Link from "next/link";
 import { chQuery } from "@/lib/ch";
 import { HelpTip } from "@/components/ui/help-tip";
 import { CopyButton } from "@/components/ui/copy-button";
+import { StatusChip } from "@/components/landing-bits";
 
 export const dynamic = "force-dynamic";
 
@@ -30,74 +31,76 @@ export default async function ConversationsPage() {
   `);
 
   return (
-    <div className="px-6 pt-5">
-      <div className="flex items-baseline justify-between">
-        <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">Conversations</h1>
-        <span className="text-sm text-gray-400 dark:text-gray-500">most recent 50</span>
+    <div className="px-6 pt-6 bg-black min-h-screen text-white">
+      <div className="flex items-baseline justify-between border-b border-white/10 pb-4">
+        <div>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-white">Conversations &amp; Traces</h1>
+          <p className="font-tech text-xs text-[#999999] mt-1">Inspecting 50 most recent agent sessions</p>
+        </div>
+        <span className="font-tech text-xs text-[#52a8ff] bg-[#52a8ff]/10 px-3 py-1 border border-[#52a8ff]/20">
+          50 RECORDED SESSIONS
+        </span>
       </div>
 
-      <table className="mt-4 w-full border-separate border-spacing-0 text-sm">
-        <thead>
-          <tr className="text-left text-sm text-gray-500 dark:text-gray-400">
-            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 font-normal">Conversation</th>
-            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 text-right font-normal">
-              Steps
-              <HelpTip text="Individual tracked actions (agent replies, tool calls, checkpoints) in this conversation." />
-            </th>
-            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 font-normal">Outcome</th>
-            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 text-right font-normal">
-              PII redacted
-              <HelpTip text="Sensitive bits (emails, phones, cards) automatically hidden before storage. Higher is safer, not worse." />
-            </th>
-            <th className="border-b border-gray-200 dark:border-gray-800 py-2 font-normal">Last seen</th>
-          </tr>
-        </thead>
-        <tbody>
-          {convos.map((c) => {
-            const failed = Number(c.errors) > 0;
-            return (
-              <tr key={c.conversation_id} className="hover:bg-gray-50 dark:hover:bg-gray-800/60">
-                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4">
-                  <Link
-                    href={`/traces/${encodeURIComponent(c.conversation_id)}`}
-                    className="font-mono text-sm text-gray-900 dark:text-gray-100 underline decoration-gray-300 underline-offset-2 hover:decoration-gray-500"
-                    title={c.conversation_id}
-                  >
-                    …{c.conversation_id.slice(-12)}
-                  </Link>
-                  <CopyButton text={c.conversation_id} />
-                </td>
-                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4 text-right tabular-nums text-gray-700 dark:text-gray-300">
-                  {Number(c.events)}
-                </td>
-                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4">
-                  <span
-                    className={`rounded px-1.5 py-0.5 text-xs font-medium ${
-                      failed ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
-                    }`}
-                    title={failed ? "At least one step failed — open to see what broke." : "Every step completed without errors."}
-                  >
-                    {failed ? `${c.errors} failed` : "Passed"}
-                  </span>
-                </td>
-                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4 text-right tabular-nums text-gray-600 dark:text-gray-400">
-                  {Number(c.pii_findings) || "—"}
-                </td>
-                <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 text-gray-500 dark:text-gray-400">
-                  {String(c.last_ts).replace("T", " ").slice(0, 19)}
+      <div className="mt-6 border border-white/10 bg-[#0a0a0a]">
+        <table className="w-full text-left font-tech text-xs">
+          <thead>
+            <tr className="border-b border-white/10 text-[#999999] uppercase tracking-wider bg-[#0d0d0d]">
+              <th className="py-3 px-4 font-normal">Conversation ID</th>
+              <th className="py-3 px-4 text-right font-normal">
+                Steps
+                <HelpTip text="Individual tracked actions in this conversation." />
+              </th>
+              <th className="py-3 px-4 font-normal">Outcome</th>
+              <th className="py-3 px-4 text-right font-normal">
+                PII Redact
+                <HelpTip text="Sensitive fields scrubbed automatically before storage." />
+              </th>
+              <th className="py-3 px-4 font-normal">Last Seen</th>
+            </tr>
+          </thead>
+          <tbody>
+            {convos.map((c) => {
+              const failed = Number(c.errors) > 0;
+              return (
+                <tr key={c.conversation_id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                  <td className="py-3 px-4">
+                    <Link
+                      href={`/traces/${encodeURIComponent(c.conversation_id)}`}
+                      className="font-mono text-xs text-white hover:text-[#52a8ff] transition-colors"
+                      title={c.conversation_id}
+                    >
+                      …{c.conversation_id.slice(-16)}
+                    </Link>
+                    <CopyButton text={c.conversation_id} />
+                  </td>
+                  <td className="py-3 px-4 text-right tabular-nums text-gray-300">
+                    {Number(c.events)}
+                  </td>
+                  <td className="py-3 px-4">
+                    <StatusChip status={failed ? "fail" : "pass"}>
+                      {failed ? `${c.errors} FAILED` : "PASSED"}
+                    </StatusChip>
+                  </td>
+                  <td className="py-3 px-4 text-right tabular-nums text-[#999999]">
+                    {Number(c.pii_findings) || "—"}
+                  </td>
+                  <td className="py-3 px-4 text-[#999999]">
+                    {String(c.last_ts).replace("T", " ").slice(0, 19)}
+                  </td>
+                </tr>
+              );
+            })}
+            {convos.length === 0 && (
+              <tr>
+                <td colSpan={5} className="py-12 text-center text-[#999999]">
+                  No conversation traces recorded yet.
                 </td>
               </tr>
-            );
-          })}
-          {convos.length === 0 && (
-            <tr>
-              <td colSpan={5} className="py-10 text-center text-gray-400 dark:text-gray-500">
-                No conversations yet.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

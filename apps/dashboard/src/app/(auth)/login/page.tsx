@@ -45,41 +45,46 @@ export default function LoginPage() {
   return (
     <form
       onSubmit={onSubmit}
-      className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm"
+      className="space-y-4 font-sans text-white"
       noValidate
     >
-      <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">Log in</h1>
+      <h1 className="font-display text-lg font-bold text-white tracking-tight">Log in to workspace</h1>
 
-      <label className="mt-4 block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-      <Input
-        type="email"
-        {...register("email")}
-        className="mt-1"
-        placeholder="you@company.com"
-        aria-invalid={!!errors.email}
-      />
-      {errors.email?.message && errors.email.message.trim() && (
-        <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-      )}
+      <div>
+        <label className="block font-tech text-xs uppercase tracking-wider text-[#999999]">Email Address</label>
+        <Input
+          type="email"
+          {...register("email")}
+          className="mt-1"
+          placeholder="you@company.com"
+          aria-invalid={!!errors.email}
+        />
+        {errors.email?.message && errors.email.message.trim() && (
+          <p className="mt-1 font-tech text-xs text-red-400">{errors.email.message}</p>
+        )}
+      </div>
 
-      <label className="mt-3 block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-      <Input
-        type="password"
-        {...register("password")}
-        className="mt-1"
-        placeholder="••••••••"
-        aria-invalid={!!errors.password}
-      />
-      {errors.password?.message && (
-        <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-      )}
+      <div>
+        <label className="block font-tech text-xs uppercase tracking-wider text-[#999999]">Password</label>
+        <Input
+          type="password"
+          {...register("password")}
+          className="mt-1"
+          placeholder="••••••••"
+          aria-invalid={!!errors.password}
+        />
+        {errors.password?.message && (
+          <p className="mt-1 font-tech text-xs text-red-400">{errors.password.message}</p>
+        )}
+      </div>
 
-      <Button type="submit" disabled={busy} className="mt-4 w-full">
+      <Button type="submit" disabled={busy} className="mt-2 w-full">
         {busy ? "Logging in…" : "Log in"}
       </Button>
-      <p className="mt-3 text-center text-sm text-gray-500 dark:text-gray-400">
+
+      <p className="mt-4 text-center font-tech text-xs text-[#999999]">
         No account?{" "}
-        <Link href="/signup" className="font-medium text-accent hover:underline">
+        <Link href="/signup" className="text-[#52a8ff] hover:underline">
           Sign up free
         </Link>
       </p>

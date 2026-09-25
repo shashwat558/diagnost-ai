@@ -113,10 +113,27 @@ body {
   animation-play-state: paused;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-landing-rise,
-  .animate-landing-marquee {
+  .animate-landing-marquee,
+  .animate-fadeIn {
     animation: none;
     opacity: 1;
   }
 }
+

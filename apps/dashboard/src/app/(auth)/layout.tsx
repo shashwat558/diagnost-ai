@@ -2,18 +2,22 @@ import Link from "next/link";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-black text-white px-4 font-sans">
       <div className="w-full max-w-sm">
-        <div className="mb-6 flex items-center justify-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-accent font-bold text-white">
-            D
+        <div className="mb-6 flex flex-col items-center justify-center gap-2 text-center">
+          <Link href="/" className="font-display text-2xl font-bold tracking-wider text-white">
+            DIAGNOST
+          </Link>
+          <span className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
+            Accountability Layer
           </span>
-          <span className="text-base font-semibold text-gray-900 dark:text-gray-100">Diagnost AI</span>
         </div>
-        {children}
-        <p className="mt-4 text-center text-sm text-gray-400 dark:text-gray-500">
+        <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-none">
+          {children}
+        </div>
+        <p className="mt-6 text-center font-tech text-xs text-[#999999]">
           Production analytics &amp; self-improvement for AI agents ·{" "}
-          <Link href="/docs" className="hover:text-gray-600">
+          <Link href="/docs" className="text-white hover:underline">
             docs
           </Link>
         </p>

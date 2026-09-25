@@ -18,16 +18,25 @@ const ADMIN_NAV = [
 ];
 
 const NAV_LINK =
-  "flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800";
-const NAV_ICON = "h-4 w-4 text-gray-500 dark:text-gray-400";
+  "flex items-center gap-2.5 rounded-none px-3 py-2 font-tech text-xs uppercase tracking-wider text-[#999999] hover:bg-white/5 hover:text-white transition-colors";
+const NAV_ICON = "h-4 w-4 text-[#999999]";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await requireSession();
   const isAdmin = ["owner", "admin"].includes(user.role);
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col overflow-y-auto border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+    <div className="flex min-h-screen bg-black text-white font-sans">
+      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-[#0a0a0a]">
+        <div className="p-4 border-b border-white/10 flex items-center gap-2 font-display text-lg font-bold text-white tracking-wider">
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <span>DIAGNOST</span>
+            <span className="text-[10px] bg-[#52a8ff]/20 text-[#52a8ff] px-1.5 py-0.5 border border-[#52a8ff]/30 font-tech uppercase">
+              CONSOLE
+            </span>
+          </Link>
+        </div>
+
         <nav className="space-y-0.5 p-3">
           {NAV.map((item) => (
             <Link key={item.href} href={item.href} className={NAV_LINK}>
@@ -37,15 +46,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           ))}
         </nav>
 
-        <div className="mt-auto space-y-0.5 p-3">
+        <div className="mt-auto space-y-0.5 p-3 border-t border-white/10">
           <Link href="/docs" className={NAV_LINK}>
             <Icon name="book" className={NAV_ICON} />
             Docs
           </Link>
-          <div className="flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm text-gray-700 dark:text-gray-300">
+          <div className="flex items-center gap-2.5 rounded-none px-3 py-2 font-tech text-xs uppercase tracking-wider text-[#999999]">
             <Icon name="sparkles" className={NAV_ICON} />
             Auto-improve
-            <span className="ml-auto inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            <span className="ml-auto inline-block h-2 w-2 rounded-full bg-[#62c073] animate-pulse" />
           </div>
           {isAdmin &&
             ADMIN_NAV.map((item) => (
@@ -54,27 +63,29 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 {item.label}
               </Link>
             ))}
-          <ThemeToggle className="w-full" />
+          <div className="pt-1">
+            <ThemeToggle className="w-full justify-start" />
+          </div>
         </div>
 
-        <div className="border-t border-gray-200 p-3 dark:border-gray-800">
-          <div className="flex items-center gap-2.5 rounded-md border border-gray-200 px-2.5 py-2 dark:border-gray-700">
-            <Icon name="database" className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
-            <span className="truncate text-sm font-medium text-gray-800 dark:text-gray-200">
+        <div className="border-t border-white/10 p-3 bg-[#0d0d0d]">
+          <div className="flex items-center gap-2.5 rounded-none border border-white/10 px-3 py-2 bg-black">
+            <Icon name="database" className="h-4 w-4 shrink-0 text-[#52a8ff]" />
+            <span className="truncate font-tech text-xs text-white">
               {user.workspaceName}
             </span>
-            <span className="ml-auto shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium capitalize text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+            <span className="ml-auto shrink-0 rounded-none bg-white/10 px-1.5 py-0.5 font-tech text-[10px] uppercase text-[#999999] border border-white/10">
               {user.role}
             </span>
           </div>
-          <div className="mt-1.5 flex items-center justify-between px-2.5">
-            <span className="truncate text-xs text-gray-400 dark:text-gray-500">{user.email}</span>
+          <div className="mt-2 flex items-center justify-between px-1">
+            <span className="truncate font-tech text-[11px] text-[#999999]">{user.email}</span>
             <LogoutButton />
           </div>
         </div>
       </aside>
 
-      <main className="min-w-0 flex-1 bg-white dark:bg-gray-950">{children}</main>
+      <main className="min-w-0 flex-1 bg-black text-white">{children}</main>
     </div>
   );
 }
