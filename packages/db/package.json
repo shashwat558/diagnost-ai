@@ -17,6 +17,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "migrate": "node dist/bin/migrate.js",
+    "s3:init": "node dist/bin/s3-init.js",
     "seed": "node dist/bin/seed.js",
     "retention": "node dist/bin/retention.js"
   },

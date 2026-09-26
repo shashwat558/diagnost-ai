@@ -28,7 +28,7 @@ What it does (idempotent — safe to re-run):
    `CLICKHOUSE_PASSWORD`, `S3_SECRET_KEY` from `.env.prod.example`
 3. `pnpm install --frozen-lockfile && pnpm build`
 4. `docker compose -p diagnost-ai-prod -f docker-compose.prod.yml --profile tls up -d --wait`
-   (postgres, clickhouse, redpanda, minio + api, consumer, notifier,
+   (postgres, clickhouse, redpanda, rustfs + api, consumer, notifier,
    dashboard, retention-cron, caddy)
 5. Runs Postgres + ClickHouse migrations
 6. Provisions workspace + owner + ingestion API key (**printed once** —

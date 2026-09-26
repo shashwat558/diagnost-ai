@@ -31,8 +31,11 @@ $DC exec -T clickhouse clickhouse-client --user "$CH_USER" --password "$CH_PASS"
     rm -f "$OUTDIR/clickhouse_events.native.gz"
   }
 
-echo "[backup] MinIO transcripts — sync via mc mirror (if needed):"
-echo "  mc mirror --overwrite local/transcripts \"$OUTDIR/transcripts\""
+echo "[backup] transcripts (S3) — sync with any S3 client, e.g. the aws CLI on the compose network:"
+echo "  docker run --rm --network ${PROJECT}_default \\"
+echo "    -e AWS_ACCESS_KEY_ID=\"\$S3_ACCESS_KEY\" -e AWS_SECRET_ACCESS_KEY=\"\$S3_SECRET_KEY\" \\"
+echo "    -v \"$OUTDIR:/out\" amazon/aws-cli \\"
+echo "    s3 sync --endpoint-url http://rustfs:9000 s3://transcripts /out/transcripts"
 
 ls -lh "$OUTDIR"
 echo "$PROJECT" > "$OUTDIR/project.txt"

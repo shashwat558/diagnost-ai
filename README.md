@@ -55,8 +55,9 @@ your agent ──SDK/OTel──▶ POST /v1/events ──▶ Redpanda ──▶ 
 ```bash
 git clone https://github.com/shashwat558/diagnost-ai && cd diagnost-ai
 pnpm install
-docker compose up -d --wait        # Postgres :5434, ClickHouse :8123, Redpanda :9092, MinIO :9001
+docker compose up -d --wait        # Postgres :5434, ClickHouse :8123, Redpanda :9092, RustFS :9001
 pnpm --filter @diagnost/db migrate # schema + dev workspace
+pnpm --filter @diagnost/db s3:init # transcripts / finetune-datasets / eval-artifacts buckets
 pnpm build
 node apps/api/dist/index.js & node apps/api/dist/consumer.js & node apps/api/dist/notifier.js &
 pnpm --filter @diagnost/dashboard start   # :3100
@@ -71,7 +72,7 @@ Sign up at `:3100/signup` for an API key, instrument your agent ([docs](http://l
 | Postgres | localhost:5434 (`diagnost` / `diagnost_dev_password`) |
 | ClickHouse HTTP / native | :8123 / localhost:9009 |
 | Redpanda (Kafka) | localhost:9092 (external), `redpanda:29092` (in-network) |
-| MinIO console / MailHog | :9001 / :8025 |
+| RustFS S3 / console | :9000 / :9001 · MailHog :8025 |
 
 ## Instrument your agent
 
