@@ -67,13 +67,17 @@ async function main(): Promise<void> {
   const stop = await consume(kafka, {
     groupId: "ingest-clickhouse",
     topics: [cfg.kafkaEventsTopic],
-    handler: async (msgs) => {
+    handler: async (msgs, { heartbeat }) => {
       const events: EventEnvelope[] = [];
       for (const { message } of msgs) {
         if (!message.value) continue;
         const event = JSON.parse(message.value.toString()) as EventEnvelope;
         await hydrateTranscript(event);
         events.push(event);
+        // transcript hydration does a serial S3 PUT per event, so keep the
+        // group membership alive mid-batch — otherwise a backlog batch
+        // outlives the 30s session timeout and the broker drops us.
+        if (events.length % 100 === 0) await heartbeat();
       }
       await insertEvents(ch, cfg.clickhouseDb, events);
       // usage metering for billing (best-effort; never blocks the pipeline)

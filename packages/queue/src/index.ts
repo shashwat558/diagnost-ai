@@ -64,14 +64,33 @@ export async function publish(
 }
 
 export type BatchHandler = (
-  messages: Array<{ topic: string; partition: number; message: KafkaMessage }>
+  messages: Array<{ topic: string; partition: number; message: KafkaMessage }>,
+  ctx: BatchHandlerCtx
 ) => Promise<void>;
+
+export interface BatchHandlerCtx {
+  /**
+   * Must be called while a batch is still being processed. Handlers that do
+   * per-message I/O (e.g. one S3 PUT per event) can outlive the 30s session
+   * timeout; without interim heartbeats the broker evicts the member
+   * (UNKNOWN_MEMBER_ID) and the consumer stops committing offsets.
+   */
+  heartbeat: () => Promise<void>;
+}
 
 export async function consume(
   kafka: Kafka,
   opts: { groupId: string; topics: string[]; handler: BatchHandler }
 ): Promise<Consumer> {
-  const consumer = kafka.consumer({ groupId: opts.groupId, sessionTimeout: 30_000 });
+  const consumer = kafka.consumer({
+    groupId: opts.groupId,
+    sessionTimeout: 30_000,
+    // Keep each fetch cycle short so a slow handler cannot starve heartbeats:
+    // with the 1MB default a backlog batch can hold ~2k messages, which
+    // per-event S3 writes cannot finish inside the session timeout.
+    maxBytes: 256 * 1024,
+    maxWaitTimeInMs: 1_000,
+  });
   await consumer.connect();
   await consumer.subscribe({ topics: opts.topics, fromBeginning: true });
 
@@ -91,7 +110,7 @@ export async function consume(
       if (msgs.length === 0) return;
 
       try {
-        await opts.handler(msgs);
+        await opts.handler(msgs, { heartbeat });
         // commit only after the whole batch succeeded
         const last = msgs[msgs.length - 1]!.message.offset;
         if (last != null) resolveOffset(last);
