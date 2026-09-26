@@ -4,7 +4,7 @@ import FireflyBackground from "@/components/FireflyBackground";
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-black font-display text-white antialiased">
+    <div className="min-h-screen bg-canvas font-display text-ink antialiased">
 
       <FireflyBackground
         zIndex={1}
@@ -13,22 +13,22 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       />
       <MarketingHeader />
       {children}
-      <footer className="border-t border-white/10 py-10">
+      <footer className="border-t border-line py-10">
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-6 md:flex-row md:items-center">
-          <span className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">
+          <span className="font-tech text-xs uppercase tracking-[0.2em] text-ink-muted">
             © {new Date().getFullYear()} Diagnost AI
           </span>
-          <div className="font-tech flex gap-6 text-xs uppercase tracking-[0.2em] text-[#999999]">
-            <Link href="/docs" className="transition-colors hover:text-white">
+          <div className="font-tech flex gap-6 text-xs uppercase tracking-[0.2em] text-ink-muted">
+            <Link href="/docs" className="transition-colors hover:text-ink">
               Docs
             </Link>
             <a
               href="https://github.com/shashwat558/diagnost-ai"
-              className="transition-colors hover:text-white"
+              className="transition-colors hover:text-ink"
             >
               GitHub
             </a>
-            <Link href="/login" className="transition-colors hover:text-white">
+            <Link href="/login" className="transition-colors hover:text-ink">
               Dashboard
             </Link>
           </div>

@@ -68,20 +68,20 @@ export function NewInstructionDialog({
       aria-label="New instruction"
     >
       <div
-        className="w-full max-w-lg rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-lg"
+        className="w-full max-w-lg rounded-lg border border-line bg-surface p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">New instruction</h2>
-        <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+        <h2 className="text-base font-semibold text-ink">New instruction</h2>
+        <p className="mt-0.5 text-sm text-ink-muted">
           A versioned prompt the auto-improver can refine. Saved as v1 — future
           remediation runs propose v2+ with eval reports.
         </p>
 
         <form onSubmit={onSubmit} className="mt-4" noValidate>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Handles intent</label>
+          <label className="block text-sm font-medium text-ink">Handles intent</label>
           <select
             {...register("handles_intent")}
-            className="mt-1 h-9 w-full rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-2 text-sm text-gray-900 dark:text-gray-100 outline-none focus:border-gray-300"
+            className="mt-1 h-9 w-full rounded-md border border-control-line bg-surface px-2 text-sm text-ink outline-none focus:border-brand"
           >
             {intents.map((i) => (
               <option key={i} value={i}>
@@ -93,7 +93,7 @@ export function NewInstructionDialog({
             <p className="mt-1 text-sm text-red-600">{errors.handles_intent.message}</p>
           )}
 
-          <label className="mt-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="mt-3 block text-sm font-medium text-ink">
             Name{" "}
             <button
               type="button"
@@ -106,13 +106,13 @@ export function NewInstructionDialog({
           <Input {...register("name")} className="mt-1" placeholder="booking_assistant_prompt" />
           {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
 
-          <label className="mt-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="mt-3 block text-sm font-medium text-ink">
             Prompt content (v1)
           </label>
           <textarea
             {...register("content")}
             rows={6}
-            className="mt-1 w-full rounded-md border border-gray-200 dark:border-gray-800 px-3 py-2 font-mono text-sm outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-gray-300 focus:ring-2 focus:ring-orange-100"
+            className="mt-1 w-full rounded-md border border-control-line px-3 py-2 font-mono text-sm outline-none placeholder:text-ink-subtle  focus:border-brand focus:ring-2 focus:ring-orange-100"
             placeholder="You are a booking assistant. Always validate dates (month 1-12) before confirming…"
           />
           {errors.content && (

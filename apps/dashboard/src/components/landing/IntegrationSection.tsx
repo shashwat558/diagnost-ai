@@ -66,24 +66,24 @@ export function IntegrationSection() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <SectionTag>Developer Experience</SectionTag>
-          <h2 className="mt-2 font-display text-3xl font-medium tracking-[-0.03em] text-white md:text-5xl">
+          <h2 className="mt-2 font-display text-3xl font-medium tracking-[-0.03em] text-ink md:text-5xl">
             Instrument in under 60 seconds.
           </h2>
-          <p className="mt-2 max-w-xl text-base text-[#999999]">
+          <p className="mt-2 max-w-xl text-base text-ink-muted">
             Works with any framework or language. Native support for OpenAI, Vercel AI SDK, LangChain, and OpenTelemetry.
           </p>
         </div>
       </div>
 
       {/* Code Window Box */}
-      <div className="bg-[#0a0a0a] ring-1 ring-white/10 overflow-hidden">
+      <div className="bg-surface ring-1 ring-line overflow-hidden">
         {/* Terminal Header Bar */}
-        <div className="flex items-center justify-between border-b border-white/10 bg-[#121212] px-4 py-3">
+        <div className="flex items-center justify-between border-b border-line bg-surface-2 px-4 py-3">
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-red-500/80 inline-block" />
             <span className="h-3 w-3 rounded-full bg-amber-500/80 inline-block" />
             <span className="h-3 w-3 rounded-full bg-emerald-500/80 inline-block" />
-            <span className="ml-3 font-tech text-xs text-[#999999]">{activeSnippet.title}</span>
+            <span className="ml-3 font-tech text-xs text-ink-muted">{activeSnippet.title}</span>
           </div>
 
           {/* Tab buttons */}
@@ -94,8 +94,8 @@ export function IntegrationSection() {
                 onClick={() => setActiveTab(key)}
                 className={`px-3 py-1 font-tech text-xs uppercase tracking-wider transition-colors ${
                   activeTab === key
-                    ? "bg-white text-black font-bold"
-                    : "text-[#999999] hover:text-white"
+                    ? "bg-ink text-canvas font-bold"
+                    : "text-ink-muted hover:text-ink"
                 }`}
               >
                 {key}
@@ -108,11 +108,11 @@ export function IntegrationSection() {
         <div className="relative p-6 bg-black font-tech text-xs md:text-sm text-gray-200 leading-relaxed overflow-x-auto">
           <button
             onClick={handleCopy}
-            className="absolute top-4 right-4 flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1.5 text-xs text-white font-tech border border-white/10 transition-colors"
+            className="absolute top-4 right-4 flex items-center gap-1.5 bg-hover hover:bg-hover px-3 py-1.5 text-xs text-ink font-tech border border-line transition-colors"
           >
             {copied ? (
               <>
-                <span className="text-emerald-400 font-bold">✓</span> Copied
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓</span> Copied
               </>
             ) : (
               <>
@@ -124,12 +124,12 @@ export function IntegrationSection() {
         </div>
 
         {/* Terminal Live Output Footer */}
-        <div className="border-t border-white/10 bg-[#0e0e0e] px-6 py-3 font-tech text-xs text-[#999999] flex items-center justify-between">
+        <div className="border-t border-line bg-surface-2 px-6 py-3 font-tech text-xs text-ink-muted flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>[diagnost-telemetry] Connected to endpoint: ingest.diagnost.ai</span>
           </div>
-          <span className="text-[#52a8ff]">Latency: 0.4ms</span>
+          <span className="text-brand">Latency: 0.4ms</span>
         </div>
       </div>
     </div>

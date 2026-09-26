@@ -23,12 +23,12 @@ function fmtMs(v: number | null) {
 
 function Stat({ label, value, tip }: { label: string; value: string; tip?: string }) {
   return (
-    <div className="px-5 py-4 bg-[#0a0a0a]">
-      <div className="font-tech text-xs uppercase tracking-wider text-[#999999] flex items-center gap-1">
+    <div className="px-5 py-4 bg-surface">
+      <div className="font-tech text-xs uppercase tracking-wider text-ink-muted flex items-center gap-1">
         {label}
         {tip && <HelpTip text={tip} />}
       </div>
-      <div className="mt-1 font-tech text-2xl font-bold text-white tracking-tight">{value}</div>
+      <div className="mt-1 font-tech text-2xl font-bold text-ink tracking-tight">{value}</div>
     </div>
   );
 }
@@ -64,22 +64,22 @@ export default async function HomePage() {
       : "0.0";
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white font-sans">
+    <div className="flex min-h-screen flex-col bg-canvas text-ink font-sans">
       <div className="flex-1 px-6 pt-6">
         {/* Page header */}
-        <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="mb-6 flex items-center justify-between border-b border-line pb-4">
           <div>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-white">Production Telemetry</h1>
-            <p className="font-tech text-xs text-[#999999] mt-1">Real-time trace overview &amp; performance metrics</p>
+            <h1 className="font-display text-2xl font-bold tracking-tight text-ink">Production Telemetry</h1>
+            <p className="font-tech text-xs text-ink-muted mt-1">Real-time trace overview &amp; performance metrics</p>
           </div>
-          <div className="flex items-center gap-2 font-tech text-xs bg-[#0a0a0a] px-3 py-1.5 border border-white/10 text-[#62c073]">
-            <span className="h-2 w-2 rounded-full bg-[#62c073] animate-pulse" />
+          <div className="flex items-center gap-2 font-tech text-xs bg-surface px-3 py-1.5 border border-line text-emerald-600 dark:text-emerald-400">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>INGESTION ACTIVE</span>
           </div>
         </div>
 
         {/* stat strip */}
-        <div className="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-white/10 rounded-none border border-white/10 bg-[#0a0a0a]">
+        <div className="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-line rounded-none border border-line bg-surface">
           <Stat label="Events (24h)" value={stats ? Number(stats.total).toLocaleString() : "—"} tip="Every tracked step your agent took in the last 24 hours." />
           <Stat label="Error rate" value={`${errRate}%`} tip="Share of events that failed (failed ÷ total)." />
           <Stat label="Typical reply time (p50)" value={fmtMs(stats?.p50 ?? null)} tip="Half of replies were faster than this (50th percentile)." />
@@ -88,13 +88,13 @@ export default async function HomePage() {
         </div>
 
         {/* volume chart card */}
-        <div className="mt-6 rounded-none border border-white/10 bg-[#0a0a0a] p-5">
-          <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-            <h2 className="font-display text-base font-semibold text-white">
+        <div className="mt-6 rounded-none border border-line bg-surface p-5">
+          <div className="flex items-baseline justify-between border-b border-line pb-3">
+            <h2 className="font-display text-base font-semibold text-ink">
               Event volume
               <HelpTip text="Passed vs failed agent steps per minute, last 6 hours." />
             </h2>
-            <span className="font-tech text-xs text-[#999999]">passed vs failed · last 6h</span>
+            <span className="font-tech text-xs text-ink-muted">passed vs failed · last 6h</span>
           </div>
           <div className="mt-4">
             <VolumeChart data={volume.map((r) => ({ bucket: r.bucket, ok: Number(r.ok), error: Number(r.error) }))} />
@@ -103,8 +103,8 @@ export default async function HomePage() {
 
         {/* latency + tools */}
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-none border border-white/10 bg-[#0a0a0a] p-5">
-            <h2 className="font-display text-base font-semibold text-white border-b border-white/10 pb-3">
+          <div className="rounded-none border border-line bg-surface p-5">
+            <h2 className="font-display text-base font-semibold text-ink border-b border-line pb-3">
               Reply time
               <HelpTip text="Typical (solid) vs slowest-5% (dashed) reply time in milliseconds, last 6 hours." />
             </h2>
@@ -112,10 +112,10 @@ export default async function HomePage() {
               <LatencyChart data={latency.map((r) => ({ bucket: r.bucket, p50: Number(r.p50 ?? 0), p95: Number(r.p95 ?? 0) }))} />
             </div>
           </div>
-          <div className="rounded-none border border-white/10 bg-[#0a0a0a] p-5">
-            <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-              <h2 className="font-display text-base font-semibold text-white">Top tools</h2>
-              <Link href="/clusters" className="font-tech text-xs text-[#52a8ff] hover:underline">
+          <div className="rounded-none border border-line bg-surface p-5">
+            <div className="flex items-baseline justify-between border-b border-line pb-3">
+              <h2 className="font-display text-base font-semibold text-ink">Top tools</h2>
+              <Link href="/clusters" className="font-tech text-xs text-brand hover:underline">
                 View intents →
               </Link>
             </div>
@@ -125,26 +125,26 @@ export default async function HomePage() {
       </div>
 
       {/* live events footer strip */}
-      <footer className="sticky bottom-0 mt-8 border-t border-white/10 bg-[#0a0a0a]">
+      <footer className="sticky bottom-0 mt-8 border-t border-line bg-surface">
         <div className="flex items-center gap-4 px-6 py-3">
-          <span className="font-tech text-xs uppercase tracking-wider text-[#999999]">Live events</span>
+          <span className="font-tech text-xs uppercase tracking-wider text-ink-muted">Live events</span>
           <div className="flex flex-1 items-center gap-[3px] overflow-hidden">
             {ticks.map((t, i) => (
               <span
                 key={i}
                 title={t.status === "error" ? "failed step" : "passed step"}
                 className={`inline-block h-3 w-[4px] rounded-none ${
-                  t.status === "error" ? "bg-red-500" : "bg-[#52a8ff]/40"
+                  t.status === "error" ? "bg-red-500" : "bg-brand/40"
                 }`}
               />
             ))}
-            {ticks.length === 0 && <span className="font-tech text-xs text-[#999999]">no events yet</span>}
+            {ticks.length === 0 && <span className="font-tech text-xs text-ink-muted">no events yet</span>}
           </div>
-          <span className="hidden items-center gap-3 font-tech text-xs text-[#999999] md:flex">
+          <span className="hidden items-center gap-3 font-tech text-xs text-ink-muted md:flex">
             <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 bg-red-500" /> failed</span>
-            <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 bg-[#52a8ff]/40" /> passed</span>
+            <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 bg-brand/40" /> passed</span>
           </span>
-          <Link href="/traces" className="flex items-center gap-1.5 font-tech text-xs text-white hover:text-[#52a8ff] transition-colors">
+          <Link href="/traces" className="flex items-center gap-1.5 font-tech text-xs text-ink hover:text-brand transition-colors">
             View all <Icon name="arrowRight" className="h-3.5 w-3.5" />
           </Link>
         </div>
@@ -160,12 +160,12 @@ async function ToolTable() {
     GROUP BY name ORDER BY calls DESC LIMIT 6
   `);
   if (tools.length === 0) {
-    return <p className="py-8 text-center font-tech text-xs text-[#999999]">No tool calls recorded.</p>;
+    return <p className="py-8 text-center font-tech text-xs text-ink-muted">No tool calls recorded.</p>;
   }
   return (
     <table className="mt-3 w-full font-tech text-xs">
       <thead>
-        <tr className="text-left text-[#999999] border-b border-white/10 uppercase tracking-wider">
+        <tr className="text-left text-ink-muted border-b border-line uppercase tracking-wider">
           <th className="py-2 pr-4 font-normal">Tool</th>
           <th className="py-2 pr-4 text-right font-normal">Calls</th>
           <th className="py-2 pl-4 text-right font-normal">Failed</th>
@@ -174,13 +174,13 @@ async function ToolTable() {
       </thead>
       <tbody>
         {tools.map((t) => (
-          <tr key={t.name} className="border-b border-white/5 last:border-0 hover:bg-white/5">
-            <td className="py-2 font-mono text-white" title={t.name}>{t.name}</td>
-            <td className="py-2 text-right tabular-nums text-gray-300">{Number(t.calls)}</td>
-            <td className={`py-2 pl-4 text-right tabular-nums ${Number(t.errors) > 0 ? "text-red-400 font-bold" : "text-[#999999]"}`}>
+          <tr key={t.name} className="border-b border-line last:border-0 hover:bg-hover">
+            <td className="py-2 font-mono text-ink" title={t.name}>{t.name}</td>
+            <td className="py-2 text-right tabular-nums text-ink-muted">{Number(t.calls)}</td>
+            <td className={`py-2 pl-4 text-right tabular-nums ${Number(t.errors) > 0 ? "text-red-600 dark:text-red-400 font-bold" : "text-ink-muted"}`}>
               {Number(t.errors) > 0 ? `${t.errors}` : "—"}
             </td>
-            <td className="py-2 pl-4 text-right tabular-nums text-gray-300">{fmtMs(t.avg_ms)}</td>
+            <td className="py-2 pl-4 text-right tabular-nums text-ink-muted">{fmtMs(t.avg_ms)}</td>
           </tr>
         ))}
       </tbody>

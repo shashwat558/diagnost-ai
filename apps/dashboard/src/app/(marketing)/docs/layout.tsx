@@ -9,7 +9,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
           <nav className="sticky top-20 max-h-[calc(100vh-6rem)] space-y-5 overflow-y-auto pb-8">
             {DOC_NAV.map((group) => (
               <div key={group.section}>
-                <div className="px-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                <div className="px-2 text-[11px] font-semibold uppercase tracking-wider text-ink-subtle">
                   {group.section}
                 </div>
                 <div className="mt-1 space-y-0.5">
@@ -17,7 +17,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
                     <Link
                       key={l.href}
                       href={l.href}
-                      className="block rounded-none px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-slate-800 dark:hover:text-gray-100"
+                      className="block rounded-none px-2 py-1.5 text-sm text-ink-muted hover:bg-surface-2 hover:text-ink"
                     >
                       {l.label}
                     </Link>

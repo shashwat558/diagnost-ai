@@ -65,7 +65,7 @@ export function ChannelsManager() {
 
   return (
     <div>
-      {isLoading && <p className="mt-2 text-sm text-gray-400 dark:text-gray-500">Loading channels…</p>}
+      {isLoading && <p className="mt-2 text-sm text-ink-subtle">Loading channels…</p>}
       {error && (
         <p className="mt-2 text-sm text-red-600">
           Couldn't load channels.{" "}
@@ -78,35 +78,35 @@ export function ChannelsManager() {
       <table className="mt-2 w-full text-sm">
         <tbody>
           {(channels ?? []).map((c) => (
-            <tr key={c.id} className="border-b border-gray-100 dark:border-gray-800 last:border-0">
+            <tr key={c.id} className="border-b border-line last:border-0">
               <td className="py-2">
                 <Badge variant="secondary">{c.channel}</Badge>
               </td>
-              <td className="max-w-[220px] truncate px-3 py-2 font-mono text-sm text-gray-700 dark:text-gray-300">
+              <td className="max-w-[220px] truncate px-3 py-2 font-mono text-sm text-ink">
                 {c.target}
               </td>
               <td className="py-2 text-right">
                 <span
-                  className={`mr-2 text-xs ${c.enabled ? "text-emerald-600" : "text-gray-400 dark:text-gray-500"}`}
+                  className={`mr-2 text-xs ${c.enabled ? "text-emerald-600" : "text-ink-subtle"}`}
                 >
                   {c.enabled ? "on" : "off"}
                 </span>
                 <button
                   onClick={() => toggle.mutate({ id: c.id, enabled: !c.enabled })}
-                  className="mr-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-800"
+                  className="mr-2 text-xs text-ink-muted hover:text-ink"
                 >
                   {c.enabled ? "Disable" : "Enable"}
                 </button>
                 <button
                   onClick={() => onTest(c.id)}
                   disabled={test.isPending}
-                  className="mr-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-800 disabled:opacity-50"
+                  className="mr-2 text-xs text-ink-muted hover:text-ink disabled:opacity-50"
                 >
                   Test
                 </button>
                 <button
                   onClick={() => remove.mutate(c.id)}
-                  className="text-xs text-red-500 hover:text-red-700"
+                  className="text-xs text-red-600 dark:text-red-500 hover:text-red-700"
                 >
                   Remove
                 </button>
@@ -115,17 +115,17 @@ export function ChannelsManager() {
           ))}
           {!isLoading && (channels ?? []).length === 0 && (
             <tr>
-              <td className="py-2 text-gray-400 dark:text-gray-500">No channels yet — add one below.</td>
+              <td className="py-2 text-ink-subtle">No channels yet — add one below.</td>
             </tr>
           )}
         </tbody>
       </table>
-      {testResult && <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{testResult}</p>}
+      {testResult && <p className="mt-1 text-sm text-ink-muted">{testResult}</p>}
 
       <form onSubmit={onSubmit} className="mt-3 flex gap-2" noValidate>
         <select
           {...register("channel")}
-          className="h-9 rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-2 text-sm text-gray-900 dark:text-gray-100 outline-none focus:border-gray-300"
+          className="h-9 rounded-md border border-control-line bg-surface px-2 text-sm text-ink outline-none focus:border-brand"
           aria-label="Channel type"
         >
           <option value="email">Email</option>

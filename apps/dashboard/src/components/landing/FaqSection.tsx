@@ -38,10 +38,10 @@ export function FaqSection() {
     <div className="space-y-8">
       <div>
         <SectionTag>FAQ</SectionTag>
-        <h2 className="mt-2 font-display text-3xl font-medium tracking-[-0.03em] text-white md:text-5xl">
+        <h2 className="mt-2 font-display text-3xl font-medium tracking-[-0.03em] text-ink md:text-5xl">
           Frequently asked questions.
         </h2>
-        <p className="mt-2 max-w-xl text-base text-[#999999]">
+        <p className="mt-2 max-w-xl text-base text-ink-muted">
           Everything you need to know about Diagnost AI telemetry, privacy, and infrastructure.
         </p>
       </div>
@@ -52,22 +52,22 @@ export function FaqSection() {
           return (
             <div
               key={faq.q}
-              className={`bg-[#0a0a0a] border transition-all duration-300 ${
-                isOpen ? "border-[#52a8ff] bg-[#0d0d0d]" : "border-white/10 hover:border-white/20"
+              className={`bg-surface border transition-all duration-300 ${
+                isOpen ? "border-brand bg-surface-2" : "border-line hover:border-line-strong"
               }`}
             >
               <button
                 onClick={() => toggle(idx)}
-                className="w-full flex items-center justify-between p-5 text-left font-display text-lg font-medium text-white hover:text-[#52a8ff] transition-colors"
+                className="w-full flex items-center justify-between p-5 text-left font-display text-lg font-medium text-ink hover:text-brand transition-colors"
               >
                 <span>{faq.q}</span>
-                <span className={`transform transition-transform duration-300 text-[#52a8ff] ${isOpen ? "rotate-180" : ""}`}>
+                <span className={`transform transition-transform duration-300 text-brand ${isOpen ? "rotate-180" : ""}`}>
                   <Icon name="chevron" className="h-5 w-5" />
                 </span>
               </button>
 
               {isOpen && (
-                <div className="px-5 pb-5 pt-1 font-sans text-sm text-[#999999] leading-relaxed border-t border-white/5 animate-fadeIn">
+                <div className="px-5 pb-5 pt-1 font-sans text-sm text-ink-muted leading-relaxed border-t border-line animate-fadeIn">
                   {faq.a}
                 </div>
               )}

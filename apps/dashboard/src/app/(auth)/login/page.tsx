@@ -45,13 +45,13 @@ export default function LoginPage() {
   return (
     <form
       onSubmit={onSubmit}
-      className="space-y-4 font-sans text-white"
+      className="space-y-4 font-sans text-ink"
       noValidate
     >
-      <h1 className="font-display text-lg font-bold text-white tracking-tight">Log in to workspace</h1>
+      <h1 className="font-display text-lg font-bold text-ink tracking-tight">Log in to workspace</h1>
 
       <div>
-        <label className="block font-tech text-xs uppercase tracking-wider text-[#999999]">Email Address</label>
+        <label className="block font-tech text-xs uppercase tracking-wider text-ink-muted">Email Address</label>
         <Input
           type="email"
           {...register("email")}
@@ -60,12 +60,12 @@ export default function LoginPage() {
           aria-invalid={!!errors.email}
         />
         {errors.email?.message && errors.email.message.trim() && (
-          <p className="mt-1 font-tech text-xs text-red-400">{errors.email.message}</p>
+          <p className="mt-1 font-tech text-xs text-red-600 dark:text-red-400">{errors.email.message}</p>
         )}
       </div>
 
       <div>
-        <label className="block font-tech text-xs uppercase tracking-wider text-[#999999]">Password</label>
+        <label className="block font-tech text-xs uppercase tracking-wider text-ink-muted">Password</label>
         <Input
           type="password"
           {...register("password")}
@@ -74,7 +74,7 @@ export default function LoginPage() {
           aria-invalid={!!errors.password}
         />
         {errors.password?.message && (
-          <p className="mt-1 font-tech text-xs text-red-400">{errors.password.message}</p>
+          <p className="mt-1 font-tech text-xs text-red-600 dark:text-red-400">{errors.password.message}</p>
         )}
       </div>
 
@@ -82,9 +82,9 @@ export default function LoginPage() {
         {busy ? "Logging in…" : "Log in"}
       </Button>
 
-      <p className="mt-4 text-center font-tech text-xs text-[#999999]">
+      <p className="mt-4 text-center font-tech text-xs text-ink-muted">
         No account?{" "}
-        <Link href="/signup" className="text-[#52a8ff] hover:underline">
+        <Link href="/signup" className="text-brand hover:underline">
           Sign up free
         </Link>
       </p>

@@ -27,24 +27,24 @@ export default async function ClustersPage() {
   const total = rows.reduce((a, r) => a + r.size, 0);
 
   return (
-    <div className="pb-8 bg-black text-white min-h-screen font-sans">
+    <div className="pb-8 bg-canvas text-ink min-h-screen font-sans">
       <div className="px-6 pt-6">
-        <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="mb-6 flex items-center justify-between border-b border-line pb-4">
           <div>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-white">Failure &amp; Intent Clusters</h1>
-            <p className="font-tech text-xs text-[#999999] mt-1">Automatic grouping of execution failure patterns</p>
+            <h1 className="font-display text-2xl font-bold tracking-tight text-ink">Failure &amp; Intent Clusters</h1>
+            <p className="font-tech text-xs text-ink-muted mt-1">Automatic grouping of execution failure patterns</p>
           </div>
-          <span className="font-tech text-xs text-[#52a8ff] bg-[#52a8ff]/10 px-3 py-1 border border-[#52a8ff]/20">
+          <span className="font-tech text-xs text-brand bg-brand/10 px-3 py-1 border border-brand/20">
             {rows.length} CLUSTERS IDENTIFIED
           </span>
         </div>
 
-        <div className="rounded-none border border-white/10 bg-[#0a0a0a] p-5">
-          <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-            <h2 className="font-display text-base font-semibold text-white">
+        <div className="rounded-none border border-line bg-surface p-5">
+          <div className="flex items-baseline justify-between border-b border-line pb-3">
+            <h2 className="font-display text-base font-semibold text-ink">
               {total.toLocaleString()} conversations across {rows.length} intents
             </h2>
-            <span className="font-tech text-xs text-[#999999]">last 7 days volume</span>
+            <span className="font-tech text-xs text-ink-muted">last 7 days volume</span>
           </div>
           <div className="mt-4">
             <Sparkline points={days} width={1120} height={72} />
@@ -53,7 +53,7 @@ export default async function ClustersPage() {
       </div>
 
       <div className="mt-6 px-6">
-        <div className="rounded-none border border-white/10 bg-[#0a0a0a] p-5">
+        <div className="rounded-none border border-line bg-surface p-5">
           <IntentsTable rows={rows} />
         </div>
       </div>

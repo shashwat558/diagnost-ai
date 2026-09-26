@@ -31,7 +31,7 @@ export function HeroDashboard() {
       <div className="grid md:grid-cols-[200px_1fr_230px]">
         {/* mini sidebar */}
         <div className="hidden border-r border-slate-700/70 p-4 text-xs md:block">
-          <div className="px-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+          <div className="px-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-ink-muted">
             Observe
           </div>
           {[
@@ -40,7 +40,7 @@ export function HeroDashboard() {
             { icon: "target", label: "Intents", badge: "3" },
             { icon: "database", label: "Events" },
           ].map((i) => (
-            <div key={i.label} className="flex items-center gap-2 rounded-none px-2 py-1.5 text-gray-300">
+            <div key={i.label} className="flex items-center gap-2 rounded-none px-2 py-1.5 text-ink-muted">
               <Icon name={i.icon} className="h-3.5 w-3.5" />
               {i.label}
               {i.badge && (
@@ -50,7 +50,7 @@ export function HeroDashboard() {
               )}
             </div>
           ))}
-          <div className="px-1 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+          <div className="px-1 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wider text-ink-muted">
             Act
           </div>
           {[
@@ -58,7 +58,7 @@ export function HeroDashboard() {
             { icon: "sparkles", label: "Auto-fix" },
             { icon: "shield", label: "Audit log" },
           ].map((i) => (
-            <div key={i.label} className="flex items-center gap-2 rounded-none px-2 py-1.5 text-gray-300">
+            <div key={i.label} className="flex items-center gap-2 rounded-none px-2 py-1.5 text-ink-muted">
               <Icon name={i.icon} className="h-3.5 w-3.5" />
               {i.label}
             </div>
@@ -68,8 +68,8 @@ export function HeroDashboard() {
         {/* chart */}
         <div className="border-slate-700/70 p-5 md:border-r">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm font-medium text-gray-300">Conversations and failures</span>
-            <span className="text-[11px] text-gray-500">daily · last 7 days</span>
+            <span className="text-sm font-medium text-ink-muted">Conversations and failures</span>
+            <span className="text-[11px] text-ink-muted">daily · last 7 days</span>
           </div>
           <div className="mt-2 h-[420px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -104,7 +104,7 @@ export function HeroDashboard() {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-1 flex items-center gap-4 text-[10px] text-gray-400">
+          <div className="mt-1 flex items-center gap-4 text-[10px] text-ink-subtle">
             <span className="flex items-center gap-1.5">
               <span className="h-1.5 w-4 rounded-none bg-accent" /> Passed
             </span>
@@ -116,11 +116,11 @@ export function HeroDashboard() {
 
         {/* stats column */}
         <div className="hidden p-5 md:block">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">This week</div>
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">This week</div>
           <dl className="mt-3 space-y-3">
             {WEEK.map((s) => (
               <div key={s.label} className="flex items-baseline justify-between text-sm">
-                <dt className="text-gray-400">{s.label}</dt>
+                <dt className="text-ink-subtle">{s.label}</dt>
                 <dd className={`font-semibold tabular-nums ${s.danger ? "text-red-400" : "text-gray-100"}`}>
                   {s.value}
                 </dd>
@@ -129,13 +129,13 @@ export function HeroDashboard() {
           </dl>
           <div className="mt-4 rounded-none bg-slate-900 p-2.5">
             <div className="flex items-baseline justify-between text-[11px]">
-              <span className="text-gray-400">Quota used</span>
+              <span className="text-ink-subtle">Quota used</span>
               <span className="font-semibold text-gray-100">32%</span>
             </div>
             <div className="mt-1.5 h-1.5 overflow-hidden rounded-none bg-gray-950">
               <div className="h-full w-1/3 rounded-none bg-accent" />
             </div>
-            <div className="mt-1 text-[10px] text-gray-500">16k of 50k events</div>
+            <div className="mt-1 text-[10px] text-ink-muted">16k of 50k events</div>
           </div>
         </div>
       </div>

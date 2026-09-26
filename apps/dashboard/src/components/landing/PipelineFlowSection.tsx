@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { SectionTag } from "@/components/landing-bits";
-import { Icon } from "@/components/icon";
 
 const STEPS = [
   {
@@ -53,10 +52,10 @@ export function PipelineFlowSection() {
     <div className="space-y-8">
       <div>
         <SectionTag>Architecture Workflow</SectionTag>
-        <h2 className="mt-2 font-display text-3xl font-medium tracking-[-0.03em] text-white md:text-5xl">
+        <h2 className="mt-2 font-display text-3xl font-medium tracking-[-0.03em] text-ink md:text-5xl">
           Three steps to self-healing AI agents.
         </h2>
-        <p className="mt-2 max-w-xl text-base text-[#999999]">
+        <p className="mt-2 max-w-xl text-base text-ink-muted">
           From trace capture to automated PR gating — built for high-throughput production LLM applications.
         </p>
       </div>
@@ -68,33 +67,33 @@ export function PipelineFlowSection() {
             <div
               key={step.num}
               onClick={() => setActiveStep(idx)}
-              className={`group cursor-pointer p-6 bg-[#0a0a0a] border transition-all duration-300 flex flex-col justify-between ${
+              className={`group cursor-pointer p-6 bg-surface border transition-all duration-300 flex flex-col justify-between ${
                 isActive
-                  ? "border-[#52a8ff] bg-[#0d0d0d]"
-                  : "border-white/10 hover:border-white/20"
+                  ? "border-brand bg-surface-2"
+                  : "border-line hover:border-line-strong"
               }`}
             >
               <div>
-                <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                  <span className="font-tech text-xl font-bold text-white">{step.num}</span>
+                <div className="flex items-center justify-between border-b border-line pb-3">
+                  <span className="font-tech text-xl font-bold text-ink">{step.num}</span>
                   <span className={`font-tech text-xs uppercase px-2 py-0.5 border ${
-                    isActive ? "bg-[#52a8ff]/10 text-[#52a8ff] border-[#52a8ff]/30" : "bg-white/5 text-[#999999] border-white/10"
+                    isActive ? "bg-brand/10 text-brand border-brand/30" : "bg-hover text-ink-muted border-line"
                   }`}>
                     {step.tag}
                   </span>
                 </div>
 
-                <h3 className="mt-4 font-display text-xl font-semibold text-white group-hover:text-[#52a8ff] transition-colors">
+                <h3 className="mt-4 font-display text-xl font-semibold text-ink group-hover:text-brand transition-colors">
                   {step.title}
                 </h3>
-                <p className="mt-2 font-sans text-sm text-[#999999] leading-relaxed">
+                <p className="mt-2 font-sans text-sm text-ink-muted leading-relaxed">
                   {step.desc}
                 </p>
               </div>
 
               {/* Code snippet preview */}
-              <div className="mt-6 border-t border-white/10 pt-4">
-                <pre className="p-3 bg-black text-[#e7e7e7] font-tech text-[11px] leading-relaxed overflow-x-auto border border-white/5">
+              <div className="mt-6 border-t border-line pt-4">
+                <pre className="p-3 bg-black text-[#e7e7e7] font-tech text-[11px] leading-relaxed overflow-x-auto border border-line">
                   {step.code}
                 </pre>
               </div>

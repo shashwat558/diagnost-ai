@@ -35,7 +35,7 @@ export function SquareCta({
   return (
     <Link
       href={href}
-      className={`inline-flex items-center gap-2 rounded-none bg-white px-5 py-3 text-base font-medium text-[#121212] transition-colors hover:bg-[#e7e7e7] ${className}`}
+      className={`inline-flex items-center gap-2 rounded-none bg-ink px-5 py-3 text-base font-medium text-canvas transition-colors hover:bg-[#e7e7e7] ${className}`}
     >
       {children}
     </Link>
@@ -44,12 +44,14 @@ export function SquareCta({
 
 /**
  * Status chip (v-chip): pill indicator for status reporting.
- * Dot: PASS #62c073, WARN #999999, ERROR/FAIL #ededed.
+ * Dot colours are literal because they encode meaning, not surface:
+ * green = pass, muted = warn, red = fail (readable on both themes).
  */
 export function StatusChip({ status, children }: { status: "pass" | "warn" | "fail"; children: React.ReactNode }) {
-  const dot = status === "pass" ? "#62c073" : status === "warn" ? "#999999" : "#ededed";
+  const dot =
+    status === "pass" ? "#22c55e" : status === "warn" ? "rgb(var(--ink-subtle-rgb))" : "#ef4444";
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-[100px] bg-[#1f1f1f] px-2.5 py-1 font-tech text-xs uppercase text-[#999999]">
+    <span className="inline-flex items-center gap-1.5 rounded-[100px] bg-surface-2 px-2.5 py-1 font-tech text-xs uppercase text-ink-muted">
       <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: dot }} />
       {children}
     </span>
@@ -59,6 +61,8 @@ export function StatusChip({ status, children }: { status: "pass" | "warn" | "fa
 /**
  * Timeline progress bar: span timing visualization.
  * Container transparent; inner bar positioned by left%/width%.
+ * Track/active colours go through the theme variables so the idle bar stays
+ * visible after switching to light mode.
  */
 export function TimelineBar({ left, width, active = false }: { left: number; width: number; active?: boolean }) {
   return (
@@ -68,7 +72,7 @@ export function TimelineBar({ left, width, active = false }: { left: number; wid
         style={{
           left: `${left}%`,
           width: `${width}%`,
-          backgroundColor: active ? "#52a8ff" : "rgba(255,255,255,0.18)",
+          backgroundColor: active ? "rgb(var(--brand-rgb))" : "rgb(var(--line-strong-rgb))",
         }}
       />
     </span>
@@ -78,7 +82,7 @@ export function TimelineBar({ left, width, active = false }: { left: number; wid
 /** Small mono section tag used above dark-tech headings. */
 export function SectionTag({ children }: { children: React.ReactNode }) {
   return (
-    <div className="font-tech text-xs uppercase tracking-[0.2em] text-[#999999]">{children}</div>
+    <div className="font-tech text-xs uppercase tracking-[0.2em] text-ink-muted">{children}</div>
   );
 }
 

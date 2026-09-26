@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   DiagonalArrow,
   HeroBackdrop,
@@ -25,7 +24,7 @@ const font = Inter({
 
 export default function LandingPage() {
   return (
-    <div className="bg-black text-white relative overflow-hidden">
+    <div className="bg-canvas text-ink relative overflow-hidden">
       {/* Background ambient fireflies */}
       <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
         <FireflyBackground />
@@ -37,7 +36,7 @@ export default function LandingPage() {
 
         <div className={`${font.className} relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 md:pb-20`}>
           <Reveal>
-            <h1 className="headline-fluid mt-4 max-w-[752px] font-display font-medium tracking-[-0.03em] text-white">
+            <h1 className="headline-fluid mt-4 max-w-[752px] font-display font-medium tracking-[-0.03em] text-ink">
               Agent work, held to account.
             </h1>
             <p className="mt-4 max-w-xl text-base leading-6 text-[#e7e7e7]">

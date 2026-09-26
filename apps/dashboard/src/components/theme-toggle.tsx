@@ -33,9 +33,9 @@ export function ThemeToggle({ className, iconOnly = false }: { className?: strin
       onClick={() => setTheme(isDark ? "light" : "dark")}
       title={isDark ? "Switch to light theme" : "Switch to dark theme"}
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-      className={`inline-flex items-center justify-center gap-2 rounded-none border border-white/20 bg-black/40 px-3 py-1.5 font-tech text-xs uppercase tracking-wider text-white hover:bg-white/10 dark:border-white/20 dark:bg-black dark:text-white transition-colors ${className ?? ""}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-none border border-line-strong bg-surface px-3 py-1.5 font-tech text-xs uppercase tracking-wider text-ink hover:bg-hover transition-colors ${className ?? ""}`}
     >
-      {isDark ? <SunIcon className="h-3.5 w-3.5 text-amber-400" /> : <MoonIcon className="h-3.5 w-3.5 text-[#52a8ff]" />}
+      {isDark ? <SunIcon className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" /> : <MoonIcon className="h-3.5 w-3.5 text-brand" />}
       {!iconOnly && <span>{isDark ? "Light" : "Dark"}</span>}
     </button>
   );

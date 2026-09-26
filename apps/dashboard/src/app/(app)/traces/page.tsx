@@ -31,21 +31,21 @@ export default async function ConversationsPage() {
   `);
 
   return (
-    <div className="px-6 pt-6 bg-black min-h-screen text-white">
-      <div className="flex items-baseline justify-between border-b border-white/10 pb-4">
+    <div className="px-6 pt-6 bg-canvas min-h-screen text-ink">
+      <div className="flex items-baseline justify-between border-b border-line pb-4">
         <div>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-white">Conversations &amp; Traces</h1>
-          <p className="font-tech text-xs text-[#999999] mt-1">Inspecting 50 most recent agent sessions</p>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-ink">Conversations &amp; Traces</h1>
+          <p className="font-tech text-xs text-ink-muted mt-1">Inspecting 50 most recent agent sessions</p>
         </div>
-        <span className="font-tech text-xs text-[#52a8ff] bg-[#52a8ff]/10 px-3 py-1 border border-[#52a8ff]/20">
+        <span className="font-tech text-xs text-brand bg-brand/10 px-3 py-1 border border-brand/20">
           50 RECORDED SESSIONS
         </span>
       </div>
 
-      <div className="mt-6 border border-white/10 bg-[#0a0a0a]">
+      <div className="mt-6 border border-line bg-surface">
         <table className="w-full text-left font-tech text-xs">
           <thead>
-            <tr className="border-b border-white/10 text-[#999999] uppercase tracking-wider bg-[#0d0d0d]">
+            <tr className="border-b border-line text-ink-muted uppercase tracking-wider bg-surface-2">
               <th className="py-3 px-4 font-normal">Conversation ID</th>
               <th className="py-3 px-4 text-right font-normal">
                 Steps
@@ -63,18 +63,18 @@ export default async function ConversationsPage() {
             {convos.map((c) => {
               const failed = Number(c.errors) > 0;
               return (
-                <tr key={c.conversation_id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                <tr key={c.conversation_id} className="border-b border-line hover:bg-hover transition-colors">
                   <td className="py-3 px-4">
                     <Link
                       href={`/traces/${encodeURIComponent(c.conversation_id)}`}
-                      className="font-mono text-xs text-white hover:text-[#52a8ff] transition-colors"
+                      className="font-mono text-xs text-ink hover:text-brand transition-colors"
                       title={c.conversation_id}
                     >
                       …{c.conversation_id.slice(-16)}
                     </Link>
                     <CopyButton text={c.conversation_id} />
                   </td>
-                  <td className="py-3 px-4 text-right tabular-nums text-gray-300">
+                  <td className="py-3 px-4 text-right tabular-nums text-ink-muted">
                     {Number(c.events)}
                   </td>
                   <td className="py-3 px-4">
@@ -82,10 +82,10 @@ export default async function ConversationsPage() {
                       {failed ? `${c.errors} FAILED` : "PASSED"}
                     </StatusChip>
                   </td>
-                  <td className="py-3 px-4 text-right tabular-nums text-[#999999]">
+                  <td className="py-3 px-4 text-right tabular-nums text-ink-muted">
                     {Number(c.pii_findings) || "—"}
                   </td>
-                  <td className="py-3 px-4 text-[#999999]">
+                  <td className="py-3 px-4 text-ink-muted">
                     {String(c.last_ts).replace("T", " ").slice(0, 19)}
                   </td>
                 </tr>
@@ -93,7 +93,7 @@ export default async function ConversationsPage() {
             })}
             {convos.length === 0 && (
               <tr>
-                <td colSpan={5} className="py-12 text-center text-[#999999]">
+                <td colSpan={5} className="py-12 text-center text-ink-muted">
                   No conversation traces recorded yet.
                 </td>
               </tr>

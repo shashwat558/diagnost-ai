@@ -50,48 +50,48 @@ export default async function AuditPage() {
   return (
     <div className="px-6 pt-5">
       <div className="flex items-baseline justify-between">
-        <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">Audit log</h1>
-        <span className="text-sm text-gray-400 dark:text-gray-500">privileged actions, most recent 100</span>
+        <h1 className="text-base font-semibold text-ink">Audit log</h1>
+        <span className="text-sm text-ink-subtle">privileged actions, most recent 100</span>
       </div>
 
       <table className="mt-4 w-full border-separate border-spacing-0 text-sm">
         <thead>
-          <tr className="text-left text-sm text-gray-500 dark:text-gray-400">
-            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 font-normal">What happened</th>
-            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 font-normal">Who</th>
-            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 font-normal">When</th>
+          <tr className="text-left text-sm text-ink-muted">
+            <th className="border-b border-line py-2 pr-4 font-normal">What happened</th>
+            <th className="border-b border-line py-2 pr-4 font-normal">Who</th>
+            <th className="border-b border-line py-2 pr-4 font-normal">When</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/60">
-              <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4">
+            <tr key={r.id} className="hover:bg-hover">
+              <td className="border-b border-line py-2.5 pr-4">
                 <span className={`rounded px-1.5 py-0.5 text-sm font-medium ${
                   r.action.includes("quota") || r.action.includes("on_hold")
                     ? "bg-red-50 text-red-600"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                    : "bg-surface-2 text-ink"
                 }`}>
                   {describeAction(r.action, r.metadata ?? {})}
                 </span>
                 <details className="mt-0.5">
-                  <summary className="cursor-pointer text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600">
+                  <summary className="cursor-pointer text-xs text-ink-subtle hover:text-ink-muted">
                     Technical details
                   </summary>
-                  <span className="font-mono text-xs text-gray-500 dark:text-gray-400">{r.action}</span>
-                  {r.target && <span className="font-mono text-xs text-gray-500 dark:text-gray-400"> · {r.target} </span>}
-                  <span className="text-xs text-gray-500 dark:text-gray-400">{metaSummary(r.metadata ?? {})}</span>
-                  {r.ip && <span className="font-mono text-xs text-gray-400 dark:text-gray-500"> · IP {r.ip}</span>}
+                  <span className="font-mono text-xs text-ink-muted">{r.action}</span>
+                  {r.target && <span className="font-mono text-xs text-ink-muted"> · {r.target} </span>}
+                  <span className="text-xs text-ink-muted">{metaSummary(r.metadata ?? {})}</span>
+                  {r.ip && <span className="font-mono text-xs text-ink-subtle"> · IP {r.ip}</span>}
                 </details>
               </td>
-              <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4 text-sm text-gray-600 dark:text-gray-400">{r.actor}</td>
-              <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 text-gray-500 dark:text-gray-400">
+              <td className="border-b border-line py-2.5 pr-4 text-sm text-ink-muted">{r.actor}</td>
+              <td className="border-b border-line py-2.5 text-ink-muted">
                 {String(r.created_at).replace("T", " ").slice(0, 19)}
               </td>
             </tr>
           ))}
           {rows.length === 0 && (
             <tr>
-              <td colSpan={3} className="py-10 text-center text-gray-400 dark:text-gray-500">
+              <td colSpan={3} className="py-10 text-center text-ink-subtle">
                 No audit events yet — plan changes, quota hits and new instructions will appear here.
               </td>
             </tr>

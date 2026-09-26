@@ -19,36 +19,64 @@
   line-height: 1.04;
 }
 
+/* ── Theme tokens ────────────────────────────────────────────────────
+   Every colour the UI uses is declared here as an RGB triplet so Tailwind
+   can apply opacity modifiers (bg-brand/20). Values flip on .dark, which is
+   what next-themes toggles on <html>. Components must reference these
+   tokens instead of hardcoded colours, otherwise a page silently keeps one
+   theme's palette when the user switches. */
 :root {
   color-scheme: light;
+
+  --canvas-rgb: 250 250 250; /* page background */
+  --surface-rgb: 255 255 255; /* cards, panels, inputs */
+  --surface-2-rgb: 243 244 246; /* nested / raised blocks */
+  --ink-rgb: 9 9 11; /* primary text */
+  --ink-muted-rgb: 82 82 91; /* secondary text */
+  --ink-subtle-rgb: 113 113 122; /* tertiary text, disabled */
+  --line-rgb: 229 231 235; /* borders (≈ white/10 in dark) */
+  --line-strong-rgb: 212 212 216; /* emphasis borders (≈ white/20) */
+  /* Form-control boundaries. WCAG 1.4.11 wants >=3:1 against the control's
+     own background, which hairline --line cannot reach on either theme. */
+  --control-line-rgb: 141 141 145;
+  --hover-rgb: 243 244 246; /* hover fills (≈ white/10 in dark) */
+  --brand-rgb: 3 105 161; /* accent blue, AA on white */
+  --brand-soft-rgb: 224 242 254; /* accent tinted fill */
 }
 
 .dark {
   color-scheme: dark;
+
+  --canvas-rgb: 0 0 0;
+  --surface-rgb: 10 10 10;
+  --surface-2-rgb: 13 13 13;
+  --ink-rgb: 255 255 255;
+  --ink-muted-rgb: 153 153 153;
+  --ink-subtle-rgb: 115 115 115;
+  --line-rgb: 38 38 42;
+  --line-strong-rgb: 63 63 70;
+  --control-line-rgb: 100 100 106;
+  --hover-rgb: 26 26 26;
+  --brand-rgb: 82 168 255;
+  --brand-soft-rgb: 16 34 51;
 }
 
 body {
-  @apply bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100;
+  @apply bg-canvas text-ink antialiased;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   font-size: 15px;
   line-height: 1.55;
 }
 
-
-
 ::selection {
-  background: #ffedd5;
+  background: rgb(var(--brand-soft-rgb));
 }
 
 /* thin scrollbars, utilitarian feel */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent;
-}
-
-.dark * {
-  scrollbar-color: #374151 transparent;
+  scrollbar-color: rgb(var(--line-strong-rgb)) transparent;
 }
 
 @font-face {

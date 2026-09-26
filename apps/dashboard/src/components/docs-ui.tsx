@@ -1,28 +1,28 @@
 import Link from "next/link";
 
 export function H1({ children }: { children: React.ReactNode }) {
-  return <h1 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{children}</h1>;
+  return <h1 className="text-xl font-semibold tracking-tight text-ink">{children}</h1>;
 }
 
 export function Lead({ children }: { children: React.ReactNode }) {
-  return <p className="mt-2 max-w-2xl text-[15px] leading-6 text-gray-600 dark:text-gray-300">{children}</p>;
+  return <p className="mt-2 max-w-2xl text-[15px] leading-6 text-ink-muted">{children}</p>;
 }
 
 export function H2({ children, id }: { children: React.ReactNode; id?: string }) {
   return (
-    <h2 id={id} className="mt-8 scroll-mt-20 text-base font-semibold text-gray-900 dark:text-gray-100">
+    <h2 id={id} className="mt-8 scroll-mt-20 text-base font-semibold text-ink">
       {children}
     </h2>
   );
 }
 
 export function P({ children }: { children: React.ReactNode }) {
-  return <p className="mt-2 max-w-3xl text-sm leading-6 text-gray-600 dark:text-gray-400">{children}</p>;
+  return <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-muted">{children}</p>;
 }
 
 export function Code({ children }: { children: string }) {
   return (
-    <pre className="my-3 max-w-3xl overflow-x-auto rounded-none border border-gray-200 bg-gray-50 p-3.5 font-mono text-[13px] leading-5 text-gray-700 dark:border-slate-800 dark:bg-slate-900 dark:text-gray-300">
+    <pre className="my-3 max-w-3xl overflow-x-auto rounded-none border border-line bg-canvas p-3.5 font-mono text-[13px] leading-5 text-ink">
       {children}
     </pre>
   );
@@ -30,7 +30,7 @@ export function Code({ children }: { children: string }) {
 
 export function Inline({ children }: { children: React.ReactNode }) {
   return (
-    <code className="rounded-none bg-gray-100 px-1.5 py-0.5 font-mono text-[12px] text-gray-700 dark:bg-slate-800 dark:text-gray-300">
+    <code className="rounded-none bg-surface-2 px-1.5 py-0.5 font-mono text-[12px] text-ink">
       {children}
     </code>
   );
@@ -46,12 +46,12 @@ export function Callout({ children }: { children: React.ReactNode }) {
 
 export function DocTable({ head, rows }: { head: string[]; rows: string[][] }) {
   return (
-    <div className="my-3 max-w-3xl overflow-x-auto rounded-none border border-gray-200 dark:border-slate-800">
+    <div className="my-3 max-w-3xl overflow-x-auto rounded-none border border-line">
       <table className="w-full text-sm">
         <thead>
-          <tr className="bg-gray-50 text-left dark:bg-slate-900">
+          <tr className="bg-canvas text-left">
             {head.map((h) => (
-              <th key={h} className="px-3 py-2 text-[13px] font-medium text-gray-500 dark:text-gray-400">
+              <th key={h} className="px-3 py-2 text-[13px] font-medium text-ink-muted">
                 {h}
               </th>
             ))}
@@ -59,9 +59,9 @@ export function DocTable({ head, rows }: { head: string[]; rows: string[][] }) {
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={i} className="border-t border-gray-100 dark:border-slate-800">
+            <tr key={i} className="border-t border-line">
               {r.map((c, j) => (
-                <td key={j} className="px-3 py-2 align-top text-[13px] leading-5 text-gray-700 dark:text-gray-300">
+                <td key={j} className="px-3 py-2 align-top text-[13px] leading-5 text-ink">
                   {c}
                 </td>
               ))}
@@ -75,10 +75,10 @@ export function DocTable({ head, rows }: { head: string[]; rows: string[][] }) {
 
 export function PrevNext({ prev, next }: { prev?: { href: string; label: string }; next?: { href: string; label: string } }) {
   return (
-    <div className="mt-10 flex max-w-3xl items-center justify-between border-t border-gray-200 pt-4 dark:border-slate-800">
+    <div className="mt-10 flex max-w-3xl items-center justify-between border-t border-line pt-4">
       <div>
         {prev && (
-          <Link href={prev.href} className="text-sm text-gray-500 hover:text-accent dark:text-gray-400">
+          <Link href={prev.href} className="text-sm text-ink-muted hover:text-accent dark:text-ink-subtle">
             ← {prev.label}
           </Link>
         )}

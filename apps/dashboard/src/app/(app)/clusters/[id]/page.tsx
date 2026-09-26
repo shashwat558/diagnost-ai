@@ -40,7 +40,7 @@ export default async function ClusterDetailPage({
   );
 
   if (!cluster) {
-    return <p className="px-6 pt-5 text-sm text-gray-500 dark:text-gray-400">Intent not found — it may have been removed or the link is wrong.</p>;
+    return <p className="px-6 pt-5 text-sm text-ink-muted">Intent not found — it may have been removed or the link is wrong.</p>;
   }
 
   const frustration = Number(cluster.frustration);
@@ -50,11 +50,11 @@ export default async function ClusterDetailPage({
 
   return (
     <div className="px-6 pt-5">
-      <Link href="/clusters" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800">
+      <Link href="/clusters" className="text-sm text-ink-muted hover:text-ink">
         ← Intents
       </Link>
       <div className="mt-1 flex items-center gap-2">
-        <h1 className="text-base font-semibold capitalize text-gray-900 dark:text-gray-100">
+        <h1 className="text-base font-semibold capitalize text-ink">
           {cluster.intent.replace(/_/g, " ")}
         </h1>
         {frustration >= 0.5 && (
@@ -66,9 +66,9 @@ export default async function ClusterDetailPage({
           </span>
         )}
       </div>
-      <p className="mt-0.5 max-w-3xl text-sm text-gray-500 dark:text-gray-400">{cluster.summary}</p>
+      <p className="mt-0.5 max-w-3xl text-sm text-ink-muted">{cluster.summary}</p>
 
-      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
+      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-ink-muted">
         <span>{Number(cluster.size)} conversations</span>
         <span>
           {(Number(cluster.error_rate) * 100).toFixed(0)}% failed
@@ -83,9 +83,9 @@ export default async function ClusterDetailPage({
           <HelpTip text="Average user mood across this intent, from assistant and user messages." />
         </span>
         <span className="flex gap-1">
-          <span className="text-gray-400 dark:text-gray-500">Common words:</span>
+          <span className="text-ink-subtle">Common words:</span>
           {(cluster.top_terms ?? []).slice(0, 5).map((t) => (
-            <span key={t} className="rounded bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 font-mono text-xs text-gray-600 dark:text-gray-400">
+            <span key={t} className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-xs text-ink-muted">
               {t}
             </span>
           ))}
@@ -94,32 +94,32 @@ export default async function ClusterDetailPage({
 
       <table className="mt-4 w-full border-separate border-spacing-0 text-sm">
         <thead>
-          <tr className="text-left text-sm text-gray-500 dark:text-gray-400">
-            <th className="border-b border-gray-200 dark:border-gray-800 py-2 pr-4 font-normal">Example conversation</th>
-            <th className="border-b border-gray-200 dark:border-gray-800 py-2 font-normal">Outcome</th>
+          <tr className="text-left text-sm text-ink-muted">
+            <th className="border-b border-line py-2 pr-4 font-normal">Example conversation</th>
+            <th className="border-b border-line py-2 font-normal">Outcome</th>
           </tr>
         </thead>
         <tbody>
           {members.length === 0 && (
             <tr>
-              <td colSpan={2} className="py-8 text-center text-gray-400 dark:text-gray-500">
+              <td colSpan={2} className="py-8 text-center text-ink-subtle">
                 No examples yet — they appear after the next analysis run.
               </td>
             </tr>
           )}
           {members.map((m) => (
-            <tr key={m.conversation_id} className="hover:bg-gray-50 dark:hover:bg-gray-800/60">
-              <td className="border-b border-gray-100 dark:border-gray-800 py-2.5 pr-4">
+            <tr key={m.conversation_id} className="hover:bg-hover">
+              <td className="border-b border-line py-2.5 pr-4">
                 <Link
                   href={`/traces/${encodeURIComponent(m.conversation_id)}`}
-                  className="font-mono text-sm text-gray-900 dark:text-gray-100 underline decoration-gray-300 underline-offset-2 hover:decoration-gray-500"
+                  className="font-mono text-sm text-ink underline decoration-line underline-offset-2 hover:decoration-ink-muted"
                   title={m.conversation_id}
                 >
                   …{m.conversation_id.slice(-12)}
                 </Link>
                 <CopyButton text={m.conversation_id} />
               </td>
-              <td className="border-b border-gray-100 dark:border-gray-800 py-2.5">
+              <td className="border-b border-line py-2.5">
                 <span
                   className={`rounded px-1.5 py-0.5 text-xs font-medium ${
                     m.has_error ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
